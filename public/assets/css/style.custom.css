@@ -1,0 +1,21 @@
+.cstm-menu-link{
+    color: #9d9da6;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    flex: 0 0 100%;
+    padding: 0.65rem 1rem;
+    transition: none;
+    outline: 0!important;
+}
+
+.cstm-menu-icon {
+    color: #c5c5d8;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    margin-right: 0.5rem;
+}
