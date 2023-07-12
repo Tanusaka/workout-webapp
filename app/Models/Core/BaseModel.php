@@ -29,7 +29,7 @@ class BaseModel
     public function apiPost($request, $data=[], $token=true)
     {
         $this->apirequest = $request;
-        $this->method = "Post";
+        $this->method = "POST";
         $this->data = $data;
 
         $this->setHttpHeader($token);
