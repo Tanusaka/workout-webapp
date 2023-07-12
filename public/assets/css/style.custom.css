@@ -19,3 +19,7 @@
     width: 2rem;
     margin-right: 0.5rem;
 }
+
+img {
+    max-width: 100%;
+}
