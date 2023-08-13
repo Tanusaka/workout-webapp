@@ -71,6 +71,24 @@ $routes->post('/libraries/courses/content/section/lesson/upload', 'App\CourseCon
 
 $routes->get('/apps/chats', 'App\ChatController::index');
 
+
+/*
+ * --------------------------------------------------------------------
+ * User Management Routes
+ * --------------------------------------------------------------------
+ */
+$routes->get('/configs/user-management/users', 'App\UserController::index');
+$routes->get('/configs/user-management/users/create', 'App\UserController::create');
+$routes->post('/configs/user-management/users/save', 'App\UserController::save');
+$routes->get('/configs/user-management/users/view/(:num)', 'App\UserController::get/$1');
+
+
+
+$routes->get('/configs/user-management/roles', 'App\RoleController::index');
+$routes->get('/configs/user-management/roles/view/(:num)', 'App\RoleController::get/$1');
+$routes->post('/configs/user-management/roles/permissions/update', 'App\RoleController::update_permissions');
+
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

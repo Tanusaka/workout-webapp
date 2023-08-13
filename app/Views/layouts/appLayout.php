@@ -274,10 +274,10 @@
 									<!--end:Menu Section-->
 									<?php } ?>
 
-									<?php if (isset($permissions->more->read) && $permissions->more->read) { ?>
+									<?php if (isset($permissions->configs->read) && $permissions->configs->read) { ?>
 									<!--begin:Menu Section-->
 									<section class="menu-section">
-										<?= $this->include('layouts/menus/menu-more') ?>
+										<?= $this->include('layouts/menus/menu-configs') ?>
 									</section>
 									<!--end:Menu Section-->
 									<?php } ?>
