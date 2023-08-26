@@ -20,6 +20,12 @@
     margin-right: 0.5rem;
 }
 
+.cstm-f-12-normal {
+    font-size: 12px;
+    font-weight: normal;
+}
+
 img {
     max-width: 100%;
 }
+

@@ -29,4 +29,25 @@ class UserModel extends BaseModel
             $this->apiPost('/users/save', $data)
         );
     }
+
+    public function updateUserProfile($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/update', $data)
+        );
+    }
+
+    public function updateUserPassword($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/update/password', $data)
+        );
+    }
+
+    public function updateUserRole($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/update/role', $data)
+        );
+    }
 }

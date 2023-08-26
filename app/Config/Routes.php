@@ -81,7 +81,13 @@ $routes->get('/configs/user-management/users', 'App\UserController::index');
 $routes->get('/configs/user-management/users/create', 'App\UserController::create');
 $routes->post('/configs/user-management/users/save', 'App\UserController::save');
 $routes->get('/configs/user-management/users/view/(:num)', 'App\UserController::get/$1');
+$routes->post('/configs/user-management/users/updateprofile', 'App\UserController::update_profile');
+$routes->post('/configs/user-management/users/updatepassword', 'App\UserController::update_password');
+$routes->post('/configs/user-management/users/updaterole', 'App\UserController::update_role');
 
+
+$routes->post('/configs/user-management/users/linkedprofiles/save', 'App\LinkedprofileController::saveLinkedProfile');
+$routes->post('/configs/user-management/users/linkedprofiles/delete', 'App\LinkedprofileController::deleteLinkedProfile');
 
 
 $routes->get('/configs/user-management/roles', 'App\RoleController::index');

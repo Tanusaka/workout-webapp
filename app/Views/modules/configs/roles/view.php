@@ -18,7 +18,13 @@
                             <!--begin::Table row-->
                             <tr>
                                 <!--begin::Label-->
-                                <td class="text-gray-800"><?= ucfirst($permission->permissionname); ?></td>
+                                <td class="d-flex align-items-center">
+                                <div class="d-flex flex-column">
+                                    <?= ucfirst($permission->permissionname); ?>
+                                    <span class="cstm-f-12-normal"><?= $permission->permissiondesc; ?></span>
+                                </div>
+                                    
+                                </td>
                                 <!--end::Label-->
                                 <!--begin::Input group-->
                                 <td>
@@ -26,31 +32,31 @@
                                     <div class="d-flex">
                                         <!--begin::Checkbox-->
                                         <label class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                            <?php if ($permission->r_access) { ?>
-                                                <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="read" value="1" checked />
-                                            <?php } else { ?>
-                                                <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="read" value="0" />
-                                            <?php } ?>
+                                            <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="read" 
+                                            value="<?= $permission->r_access; ?>" 
+                                            <?php if ($permission->r_access) : echo "checked"; endif; ?>
+                                            <?php if (!$permission->r_enable) : echo "disabled"; endif; ?>
+                                            />
                                             <span class="form-check-label">Read</span>
                                         </label>
                                         <!--end::Checkbox-->
                                         <!--begin::Checkbox-->
-                                        <label class="form-check form-check-custom form-check-solid me-5 me-lg-20">
-                                        <?php if ($permission->w_access) { ?>
-                                            <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="write" value="1" checked />
-                                            <?php } else { ?>
-                                                <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="write" value="0" />
-                                            <?php } ?>
+                                        <label class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
+                                            <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="write" 
+                                            value="<?= $permission->w_access; ?>" 
+                                            <?php if ($permission->w_access) : echo "checked"; endif; ?>
+                                            <?php if (!$permission->w_enable) : echo "disabled"; endif; ?>
+                                            />
                                             <span class="form-check-label">Write</span>
                                         </label>
                                         <!--end::Checkbox-->
                                         <!--begin::Checkbox-->
-                                        <label class="form-check form-check-custom form-check-solid">
-                                        <?php if ($permission->d_access) { ?>
-                                            <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="delete" value="1" checked />
-                                            <?php } else { ?>
-                                                <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="delete" value="0" />
-                                            <?php } ?>
+                                        <label class="form-check form-check-sm form-check-custom form-check-solid">
+                                            <input class="form-check-input" type="checkbox" data-pid="<?= $permission->id; ?>" data-mode="delete" 
+                                            value="<?= $permission->d_access; ?>" 
+                                            <?php if ($permission->d_access) : echo "checked"; endif; ?>
+                                            <?php if (!$permission->d_enable) : echo "disabled"; endif; ?>
+                                            />
                                             <span class="form-check-label">Delete</span>
                                         </label>
                                         <!--end::Checkbox-->

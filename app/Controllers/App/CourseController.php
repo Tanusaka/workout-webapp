@@ -34,10 +34,17 @@ class CourseController extends AuthController
 
 		$pagedata = [
 			'permissions' => $_SESSION['permissions'],
+            'pageid' => 'overview',
+            'title' => 'Courses',
+            'breadcrumbs' => [ 
+                'Home' => 'dashboard', 
+                'Libraries' => '', 
+                'Courses' => '' 
+            ],
 			'courses' => $courses
 		];
 
-		return view('modules/libraries/courses/overview', $pagedata);
+		return view('modules/libraries/courses/index', $pagedata);
 	}
 
 	public function get($id=0)
@@ -54,12 +61,24 @@ class CourseController extends AuthController
 			$course = $response->data;
 		}
 
+		if (empty($course)) {
+			return view('errors/html/error_404', ['message'=>'Course cannot be found.']);
+		}
+
 		$pagedata = [
 			'permissions' => $_SESSION['permissions'],
-			'course' => $course,
+            'title' => 'View Course Details',
+            'breadcrumbs' => [ 
+                'Home' => 'dashboard', 
+                'Libraries' => 'libraries/courses', 
+                'Courses' => 'libraries/courses', 
+                'Profile' => '' 
+            ],
+            'pageid' => 'view',
+			'course' => $course
 		];
 
-		return view('modules/libraries/courses/view', $pagedata);
+		return view('modules/libraries/courses/index', $pagedata);
 
 	}
 
@@ -70,11 +89,18 @@ class CourseController extends AuthController
         }
 
 		$pagedata = [
+			'pageid' => 'create',
 			'permissions' => $_SESSION['permissions'],
+            'title' => 'New Course',
+            'breadcrumbs' => [ 
+                'Home' => 'dashboard', 
+                'Libraries' => 'libraries/courses', 
+                'Courses' => 'libraries/courses', 
+                'Create' => '' 
+            ],
 		];
 
-		return view('modules/libraries/courses/create', $pagedata);
-
+		return view('modules/libraries/courses/index', $pagedata);
 	}
 
 	public function save()
@@ -93,9 +119,9 @@ class CourseController extends AuthController
 
 		$course = [
             'tenantid' => 1,
-            'coursetype' => $reqdata->coursetype,
 			'coursename' => $reqdata->coursename,
 			'courseintro' => $reqdata->courseintro,
+			'coursetype' => $reqdata->coursetype,
 			'coursedescription' => $reqdata->coursedescription
         ];
 

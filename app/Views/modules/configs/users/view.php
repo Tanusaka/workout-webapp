@@ -15,12 +15,12 @@
                     </div>
                     <!--end::Avatar-->
                     <!--begin::Name-->
-                    <a href="#" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"><?= $user->firstname.' '.$user->lastname; ?></a>
+                    <a id="dsp_profilename" href="#" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"><?= $user->firstname.' '.$user->lastname; ?></a>
                     <!--end::Name-->
                     <!--begin::Position-->
                     <div class="mb-9">
                         <!--begin::Badge-->
-                        <div class="badge badge-lg badge-light-primary d-inline"><?= $user->rolename; ?></div>
+                        <div id="dsp_rolename" class="badge badge-lg badge-light-primary d-inline"><?= $user->rolename; ?></div>
                         <!--begin::Badge-->
                     </div>
                     <!--end::Position-->
@@ -59,8 +59,14 @@
                         <!--begin::Details item-->
                         <div class="fw-bold mt-5">Address</div>
                         <div class="text-gray-600">
+                        <span id="dsp_address1"><?= $user->address1; ?></span>
                         <br />
-                        <br /></div>
+                        <span id="dsp_address2"><?= $user->address2; ?></span>
+                        <br />
+                        <span id="dsp_city"><?= $user->city; ?></span>
+                        <br />
+                        <span id="dsp_country"><?= $user->country; ?></span>
+                        </div>
                         <!--begin::Details item-->
                         <!--begin::Details item-->
                         <div class="fw-bold mt-5">Last Login</div>
@@ -82,40 +88,44 @@
     <div class="flex-lg-row-fluid ms-lg-15">
         <!--begin:::Tabs-->
         <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8">
+            
+            <?php if (isset($permissions->users_linkedprofiles->read) && $permissions->users_linkedprofiles->read) { ?>
             <!--begin:::Tab item-->
             <li class="nav-item">
-                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_user_view_overview_tab">Overview</a>
+                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_user_view_linkedprofiles_tab">Linked Profiles</a>
             </li>
             <!--end:::Tab item-->
+            <?php } ?>
+            
+            <?php if (isset($permissions->users->read) && $permissions->users->read) { ?>
             <!--begin:::Tab item-->
             <li class="nav-item">
-                <a class="nav-link text-active-primary pb-4" data-kt-countup-tabs="true" data-bs-toggle="tab" href="#kt_user_view_overview_security">Security</a>
+                <a class="nav-link text-active-primary pb-4" data-kt-countup-tabs="true" data-bs-toggle="tab" href="#kt_user_view_sttings_tab">Settings</a>
             </li>
             <!--end:::Tab item-->
-            <!--begin:::Tab item-->
-            <li class="nav-item">
-                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_user_view_overview_events_and_logs_tab">Events & Logs</a>
-            </li>
-            <!--end:::Tab item-->
+            <?php } ?>
+
         </ul>
         <!--end:::Tabs-->
         <!--begin:::Tab content-->
         <div class="tab-content" id="myTabContent">
+            
+            <?php if (isset($permissions->users_linkedprofiles->read) && $permissions->users_linkedprofiles->read) { ?>
             <!--begin:::Tab pane-->
-            <div class="tab-pane fade show active" id="kt_user_view_overview_tab" role="tabpanel">
-
+            <div class="tab-pane fade show active" id="kt_user_view_linkedprofiles_tab" role="tabpanel">
+                <?= $this->include('modules/configs/users/linkedprofiles') ?>
             </div>
             <!--end:::Tab pane-->
-            <!--begin:::Tab pane-->
-            <div class="tab-pane fade" id="kt_user_view_overview_security" role="tabpanel">
+            <?php } ?>
 
+            <?php if (isset($permissions->users->read) && $permissions->users->read) { ?>
+            <!--begin:::Tab pane-->
+            <div class="tab-pane fade" id="kt_user_view_sttings_tab" role="tabpanel">
+                <?= $this->include('modules/configs/users/settings') ?>
             </div>
             <!--end:::Tab pane-->
-            <!--begin:::Tab pane-->
-            <div class="tab-pane fade" id="kt_user_view_overview_events_and_logs_tab" role="tabpanel">
-
-            </div>
-            <!--end:::Tab pane-->
+            <?php } ?>
+            
         </div>
         <!--end:::Tab content-->
     </div>

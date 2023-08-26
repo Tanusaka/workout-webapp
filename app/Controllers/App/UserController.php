@@ -9,6 +9,7 @@ use App\Controllers\App\AuthController;
 
 use App\Models\App\UserModel;
 use App\Models\App\RoleModel;
+use App\Models\App\LinkedprofileModel;
 
 class UserController extends AuthController
 {
@@ -62,6 +63,13 @@ class UserController extends AuthController
 			$user = $response->data;
 		}
 
+		if (empty($user)) {
+			return view('errors/html/error_404', ['message'=>'User cannot be found.']);
+		}
+
+		$rolemodel = new RoleModel();
+		$linkedprofilemodel = new LinkedprofileModel();
+
 		$pagedata = [
 			'permissions' => $_SESSION['permissions'],
             'title' => 'View User Details',
@@ -72,7 +80,10 @@ class UserController extends AuthController
                 'Profile' => '' 
             ],
             'pageid' => 'view',
-			'user' => $user
+			'user' => $user,
+			'roles' => $rolemodel->get()->data,
+			'linkedprofiles' => $linkedprofilemodel->getLinkedprofiles(['userid'=>$user->id])->data,
+			'usersforlinkedprofile' => $linkedprofilemodel->getUsersForLinkedProfile(['userid'=>$user->id])->data,
 		];
 
 		return view('modules/configs/users/index', $pagedata);
@@ -141,5 +152,128 @@ class UserController extends AuthController
         return $this->response;
 
 	}
+
+	public function update_profile()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->updateUserProfile([
+			'userid' => trim($reqdata->userid),
+            'firstname' => trim($reqdata->firstname),
+			'lastname' => trim($reqdata->lastname),
+			'gender' => trim($reqdata->gender),
+			'dob' => trim($reqdata->dob),
+			'mobile' => trim($reqdata->mobile),
+			'address1' => trim($reqdata->address1),
+			'address2' => trim($reqdata->address2),
+			'city' => trim($reqdata->city),
+			'country' => trim($reqdata->country)
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function update_password()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->updateUserPassword([
+			'userid' => trim($reqdata->userid),
+            'current_password' => trim($reqdata->current_password),
+			'password' => trim($reqdata->new_password),
+			'confirm_password' => trim($reqdata->confirm_password)
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function update_role()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->updateUserRole([
+			'userid' => trim($reqdata->userid),
+            'roleid' => trim($reqdata->roleid)
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+
 
 }

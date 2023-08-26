@@ -12,6 +12,7 @@
 		<!--begin::Vendor Stylesheets(used for this page only)-->
 		<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
 		<link href="assets/plugins/custom/vis-timeline/vis-timeline.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="assets/plugins/vendor/richtexteditor/rte_theme_default.css" rel="stylesheet" type="text/css" />
 		<!--end::Vendor Stylesheets-->
 		<!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
 		<link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
@@ -370,6 +371,11 @@
 		<script src="assets/plugins/global/plugins.bundle.js"></script>
 		<script src="assets/js/scripts.bundle.js"></script>
 		<!--end::Global Javascript Bundle-->
+
+		<!--begin::Render Vendor Javascripts-->
+		<script src="assets/plugins/vendor/richtexteditor/rte.js"></script>
+		<script src="assets/plugins/vendor/richtexteditor/plugins/all_plugins.js"></script>
+		<!--end::Render Vendor Javascripts-->
 		
 		<!--begin::Render Custom Javascripts-->
 		<?= $this->renderSection('customscripts') ?>
