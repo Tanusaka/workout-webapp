@@ -117,7 +117,7 @@
                 <label class="required form-label mb-3">Description</label>
                 <!--end::Label-->
                 <!--begin::Input-->
-                <textarea name="crt_coursedescription" id="kt_crt_courseeditor" class="form-control form-control-lg form-control-solid" placeholder="Type something about this course...">
+                <textarea name="crt_coursedescription" id="kt_crt_courseeditor" class="form-control form-control-lg form-control-solid" style="min-width: 100%" placeholder="Type something about this course...">
                 
                 </textarea>  
                 <!--end::Input-->

@@ -248,7 +248,6 @@ var tx = function () {
                 }
 
             }).catch(function (error) {
-                console.log(error);
                 Swal.fire({
                     text: "Sorry, looks like there are some errors detected, please try again.",
                     icon: "error",

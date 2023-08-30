@@ -72,7 +72,6 @@ var tx = function () {
                 } 
     
             }).catch(function (error) {
-                console.log(error);
                 Swal.fire({
                     text: "Sorry, looks like there are some errors detected, please try again.",
                     icon: "error",
@@ -82,9 +81,7 @@ var tx = function () {
                         confirmButton: "btn btn-primary"
                     }
                 }).then(function() {                            
-                    if (response.data.redirect) {
-                        location.href = response.data.redirect;
-                    }
+                    
                 });
             });
     

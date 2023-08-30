@@ -65,7 +65,7 @@
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                     </i>
-                                    <div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="4500" data-kt-countup-prefix="">0</div>
+                                    <div id="kt_course_follower_stat" class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="<?php echo $course->follower_count; ?>" data-kt-countup-prefix="">0</div>
                                 </div>
                                 <!--end::Number-->
                                 <!--begin::Label-->
@@ -81,29 +81,29 @@
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                     </i>
-                                    <div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="10">0</div>
+                                    <div id="kt_course_review_stat" class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="<?php echo $course->review_count; ?>">0</div>
                                 </div>
                                 <!--end::Number-->
                                 <!--begin::Label-->
-                                <div class="fw-semibold fs-6 text-gray-400">Sections</div>
+                                <div class="fw-semibold fs-6 text-gray-400">Reviews</div>
                                 <!--end::Label-->
                             </div>
                             <!--end::Stat-->
                             <!--begin::Stat-->
-                            <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                            <!-- <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"> -->
                                 <!--begin::Number-->
-                                <div class="d-flex align-items-center">
-                                    <i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                    <div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="60" data-kt-countup-prefix="%">0</div>
-                                </div>
+                                <!-- <div class="d-flex align-items-center"> -->
+                                    <!-- <i class="ki-duotone ki-arrow-up fs-3 text-success me-2"> -->
+                                        <!-- <span class="path1"></span> -->
+                                        <!-- <span class="path2"></span> -->
+                                    <!-- </i> -->
+                                    <!-- <div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="60" data-kt-countup-prefix="%">0</div> -->
+                                <!-- </div> -->
                                 <!--end::Number-->
                                 <!--begin::Label-->
-                                <div class="fw-semibold fs-6 text-gray-400">Success Rate</div>
+                                <!-- <div class="fw-semibold fs-6 text-gray-400">Success Rate</div> -->
                                 <!--end::Label-->
-                            </div>
+                            <!-- </div> -->
                             <!--end::Stat-->
                         </div>
                         <!--end::Stats-->
@@ -133,7 +133,7 @@
         <!--begin:::Tab Container-->
         <div id="kt_tab_container">
         <!--begin:::Tabs-->
-        <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x border-transparent fw-semibold mb-15">
+        <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x border-transparent fw-semibold mb-5">
             
             <?php if (isset($permissions->courses_overview->read) && $permissions->courses_overview->read) { ?>
             <!--begin:::Tab item-->
@@ -157,7 +157,7 @@
             <!--begin:::Tab item-->
             <li class="nav-item">
                 <a id="navigator_course_instructor" class="nav-link text-active-primary d-flex align-items-center pb-5" data-bs-toggle="tab" href="#kt_course_instructor">
-                Instructor</a>
+                Instructors</a>
             </li>
             <!--end:::Tab item-->
             <?php } ?>
@@ -272,11 +272,16 @@
 
 <?= $this->section('custommodals') ?>
 <!--begin::Custom Modal(used for this page only)-->
-<?= $this->include('modules/libraries/courses/modals/view_content') ?>
 <?= $this->include('modules/libraries/courses/modals/add_section') ?>
 <?= $this->include('modules/libraries/courses/modals/edit_section') ?>
-<?= $this->include('modules/libraries/courses/modals/add_content') ?>
-<?= $this->include('modules/libraries/courses/modals/edit_content') ?>
+<?= $this->include('modules/libraries/courses/modals/add_lesson') ?>
+<?= $this->include('modules/libraries/courses/modals/edit_lesson') ?>
+<?= $this->include('modules/libraries/courses/modals/view_lesson') ?>
+
+<?= $this->include('modules/libraries/courses/modals/add_instructor') ?>
+<?= $this->include('modules/libraries/courses/modals/add_review') ?>
+<?= $this->include('modules/libraries/courses/modals/add_follower') ?>
+
 <!--end::Custom Modal-->
 <?= $this->endSection() ?>
 

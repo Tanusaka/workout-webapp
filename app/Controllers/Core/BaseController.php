@@ -61,4 +61,11 @@ abstract class BaseController extends Controller
         $this->session = \Config\Services::session();
         $this->appconfigs = config('App');
     }
+
+    public function convertDateTimeTo($datetime="", $format="Y/m/d H:i:s") {
+        $dateTimeArray = explode(' ', $datetime);
+        $date=date_create($dateTimeArray[0]);
+        return date_format($date, $format);
+
+    }
 }

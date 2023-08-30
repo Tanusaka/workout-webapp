@@ -45,6 +45,7 @@ $routes->get('/libraries/courses', 'App\CourseController::index');
 $routes->get('/libraries/courses/create', 'App\CourseController::create');
 $routes->post('/libraries/courses/save', 'App\CourseController::save');
 $routes->post('/libraries/courses/update', 'App\CourseController::update');
+$routes->post('/libraries/courses/delete', 'App\CourseController::delete');
 
 $routes->post('/libraries/courses/upload/image', 'App\CourseController::upload_courseimage');
 $routes->post('/libraries/courses/remove/image', 'App\CourseController::remove_courseimage');
@@ -54,17 +55,39 @@ $routes->get('/libraries/courses/view/(:num)', 'App\CourseController::get/$1');
 
 $routes->post('/libraries/courses/get/overview', 'App\CourseController::get_overview');
 $routes->post('/libraries/courses/get/contents', 'App\CourseController::get_contents');
+$routes->post('/libraries/courses/get/instructors', 'App\CourseController::get_instructors');
+$routes->post('/libraries/courses/get/reviews', 'App\CourseController::get_reviews');
+$routes->post('/libraries/courses/get/followers', 'App\CourseController::get_followers');
 $routes->post('/libraries/courses/get/settings', 'App\CourseController::get_settings');
+
+
+$routes->get('/libraries/courses/instructors/forcourse/(:num)', 'App\CourseController::get_instructors_for_course/$1');
+$routes->post('/libraries/courses/instructors/save', 'App\CourseController::save_instructor');
+$routes->post('/libraries/courses/instructors/delete', 'App\CourseController::delete_instructor');
+
+
+$routes->post('/libraries/courses/reviews/save', 'App\CourseController::save_review');
+$routes->post('/libraries/courses/reviews/delete', 'App\CourseController::delete_review');
+
+
+$routes->get('/libraries/courses/followers/forcourse/(:num)', 'App\CourseController::get_followers_for_course/$1');
+$routes->post('/libraries/courses/followers/save', 'App\CourseController::save_follower');
+$routes->post('/libraries/courses/followers/delete', 'App\CourseController::delete_follower');
+
+
+
+
 
 
 $routes->post('/libraries/courses/content/section/get', 'App\CourseController::get_section');
 $routes->post('/libraries/courses/content/section/save', 'App\CourseController::save_section');
 $routes->post('/libraries/courses/content/section/update', 'App\CourseController::update_section');
-
+$routes->post('/libraries/courses/content/section/delete', 'App\CourseController::delete_section');
 
 $routes->post('/libraries/courses/content/section/lesson/get', 'App\CourseController::get_lesson');
 $routes->post('/libraries/courses/content/section/lesson/save', 'App\CourseController::save_lesson');
 $routes->post('/libraries/courses/content/section/lesson/update', 'App\CourseController::update_lesson');
+$routes->post('/libraries/courses/content/section/lesson/delete', 'App\CourseController::delete_lesson');
 
 $routes->post('/libraries/courses/content/section/lesson/upload', 'App\CourseController::upload_lesson');
 
