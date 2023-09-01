@@ -107,7 +107,7 @@
                                         $d2 = new DateTime('now');
                                         $interval = $d1->diff($d2);
                                     ?>
-                                    <span class="text-muted fs-7 mb-1"><?php echo $interval->h; ?> hours</span>
+                                    <span class="text-muted fs-7 mb-1"><?php echo $interval->h == 0? 'less than 1 hour': $interval->h.' hours' ; ?></span>
                                 </div>
                                 <!--end::Lat seen-->
                             </div>
