@@ -23,11 +23,11 @@ class ChatController extends AuthController
         if ( !AuthController::auth() ) {
             return redirect()->route('/');
         }
-
+	
 	$threads = [];
 
 	$response = $this->chatModel->get([ 'id' => 3 ]);
-
+	print_r($response);
 	if ($response->status==200) {
 		$threads = $response->data;
 	}
