@@ -102,7 +102,11 @@
                                 <!--end::Details-->
                                 <!--begin::Lat seen-->
                                 <div class="d-flex flex-column align-items-end ms-2">
-                                    <span class="text-muted fs-7 mb-1"><?php echo $thread->timestamp; ?></span>
+                                    <?php
+                                        $d1 = new DateTime($thread->timestamp);
+                                        $d2 = new DateTime('now');
+                                        $interval = $d1->diff($d2);
+                                    <span class="text-muted fs-7 mb-1"><?php echo $interval->h; ?> hours</span>
                                 </div>
                                 <!--end::Lat seen-->
                             </div>
