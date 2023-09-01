@@ -10,10 +10,10 @@ use App\Models\Core\BaseModel;
 class ChatModel extends BaseModel
 {
     #chats
-    public function get()
+    public function get($data=[])
     {
         return json_decode(
-            $this->apiPost('/chats')
+            $this->apiPost('/chats', $data)
         );
     }
 
