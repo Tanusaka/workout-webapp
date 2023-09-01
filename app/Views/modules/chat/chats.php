@@ -106,6 +106,7 @@
                                         $d1 = new DateTime($thread->timestamp);
                                         $d2 = new DateTime('now');
                                         $interval = $d1->diff($d2);
+                                    ?>
                                     <span class="text-muted fs-7 mb-1"><?php echo $interval->h; ?> hours</span>
                                 </div>
                                 <!--end::Lat seen-->
