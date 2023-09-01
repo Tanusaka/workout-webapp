@@ -28,9 +28,9 @@ class ChatController extends AuthController
 
 	$response = $this->chatModel->get([ 'user_id' => 3 ]);
 	//print_r($response);
-	if ($response->status==200) {
+	//if ($response->status==200) {
 		$threads = $response->threads;
-	}
+	//}
 
         $pagedata = [
 		    'permissions' => $_SESSION['permissions'],
