@@ -102,7 +102,7 @@
                                 <!--end::Details-->
                                 <!--begin::Lat seen-->
                                 <div class="d-flex flex-column align-items-end ms-2">
-                                    <span class="text-muted fs-7 mb-1">1 week</span>
+                                    <span class="text-muted fs-7 mb-1"><?php echo $thread->timestamp; ?></span>
                                 </div>
                                 <!--end::Lat seen-->
                             </div>
