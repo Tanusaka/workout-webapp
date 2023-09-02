@@ -104,7 +104,7 @@
                                 <div class="d-flex flex-column align-items-end ms-2">
                                     <?php
                                         $d1 = new DateTime($thread->timestamp);
-                                        $d2 = new DateTime('2023-08-31 14:00:52');
+                                        $d2 = new DateTime('now');
                                         $interval = $d1->diff($d2);
                                     ?>
                                     <span class="text-muted fs-7 mb-1"><?php echo $interval->h == 0? 'less than 1 hour': $interval->h.' hours' ; ?></span>
