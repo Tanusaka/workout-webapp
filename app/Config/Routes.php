@@ -93,6 +93,7 @@ $routes->post('/libraries/courses/content/section/lesson/upload', 'App\CourseCon
 
 
 $routes->get('/apps/chats', 'App\ChatController::index');
+$routes->get('/apps/chats/view/(:num)', 'App\ChatController::view/$1');
 
 
 /*
