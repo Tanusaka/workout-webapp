@@ -94,7 +94,7 @@
                                     <!--end::Avatar-->
                                     <!--begin::Details-->
                                     <div class="ms-5">
-                                        <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary mb-2"><?php echo $thread->firstname." ".$thread->lastname; ?></a>
+                                        <a href="/apps/chats/view/<?php echo $thread->linkedprofileid; ?>" class="fs-5 fw-bold text-gray-900 text-hover-primary mb-2"><?php echo $thread->firstname." ".$thread->lastname; ?></a>
                                         <div class="fw-semibold text-muted"><?php echo $thread->email; ?></div>
                                     </div>
                                     <!--end::Details-->
