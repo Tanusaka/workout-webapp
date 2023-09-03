@@ -26,7 +26,7 @@ class ChatController extends AuthController
 	
 	$threads = [];
 
-	$response = $this->chatModel->get([ 'user_id' => 3 ]);
+	$response = $this->chatModel->get();
 	//print_r($response);
 	//if ($response->status==200) {
 		$threads = $response->threads;
@@ -45,5 +45,34 @@ class ChatController extends AuthController
 	];
         
 		return view('modules/chat/chats', $pagedata);
+	}
+
+	public function view()
+	{
+        if ( !AuthController::auth() ) {
+            return redirect()->route('/');
+        }
+	
+	$thread = [];
+
+	$response = $this->chatModel->getChat([ "other_user_id":1,"limit":10,"offset":0 ]);
+	//print_r($response);
+	//if ($response->status==200) {
+		$thread = $response->messages;
+	//}
+
+        $pagedata = [
+		    'permissions' => $_SESSION['permissions'],
+	            'pageid' => 'overview',
+	            'title' => 'Messaging Page',
+	            'breadcrumbs' => [ 
+	                'Home' => 'dashboard', 
+	                'User Management' => '', 
+	                'Users' => '' 
+	            ],
+		    'thread' => $thread
+	];
+        
+		return view('modules/chat/chat', $pagedata);
 	}
 }
