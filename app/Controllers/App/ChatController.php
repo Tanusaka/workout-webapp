@@ -9,6 +9,8 @@ use App\Controllers\App\AuthController;
 
 
 use App\Models\App\ChatModel;
+use App\Models\App\UserModel;
+
 
 class ChatController extends AuthController
 {
