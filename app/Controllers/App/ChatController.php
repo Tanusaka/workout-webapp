@@ -47,7 +47,7 @@ class ChatController extends AuthController
 		return view('modules/chat/chats', $pagedata);
 	}
 
-	public function view()
+	public function view($id)
 	{
         if ( !AuthController::auth() ) {
             return redirect()->route('/');
@@ -55,7 +55,7 @@ class ChatController extends AuthController
 	
 	$thread = [];
 
-	$response = $this->chatModel->getChat([ "other_user_id"=>1,"limit"=>10,"offset"=>0 ]);
+	$response = $this->chatModel->getChat([ "other_user_id"=>$id,"limit"=>10,"offset"=>0 ]);
 	//print_r($response);
 	//if ($response->status==200) {
 		$thread = $response->messages;
