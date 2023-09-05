@@ -75,7 +75,7 @@ class ChatController extends AuthController
 	        $pagedata = [
 			    'permissions' => $_SESSION['permissions'],
 		            'pageid' => 'overview',
-		            'title' => 'Messaging Page',
+		            'title' => 'Personal Messaging Page',
 		            'breadcrumbs' => [ 
 		                'Home' => 'dashboard', 
 		                'User Management' => '', 
