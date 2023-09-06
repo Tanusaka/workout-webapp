@@ -10,6 +10,7 @@
         <meta http-equiv="content-language" content="en-us">
         <meta http-equiv="content-script-type" content="text/javascript">
         <meta http-equiv="content-style-type" content="text/css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
         <meta property="og:locale" content="en_US" />
 		<!--begin::Fonts(mandatory for all pages)-->
