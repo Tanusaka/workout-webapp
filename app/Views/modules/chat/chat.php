@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/appLayout') ?>
 
 <?= $this->section('content') ?>
-<!--begin::Toolbar--><?php //print_r($thread); ?><?php print_r($linked_user->firstname); ?>
+<!--begin::Toolbar--><?php //print_r($thread); ?><?php //print_r($linked_user->firstname); ?>
 <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
     <!--begin::Toolbar container-->
     <div id="kt_app_toolbar_container" class="app-container container-xxl d-flex flex-stack">
@@ -166,10 +166,15 @@
                                             <img alt="Pic" src="assets/media/avatars/300-25.jpg" />
                                         </div>
                                         <!--end::Avatar-->
+                                        <?php
+                                            //$d1 = new DateTime($msg->timestamp);
+                                            //$d2 = new DateTime('now');
+                                            //$interval = $d1->diff($d2);
+                                        ?>
                                         <!--begin::Details-->
                                         <div class="ms-3">
                                             <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1"><?php echo $linked_user->firstname.' '.$linked_user->lastname; ?></a>
-                                            <span class="text-muted fs-7 mb-1">2 mins</span>
+                                            <span class="text-muted fs-7 mb-1"><?php $d1 = new DateTime($msg->timestamp); ?></span>
                                         </div>
                                         <!--end::Details-->
                                     </div>
