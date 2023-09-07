@@ -181,7 +181,7 @@
                                 <!--end::Wrapper-->
                             </div>
                             <!--end::Message(in)-->
-                            <?php elseif: ?>
+                            <?php else: ?>
                             <!--begin::Message(out)-->
                             <div class="d-flex justify-content-end mb-10">
                                 <!--begin::Wrapper-->
