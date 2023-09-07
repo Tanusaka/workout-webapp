@@ -174,7 +174,7 @@
                                         <!--begin::Details-->
                                         <div class="ms-3">
                                             <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1"><?php echo $linked_user->firstname.' '.$linked_user->lastname; ?></a>
-                                            <span class="text-muted fs-7 mb-1"><?php $msg->timestamp; ?></span>
+                                            <span class="text-muted fs-7 mb-1"><?php echo $msg->timestamp; ?></span>
                                         </div>
                                         <!--end::Details-->
                                     </div>
@@ -195,7 +195,7 @@
                                     <div class="d-flex align-items-center mb-2">
                                         <!--begin::Details-->
                                         <div class="me-3">
-                                            <span class="text-muted fs-7 mb-1"><?php $msg->timestamp; ?></span>
+                                            <span class="text-muted fs-7 mb-1"><?php echo $msg->timestamp; ?></span>
                                             <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary ms-1">You</a>
                                         </div>
                                         <!--end::Details-->
