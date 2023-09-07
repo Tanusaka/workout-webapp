@@ -173,7 +173,7 @@
                                     </div>
                                     <!--end::User-->
                                     <!--begin::Text-->
-                                    <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start" data-kt-element="message-text"><?php echo $msg->message_text; ?></div>
+                                    <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start" data-kt-element="message-text"><?php echo //$msg->message_text; ?></div>
                                     <!--end::Text-->
                                 </div>
                                 <!--end::Wrapper-->
