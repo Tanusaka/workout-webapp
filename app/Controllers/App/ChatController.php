@@ -69,7 +69,7 @@ class ChatController extends AuthController
 		$user = [];
 	
 		$response = $this->userModel->getUserData([ 'userid' => $id ]);
-		print_r($response);
+		//print_r($response);
 		
 		if ($response->status==200) {
 			$user = $response->data;
