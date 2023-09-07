@@ -23,6 +23,13 @@ class UserModel extends BaseModel
         );
     }
 
+    public function getUserData($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/getdata', $data)
+        );
+    }
+
     public function saveUser($data=[])
     {
         return json_decode(
