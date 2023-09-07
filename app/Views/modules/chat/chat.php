@@ -152,7 +152,7 @@
                         <!--begin::Messages-->
                         <div class="scroll-y me-n5 pe-5 h-300px h-lg-auto" data-kt-element="messages" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_header, #kt_app_header, #kt_app_toolbar, #kt_toolbar, #kt_footer, #kt_app_footer, #kt_chat_messenger_header, #kt_chat_messenger_footer" data-kt-scroll-wrappers="#kt_content, #kt_app_content, #kt_chat_messenger_body" data-kt-scroll-offset="5px">
                             <?php //print_r($thread); ?>
-                            <?php foreach($thread as $msg): ?>
+                            <?php foreach($messages as $msg): ?>
                             <?php //print_r($msg); ?>
                             <!--begin::Message(in)-->
                             <div class="d-flex justify-content-start mb-10">
@@ -174,7 +174,7 @@
                                     </div>
                                     <!--end::User-->
                                     <!--begin::Text-->
-                                    <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start" data-kt-element="message-text"><?php //echo $msg->message_text; ?></div>
+                                    <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start" data-kt-element="message-text"><?php echo $msg->message_text; ?></div>
                                     <!--end::Text-->
                                 </div>
                                 <!--end::Wrapper-->
