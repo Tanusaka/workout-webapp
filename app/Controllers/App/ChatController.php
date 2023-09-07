@@ -83,7 +83,7 @@ class ChatController extends AuthController
 		                'User Management' => '', 
 		                'Users' => '' 
 		            ],
-			    'thread' => $thread,
+			    'messages' => $thread,
 			    'threads' => $threads,
 			    'linked_user' => $user
 		];
