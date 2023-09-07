@@ -134,11 +134,11 @@
                         <div class="card-title">
                             <!--begin::User-->
                             <div class="d-flex justify-content-center flex-column me-3">
-                                <a href="#" class="fs-4 fw-bold text-gray-900 text-hover-primary me-1 mb-2 lh-1">Brian Cox</a>
+                                <a href="#" class="fs-4 fw-bold text-gray-900 text-hover-primary me-1 mb-2 lh-1"><?php echo $linked_user->firstname.' '.$linked_user->lastname; ?></a>
                                 <!--begin::Info-->
                                 <div class="mb-0 lh-1">
                                     <span class="badge badge-success badge-circle w-10px h-10px me-1"></span>
-                                    <span class="fs-7 fw-semibold text-muted">Active</span>
+                                    <span class="fs-7 fw-semibold text-muted"></span>
                                 </div>
                                 <!--end::Info-->
                             </div>
@@ -167,7 +167,7 @@
                                         <!--end::Avatar-->
                                         <!--begin::Details-->
                                         <div class="ms-3">
-                                            <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Brian Cox</a>
+                                            <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1"><?php echo $linked_user->firstname.' '.$linked_user->lastname; ?></a>
                                             <span class="text-muted fs-7 mb-1">2 mins</span>
                                         </div>
                                         <!--end::Details-->
