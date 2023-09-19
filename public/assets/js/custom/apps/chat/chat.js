@@ -42,6 +42,16 @@ var KTAppChat = function () {
 		input.value = '';
 		messages.appendChild(message);
 		messages.scrollTop = messages.scrollHeight;
+
+		Swal.fire({
+			text: input.value,
+			icon: "error",
+			buttonsStyling: false,
+			confirmButtonText: "Ok, got it!",
+			customClass: {
+				confirmButton: "btn btn-primary"
+			}
+		});
 		
 		/*
 		setTimeout(function() {			
