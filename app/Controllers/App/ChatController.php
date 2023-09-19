@@ -111,7 +111,7 @@ class ChatController extends AuthController
 			'message_text' => $reqdata->message_text
 		]);
 
-		if ($response->status==200) {
+		if ($response->status=="success") {
 			$this->response->setJSON([ 
 				'status' => 200,
 				'redirect' => '',
@@ -121,7 +121,7 @@ class ChatController extends AuthController
 			$this->response->setJSON([ 
 				'status' => $response->status,
 				'redirect' => '',
-				'message'  => $response->status." ".$response->message_id
+				'message'  => $response->message
 			]);
 		}
 
