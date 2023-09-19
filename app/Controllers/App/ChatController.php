@@ -56,8 +56,8 @@ class ChatController extends AuthController
 		
 		$thread = [];
 	
-		$response = $this->chatModel->getChat([ "other_user_id"=>$id,"limit"=>10,"offset"=>0 ]);
-		$thread = $response->messages;
+		$response = $this->chatModel->getChat([ "other_user_id"=>$id,"limit"=>100,"offset"=>0 ]);
+		$thread = array_reverse($response->messages);
 
 		//print_r($thread);
 		
