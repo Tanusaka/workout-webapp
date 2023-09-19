@@ -26,8 +26,7 @@ var KTAppChat = function () {
 	var handeMessaging = function(element) {
 		var messages = element.querySelector('[data-kt-element="messages"]');
 		var input = element.querySelector('[data-kt-element="input"]');
-		console.log(messages);
-		console.log(input);
+		
         if (input.value.length === 0 ) {
             return;
         }
@@ -44,7 +43,7 @@ var KTAppChat = function () {
 		messages.appendChild(message);
 		messages.scrollTop = messages.scrollHeight;
 		
-		
+		/*
 		setTimeout(function() {			
 			// Show example incoming message
 			message = messageInTemplate.cloneNode(true);			
@@ -52,7 +51,7 @@ var KTAppChat = function () {
 			message.querySelector('[data-kt-element="message-text"]').innerText = 'Thank you for your awesome support!';
 			messages.appendChild(message);
 			messages.scrollTop = messages.scrollHeight;
-		}, 2000);
+		}, 2000); */
 	}
 
 	// Public methods
