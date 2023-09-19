@@ -121,7 +121,7 @@ class ChatController extends AuthController
 			$this->response->setJSON([ 
 				'status' => $response->status,
 				'redirect' => '',
-				'message'  => $response->messages
+				'message'  => $response->message
 			]);
 		}
 
