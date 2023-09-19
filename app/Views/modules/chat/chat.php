@@ -228,7 +228,7 @@
                                             </div>
                                             <!--end::Details-->
 
-                                            <!--begin::Avatar--><div class="symbol  symbol-35px symbol-circle "><img alt="Pic" src="/metronic8/demo1/assets/media/avatars/300-1.jpg"></div><!--end::Avatar-->                 
+                                            <!--begin::Avatar--><div class="symbol  symbol-35px symbol-circle "><img alt="Pic" src="/assets/media/avatars/300-1.jpg"></div><!--end::Avatar-->                 
                                     </div>
                                     <!--end::User-->
 
@@ -250,7 +250,7 @@
                                                             <!--begin::Avatar--><div class="symbol  symbol-35px symbol-circle "><img alt="Pic" src="/metronic8/demo1/assets/media/avatars/300-25.jpg"></div><!--end::Avatar-->
                                             <!--begin::Details-->
                                             <div class="ms-3">
-                                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">Brian Cox</a>
+                                                <a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1"></a>
                                                 <span class="text-muted fs-7 mb-1">Just now</span>
                                             </div>
                                             <!--end::Details-->
@@ -260,7 +260,7 @@
 
                                     <!--begin::Text-->
                                     <div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start" data-kt-element="message-text">
-                                        Right before vacation season we have the next Big Deal for you.            </div>
+                                                   </div>
                                     <!--end::Text-->
                                 </div>
                                 <!--end::Wrapper-->
