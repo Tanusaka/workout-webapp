@@ -41,7 +41,7 @@ var KTAppChat = function () {
 		
 
 		// Check axios library docs: https://axios-http.com/docs/intro 
-		axios.post(baseurl+'chats/save', {
+		axios.post(baseurl+'apps/chats/save', {
 			receiver_id: 1, 
 			message_text: input.value
 		}).then(function (response) {

@@ -91,4 +91,40 @@ class ChatController extends AuthController
         
 		return view('modules/chat/chat', $pagedata);
 	}
+
+	public function save()
+	{
+	    if (!AuthController::auth() || !AuthController::hasPermissions('courses-read')) {
+			$this->response->setJSON([ 
+				'status' => 403,
+				'redirect' => '',
+				'message'  => "You don't have permission to access"
+			]);
+
+			return $this->response;
+		}
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->chatModel->saveChat([
+			'receiver_id' => $reqdata->receiver_id,
+			'message_text' => $reqdata->message_text
+		]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->message_id
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+		return $this->response;
+	}
 }
