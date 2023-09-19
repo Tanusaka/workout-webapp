@@ -1,5 +1,8 @@
 "use strict";
 
+let baseurl = $("#baseurl").attr('href');
+
+
 // Class definition
 var KTAppChat = function () {
 	// Private functions
@@ -35,22 +38,45 @@ var KTAppChat = function () {
 		var messageInTemplate = messages.querySelector('[data-kt-element="template-in"]');
 		var message;
 		
-		// Show example outgoing message
-		message = messageOutTemplate.cloneNode(true);
-		message.classList.remove('d-none');
-		message.querySelector('[data-kt-element="message-text"]').innerText = input.value;		
-		input.value = '';
-		messages.appendChild(message);
-		messages.scrollTop = messages.scrollHeight;
+		
 
-		Swal.fire({
-			text: input.value,
-			icon: "error",
-			buttonsStyling: false,
-			confirmButtonText: "Ok, got it!",
-			customClass: {
-				confirmButton: "btn btn-primary"
+		// Check axios library docs: https://axios-http.com/docs/intro 
+		axios.post(baseurl+'chats/save', {
+			receiver_id: form.querySelector('[name="email"]').value, 
+			message_text: input.value
+		}).then(function (response) {
+			if (response.data.status==200) {
+	
+				// Show  outgoing message
+				message = messageOutTemplate.cloneNode(true);
+				message.classList.remove('d-none');
+				message.querySelector('[data-kt-element="message-text"]').innerText = input.value;		
+				input.value = '';
+				messages.appendChild(message);
+				messages.scrollTop = messages.scrollHeight;
+
+			} else {
+				// Show error popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+				Swal.fire({
+					text: response.data.message,
+					icon: "error",
+					buttonsStyling: false,
+					confirmButtonText: "Ok, got it!",
+					customClass: {
+						confirmButton: "btn btn-primary"
+					}
+				});
 			}
+		}).catch(function (error) {
+			Swal.fire({
+				text: "Sorry, looks like there are some errors detected, please try again.",
+				icon: "error",
+				buttonsStyling: false,
+				confirmButtonText: "Ok, got it!",
+				customClass: {
+					confirmButton: "btn btn-primary"
+				}
+			});
 		});
 		
 		/*
