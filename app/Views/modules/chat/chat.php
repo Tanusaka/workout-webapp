@@ -139,6 +139,7 @@
                                 <div class="mb-0 lh-1">
                                     <span class="badge badge-success badge-circle w-10px h-10px me-1"></span>
                                     <span class="fs-7 fw-semibold text-muted"></span>
+                                    <base id="kt_chat_receiver" user="<?php echo $linked_user->id; ?>" target="_self">
                                 </div>
                                 <!--end::Info-->
                             </div>

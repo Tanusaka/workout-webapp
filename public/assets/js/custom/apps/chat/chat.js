@@ -1,7 +1,7 @@
 "use strict";
 
 let baseurl = $("#baseurl").attr('href');
-
+let linked_user = $("kt_chat_receiver").attr('user');
 
 // Class definition
 var KTAppChat = function () {
@@ -42,7 +42,7 @@ var KTAppChat = function () {
 
 		// Check axios library docs: https://axios-http.com/docs/intro 
 		axios.post(baseurl+'apps/chats/save', {
-			receiver_id: 5, 
+			receiver_id: linked_user, 
 			message_text: input.value
 		}).then(function (response) {
 			if (response.data.status==200) {
