@@ -1,7 +1,7 @@
 "use strict";
 
 let baseurl = $("#baseurl").attr('href');
-let linked_user = $("kt_chat_receiver").attr('user');
+let linked_user = $("#kt_chat_receiver").attr('user');
 alert(linked_user);
 // Class definition
 var KTAppChat = function () {
