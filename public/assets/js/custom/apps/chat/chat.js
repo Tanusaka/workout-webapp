@@ -42,7 +42,7 @@ var KTAppChat = function () {
 
 		// Check axios library docs: https://axios-http.com/docs/intro 
 		axios.post(baseurl+'chats/save', {
-			receiver_id: form.querySelector('[name="email"]').value, 
+			receiver_id: 1, 
 			message_text: input.value
 		}).then(function (response) {
 			if (response.data.status==200) {
