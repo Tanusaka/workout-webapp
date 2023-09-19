@@ -105,4 +105,8 @@ KTUtil.onDOMContentLoaded(function () {
 
 	// Init drawer chat messenger
 	KTAppChat.init(document.querySelector('#kt_drawer_chat_messenger'));
+
+	var messages = document.querySelector('[data-kt-element="messages"]');
+	messages.scrollTop = messages.scrollHeight;
+
 });
