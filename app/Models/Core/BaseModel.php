@@ -5,10 +5,10 @@
  */
 namespace App\Models\Core;
 
-// use CodeIgniter\Model;
+use CodeIgniter\Model;
 use CodeIgniter\I18n\Time;
 
-class BaseModel 
+class BaseModel extends Model
 {
     protected $apirequest;
     protected $method;
@@ -59,14 +59,10 @@ class BaseModel
     *******************************************************************************/  
     private function apiConnect() 
     {
-    	// $web_service_host = trim($this->config->item('app_auth_WEB_host'));
-    	// $web_service_port = trim($this->config->item('app_auth_WEB_port'));
-    	// $web_service_key  = trim($this->config->item('app_auth_WEB_key'));
-
-        // $REQUEST_URL = $web_service_host.":".$web_service_port.$request;
+    	$appconfigs = config('App');
 
 
-        $REQUEST_URL = 'http://localhost:8888/trainerapp/api/public/'.$this->apirequest;
+        $REQUEST_URL = $appconfigs->WEBAPI_URL.$this->apirequest;
 
         $curl = curl_init();
 

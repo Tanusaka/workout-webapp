@@ -122,6 +122,16 @@ $routes->post('/configs/user-management/roles/permissions/update', 'App\RoleCont
 
 /*
  * --------------------------------------------------------------------
+ * Medaia Routes
+ * --------------------------------------------------------------------
+ */
+$routes->get('/libraries/media', 'App\MediaController::index');
+$routes->post('/libraries/media/upload', 'App\MediaController::upload');
+$routes->post('/libraries/media/save', 'App\MediaController::save');
+$routes->post('/libraries/media/delete', 'App\MediaController::delete');
+
+/*
+ * --------------------------------------------------------------------
  * Additional Routing
  * --------------------------------------------------------------------
  *

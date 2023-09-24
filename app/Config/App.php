@@ -446,4 +446,16 @@ class App extends BaseConfig
      * @see http://www.w3.org/TR/CSP/
      */
     public bool $CSPEnabled = false;
+
+    /**
+     * --------------------------------------------------------------------------
+     * WEB API URL
+     * --------------------------------------------------------------------------
+     *
+     * URL to your thirdparty web api serivce
+     * 
+     *
+     *    
+     */
+    public string $WEBAPI_URL = '';
 }
