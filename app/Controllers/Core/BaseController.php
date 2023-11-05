@@ -10,6 +10,8 @@ use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\API\ResponseTrait;
 use Psr\Log\LoggerInterface;
 
+use App\Models\App\FileModel;
+
 /**
  * Class BaseController
  *
@@ -45,6 +47,10 @@ abstract class BaseController extends Controller
     protected $session;
 
     protected $appconfigs;
+	protected $appencrypter;
+
+
+	protected $filemodel;
 
     use ResponseTrait;
     /**
@@ -60,12 +66,120 @@ abstract class BaseController extends Controller
         // E.g.: 
         $this->session = \Config\Services::session();
         $this->appconfigs = config('App');
+
+		$config         = new \Config\Encryption();
+		$config->key    = 'aBigsecret_ofAtleast32Characters';
+		$config->driver = 'OpenSSL';
+
+		$this->appencrypter = \Config\Services::encrypter($config);
+
+		$this->filemodel = new FileModel();
     }
 
     public function convertDateTimeTo($datetime="", $format="Y/m/d H:i:s") {
         $dateTimeArray = explode(' ', $datetime);
         $date=date_create($dateTimeArray[0]);
         return date_format($date, $format);
+
+    }
+
+    public function uploadFile() {
+
+		$input = $this->validate([
+			'file' => [
+				'uploaded[file]',
+				'mime_in[file,image/jpg,image/jpeg,image/png]',
+				'max_size[file,1024]',
+			]
+		]);
+
+		$filename = ''; $filepath = ''; $filetype = ''; $status=400;
+
+		if ($input) {
+			$file = $this->request->getFile('file');
+
+			$filename = $file->getRandomName();
+			$filepath = WRITEPATH . 'uploads/temp';
+			$filetype = $file->getMimeType();
+			$filesize = $file->getSizeByUnit('mb');
+			$fileextn = $file->guessExtension();
+
+			$file->move($filepath, $filename);
+
+			$status = 200;
+
+		} else {
+			$status = 400;     
+		}
+
+		$this->response->setJSON([ 
+			'status' => 200,
+			'redirect' => '',
+			'messages'  => '',
+			'data' => [
+				'status' => $status,  
+				'filename' => $filename,
+				'filetype' => $filetype,
+				'filepath' => $filepath,
+				'filesize' => $filesize,
+				'fileextn' => $fileextn,
+			]
+		]);
+
+		return $this->response;
+    }
+
+    public function moveFile($fileData="", $root='public') {
+
+		$file = [];
+
+		if ($fileData == "") {
+			return 0;
+		}
+
+		$file = explode ("|", $fileData);
+
+		$tenantFolder = hash('crc32b', (string)$_SESSION['tenantid']);
+		$userFolder = hash('crc32b', (string)$_SESSION['id']);
+		$rootFolder = hash('crc32b', $root);
+
+        $upload = [
+			'rootdir' => $root,
+			'path' => 'uploads/'.$tenantFolder.'/'.$userFolder.'/'.$rootFolder.'/',
+			'name' => $file[0],
+			'type' => $file[1],
+			'ext' => $file[2],
+			'size' => $file[3],
+        ];
+
+        
+		$response = $this->filemodel->saveFile($upload);
+
+		if ($response->status==200) {
+
+			try {
+				if ($file[0] != "") {
+
+					#create folder IF NOT EXIIST
+					if (!is_dir(FCPATH . $upload['path'])) {
+						mkdir(FCPATH . $upload['path'], 0777, TRUE);
+					}
+
+					#move file to permement location IF EXIIST
+					$file = new \CodeIgniter\Files\File(WRITEPATH . 'uploads/temp/'.$file[0]);
+					$file->move(FCPATH . $upload['path']);
+				} 
+				
+				return $response->data->file;
+
+			} catch (\Exception $e) {
+				log_message('error', '[ERROR] {exception}', ['exception' => $e]);
+                return 0;
+			}
+
+		} else {
+			return 0;
+		}
 
     }
 }

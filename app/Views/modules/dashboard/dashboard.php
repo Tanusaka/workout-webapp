@@ -1,6 +1,7 @@
 <?= $this->extend('layouts/appLayout') ?>
 
 <?= $this->section('content') ?>
+
 <!--begin::Toolbar-->
 <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
     <!--begin::Toolbar container-->

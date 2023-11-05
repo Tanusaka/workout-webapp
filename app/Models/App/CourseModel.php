@@ -24,6 +24,13 @@ class CourseModel extends BaseModel
         );
     }
 
+    public function getCourseInstructors($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/get/instructors', $data)
+        );
+    }
+
     public function saveCourse($data=[])
     {
         return json_decode(
@@ -37,6 +44,22 @@ class CourseModel extends BaseModel
             $this->apiPost('/courses/update', $data)
         );
     }
+
+    public function updateCourseDescription($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/update/description', $data)
+        );
+    }
+
+
+    public function updateCourseInstructor($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/update/instructor', $data)
+        );
+    }
+
 
     public function deleteCourse($data=[])
     {
@@ -104,83 +127,98 @@ class CourseModel extends BaseModel
     }
 
     #instructors
-    public function getCourseInstructors($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/courses/instructors/get', $data)
-        );
-    }
+    // public function getCourseInstructors($data=[])
+    // {
+    //     return json_decode(
+    //         $this->apiPost('/courses/instructors/get', $data)
+    //     );
+    // }
 
-    public function getInstructorsForCourse($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/courses/instructors/get/trainers', $data)
-        );
-    }
+    // public function getInstructorsForCourse($data=[])
+    // {
+    //     return json_decode(
+    //         $this->apiPost('/courses/instructors/get/trainers', $data)
+    //     );
+    // }
 
-    public function saveCourseInstructor($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/courses/instructors/save', $data)
-        );
-    }
+    // public function saveCourseInstructor($data=[])
+    // {
+    //     return json_decode(
+    //         $this->apiPost('/courses/instructors/save', $data)
+    //     );
+    // }
 
-    public function deleteCourseInstructor($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/courses/instructors/delete', $data)
-        );
-    }
+    // public function deleteCourseInstructor($data=[])
+    // {
+    //     return json_decode(
+    //         $this->apiPost('/courses/instructors/delete', $data)
+    //     );
+    // }
 
     #reviews
-    public function getCourseReviews($data=[])
+    // public function getCourseReviews($data=[])
+    // {
+    //     return json_decode(
+    //         $this->apiPost('/courses/reviews/get', $data)
+    //     );
+    // }
+
+    // public function saveCourseReview($data=[])
+    // {
+    //     return json_decode(
+    //         $this->apiPost('/courses/reviews/save', $data)
+    //     );
+    // }
+
+    // public function deleteCourseReview($data=[])
+    // {
+    //     return json_decode(
+    //         $this->apiPost('/courses/reviews/delete', $data)
+    //     );
+    // }
+
+    #enrollments
+    public function getUsersForEnroll($data=[])
     {
         return json_decode(
-            $this->apiPost('/courses/reviews/get', $data)
+            $this->apiPost('/courses/enrollments/get/users', $data)
         );
     }
 
-    public function saveCourseReview($data=[])
+    public function getCourseEnrollments($data=[])
     {
         return json_decode(
-            $this->apiPost('/courses/reviews/save', $data)
+            $this->apiPost('/courses/enrollments/course', $data)
         );
     }
 
-    public function deleteCourseReview($data=[])
+    public function resetCourseEnrollments($data=[])
     {
         return json_decode(
-            $this->apiPost('/courses/reviews/delete', $data)
+            $this->apiPost('/courses/enrollments/course/reset', $data)
         );
     }
 
-    #followers
-    public function getCourseFollowers($data=[])
+    public function saveCourseEnrollment($data=[])
     {
         return json_decode(
-            $this->apiPost('/courses/followers/get', $data)
+            $this->apiPost('/courses/enrollments/save', $data)
         );
     }
 
-    public function getFollowersForCourse($data=[])
+    public function deleteCourseEnrollment($data=[])
     {
         return json_decode(
-            $this->apiPost('/courses/followers/get/users', $data)
+            $this->apiPost('/courses/enrollments/delete', $data)
         );
     }
 
-    public function saveCourseFollower($data=[])
+    public function acceptCourseEnrollment($data=[])
     {
         return json_decode(
-            $this->apiPost('/courses/followers/save', $data)
+            $this->apiPost('/courses/enrollments/accept', $data)
         );
     }
-
-    public function deleteCourseFollower($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/courses/followers/delete', $data)
-        );
-    }
+    
 
 }

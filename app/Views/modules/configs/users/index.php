@@ -1,6 +1,8 @@
 <?= $this->extend('layouts/appLayout') ?>
 
 <?= $this->section('content') ?>
+
+<?php if (isset($pageid) && $pageid!='myprofile') : ?>
 <!--begin::Toolbar-->
 <div id="kt_app_toolbar" class="app-toolbar py-3 py-lg-6">
     <!--begin::Toolbar container-->
@@ -43,11 +45,11 @@
 
         <!--begin::Actions-->
 		<?php if (
-            (isset($pageid) && $pageid=='overview') &&
-            (isset($permissions->users->write) && $permissions->users->write)) { ?>
+            (isset($pageid) && $pageid=='all') &&
+            (isset($permissions->user_create_profile) && $permissions->user_create_profile)) { ?>
         <div class="d-flex align-items-center gap-2 gap-lg-3">
             <!--begin::Primary button-->
-            <a href="configs\user-management\users\create" class="btn btn-sm fw-bold btn-primary">
+            <a href="configs\users\create" class="btn btn-sm fw-bold btn-primary">
             <i class="ki-duotone ki-plus fs-2"></i>Add User</a>
             <!--end::Primary button-->
         </div>
@@ -58,19 +60,21 @@
     <!--end::Toolbar container-->
 </div>
 <!--end::Toolbar-->
-
+<?php endif; ?>
 
 <!--begin::Content-->
 <div id="kt_app_content" class="app-content flex-column-fluid">
     <!--begin::Content container-->
     <div id="kt_app_content_container" class="app-container container-xxl">
 
-        <?php if (isset($pageid) && $pageid=='overview') { ?>
-            <?= $this->include('modules/configs/users/overview') ?>
+        <?php if (isset($pageid) && $pageid=='all') { ?>
+            <?= $this->include('modules/configs/users/all') ?>
         <?php } elseif (isset($pageid) && $pageid=='create') { ?>
             <?= $this->include('modules/configs/users/create') ?>
         <?php } elseif (isset($pageid) && $pageid=='view') { ?>
             <?= $this->include('modules/configs/users/view') ?>
+        <?php } elseif (isset($pageid) && $pageid=='myprofile') { ?>
+            <?= $this->include('modules/configs/users/myprofile') ?>
         <?php } ?>    
 
     </div>
@@ -83,8 +87,18 @@
 
 
 <?= $this->section('customscripts') ?>
-<!--begin::Custom Javascript-Courses -->
-<script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
-<script src="assets/app/modules/users/script.js"></script>
-<!--end::Custom Javascript-Courses -->
+<!--begin::Custom Javascript-Users -->
+<?php if (isset($pageid) && $pageid=='all') { ?>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="app/modules/users/script-usergrid.js"></script>
+<?php } elseif (isset($pageid) && $pageid=='create') { ?>
+    <script src="app/modules/users/script-usercreate.js"></script>
+<?php } elseif (isset($pageid) && $pageid=='view') { ?>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="app/modules/users/script-userview.js"></script>
+<?php } elseif (isset($pageid) && $pageid=='myprofile') { ?>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="app/modules/users/script-myprofile.js"></script>
+<?php } ?> 
+<!--end::Custom Javascript-Users -->
 <?= $this->endSection() ?>

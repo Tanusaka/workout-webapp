@@ -43,8 +43,8 @@
 
         <!--begin::Actions-->
 		<?php if (
-            (isset($pageid) && $pageid=='overview') &&
-            (isset($permissions->courses->write) && $permissions->courses->write)) { ?>
+            (isset($pageid) && $pageid=='all') &&
+            (isset($permissions->course_create) && $permissions->course_create)) { ?>
         <div class="d-flex align-items-center gap-2 gap-lg-3">
             <!--begin::Primary button-->
             <a href="libraries/courses/create" class="btn btn-sm fw-bold btn-primary">
@@ -65,8 +65,8 @@
     <!--begin::Content container-->
     <div id="kt_app_content_container" class="app-container container-xxl">
 
-        <?php if (isset($pageid) && $pageid=='overview') { ?>
-            <?= $this->include('modules/libraries/courses/overview') ?>
+        <?php if (isset($pageid) && $pageid=='all') { ?>
+            <?= $this->include('modules/libraries/courses/all') ?>
         <?php } elseif (isset($pageid) && $pageid=='create') { ?>
             <?= $this->include('modules/libraries/courses/create') ?>
         <?php } elseif (isset($pageid) && $pageid=='view') { ?>
@@ -84,8 +84,15 @@
 
 <?= $this->section('customscripts') ?>
 <!--begin::Custom Javascript-Courses -->
-<script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
-<script src="assets/app/modules/courses/script.js"></script>
+<?php if (isset($pageid) && $pageid=='all') { ?>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="app/modules/courses/script-coursegrid.js"></script>
+<?php } elseif (isset($pageid) && $pageid=='create') { ?>
+    <script src="app/modules/courses/script-coursecreate.js"></script>
+<?php } elseif (isset($pageid) && $pageid=='view') { ?>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="app/modules/courses/script-courseview.js"></script>
+<?php } ?> 
 <!--end::Custom Javascript-Courses -->
 <?= $this->endSection() ?>
 

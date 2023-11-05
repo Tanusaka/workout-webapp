@@ -92,3 +92,6 @@ define('EVENT_PRIORITY_NORMAL', 100);
  * @deprecated Use \CodeIgniter\Events\Events::PRIORITY_HIGH instead.
  */
 define('EVENT_PRIORITY_HIGH', 10);
+
+
+defined('SYSTEM_ERROR')      || define('SYSTEM_ERROR', 'Something went wrong, please contact your system administrator.');    // highest automatically-assigned error code

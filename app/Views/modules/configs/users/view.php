@@ -1,134 +1,136 @@
-<!--begin::Layout-->
-<div class="d-flex flex-column flex-lg-row">
-    <!--begin::Sidebar-->
-    <div class="flex-column flex-lg-row-auto w-lg-250px w-xl-350px mb-10">
-        <!--begin::Card-->
-        <div class="card mb-5 mb-xl-8">
-            <!--begin::Card body-->
-            <div class="card-body">
-                <!--begin::Summary-->
-                <!--begin::User Info-->
-                <div class="d-flex flex-center flex-column py-5">
-                    <!--begin::Avatar-->
-                    <div class="symbol symbol-100px symbol-circle mb-7">
-                        <img src="assets/media/avatars/blank.png" alt="image" />
-                    </div>
-                    <!--end::Avatar-->
-                    <!--begin::Name-->
-                    <a id="dsp_profilename" href="#" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-3"><?= $user->firstname.' '.$user->lastname; ?></a>
-                    <!--end::Name-->
-                    <!--begin::Position-->
-                    <div class="mb-9">
-                        <!--begin::Badge-->
-                        <div id="dsp_rolename" class="badge badge-lg badge-light-primary d-inline"><?= $user->rolename; ?></div>
-                        <!--begin::Badge-->
-                    </div>
-                    <!--end::Position-->
-                    <!--begin::Info-->
-                    <!--begin::Info heading-->
+<!-- begin: section container -->
+<div id="pagedata-container" class="container" style="margin-top: 15px;" data-pid="<?= $user->id ?>">	
 
-                    <!--end::Info heading-->
-    
-                    <!--end::Info-->
-                </div>
-                <!--end::User Info-->
-                <!--end::Summary-->
-                <!--begin::Details toggle-->
-                <div class="d-flex flex-stack fs-4 py-3">
-                    <div class="fw-bold rotate collapsible" data-bs-toggle="collapse" href="#kt_user_view_details" role="button" aria-expanded="false" aria-controls="kt_user_view_details">Details
-                    <span class="ms-2 rotate-180">
-                        <i class="ki-duotone ki-down fs-3"></i>
-                    </span></div>
-                    <!-- Edit User Details -->
-                </div>
-                <!--end::Details toggle-->
-                <div class="separator"></div>
-                <!--begin::Details content-->
-                <div id="kt_user_view_details" class="collapse show">
-                    <div class="pb-5 fs-6">
-                        <!--begin::Details item-->
-                        <div class="fw-bold mt-5">Account ID</div>
-                        <div class="text-gray-600"><?= 'ID-'.$user->id; ?></div>
-                        <!--begin::Details item-->
-                        <!--begin::Details item-->
-                        <div class="fw-bold mt-5">Email</div>
-                        <div class="text-gray-600">
-                            <a href="#" class="text-gray-600 text-hover-primary"><?= $user->email; ?></a>
-                        </div>
-                        <!--begin::Details item-->
-                        <!--begin::Details item-->
-                        <div class="fw-bold mt-5">Address</div>
-                        <div class="text-gray-600">
-                        <span id="dsp_address1"><?= $user->address1; ?></span>
-                        <br />
-                        <span id="dsp_address2"><?= $user->address2; ?></span>
-                        <br />
-                        <span id="dsp_city"><?= $user->city; ?></span>
-                        <br />
-                        <span id="dsp_country"><?= $user->country; ?></span>
-                        </div>
-                        <!--begin::Details item-->
-                        <!--begin::Details item-->
-                        <div class="fw-bold mt-5">Last Login</div>
-                        <div class="text-gray-600"><?= $user->lastinat; ?></div>
-                        <!--begin::Details item-->
-                    </div>
-                </div>
-                <!--end::Details content-->
-            </div>
-            <!--end::Card body-->
+    <div class="page-alert">
+        <div id="alert" class="alert d-flex align-items-center alert-dismissible fade show d-none auto-close" role="alert">
+            <div id="alertmessage"></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <!--end::Card-->
-        <!--begin::Connected Accounts-->
-
-        <!--end::Connected Accounts-->
     </div>
-    <!--end::Sidebar-->
-    <!--begin::Content-->
-    <div class="flex-lg-row-fluid ms-lg-15">
-        <!--begin:::Tabs-->
-        <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-8">
-            
-            <?php if (isset($permissions->users_linkedprofiles->read) && $permissions->users_linkedprofiles->read) { ?>
-            <!--begin:::Tab item-->
-            <li class="nav-item">
-                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_user_view_linkedprofiles_tab">Linked Profiles</a>
-            </li>
-            <!--end:::Tab item-->
-            <?php } ?>
-            
-            <?php if (isset($permissions->users->read) && $permissions->users->read) { ?>
-            <!--begin:::Tab item-->
-            <li class="nav-item">
-                <a class="nav-link text-active-primary pb-4" data-kt-countup-tabs="true" data-bs-toggle="tab" href="#kt_user_view_sttings_tab">Settings</a>
-            </li>
-            <!--end:::Tab item-->
-            <?php } ?>
 
-        </ul>
-        <!--end:::Tabs-->
-        <!--begin:::Tab content-->
-        <div class="tab-content" id="myTabContent">
-            
-            <?php if (isset($permissions->users_linkedprofiles->read) && $permissions->users_linkedprofiles->read) { ?>
-            <!--begin:::Tab pane-->
-            <div class="tab-pane fade show active" id="kt_user_view_linkedprofiles_tab" role="tabpanel">
-                <?= $this->include('modules/configs/users/linkedprofiles') ?>
-            </div>
-            <!--end:::Tab pane-->
-            <?php } ?>
+    <div class="row">
+        <div class="col-md-3 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <div class="d-flex flex-center flex-column">
+                        
+                        <div class="profile-img symbol symbol-100px symbol-circle mb-4">
+                            <?php if ( isset($user->profileimage) && !is_null($user->profileimage) ) : ?>
+                            <img id="dsp_profileimage" src="<?= $user->profileimage ?>" alt="image">
+                            <?php else: ?>
+                            <img id="dsp_profileimage" src="assets/images/avatar.png" alt="image">  
+                            <?php endif; ?>
+                        </div>
+                        <div class="profile-title mb-4">
+                            <span id="dsp_profilename" href="#" class="text-truncate text-wrap fw-sb fs-14 fc-dark"><?= $user->firstname.' '.$user->lastname ?></span>
+                        </div>
+                        <div class="profile-subtitle mb-12">
+                            <span id="dsp_rolename" href="#" class="text-truncate text-wrap fw-normal fs-12 fc-light"><?= $user->rolename ?></span>
+                        </div>
+                    </div>
 
-            <?php if (isset($permissions->users->read) && $permissions->users->read) { ?>
-            <!--begin:::Tab pane-->
-            <div class="tab-pane fade" id="kt_user_view_sttings_tab" role="tabpanel">
-                <?= $this->include('modules/configs/users/settings') ?>
+                    <div class="separator separator-dashed my-15"></div>
+
+                    <div class="d-flex flex-start flex-column mb-3">
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate text-wrap fw-sb fs-12 fc-dark">Personal Information</p>
+                        </div>
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate text-wrap fw-normal fs-12 fc-light mb-0">Date of Birth:</p>
+                            <?php if ( isset($user->dob) &&  $user->dob!=='' && $user->dob!=='0000-00-00' ):?>
+                            <p id="dsp_dob" class="text-truncate text-wrap fw-normal fs-12 fc-dark"><?= $user->dob ?></p>
+                            <?php else: ?>
+                            <p id="dsp_dob" class="text-truncate text-wrap fw-normal fs-12 fc-dark">NOT GIVEN</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate text-wrap fw-normal fs-12 fc-light mb-0">Gender:</p>
+                            <?php if ( isset($user->gender) &&  $user->gender!=='' ):?>
+                                <?php if ( $user->gender=='M' ):?>
+                                    <p id="dsp_gender" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0">Male</p>
+                                <?php elseif ( $user->gender=='F' ):?>
+                                    <p id="dsp_gender" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0">Female</p>
+                                <?php else: ?>
+                                    <p id="dsp_gender" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0">-</p>
+                                <?php endif; ?>
+                            <?php else: ?>
+                            <p id="dsp_gender" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0">NOT GIVEN</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="separator separator-dashed my-15"></div>
+
+                    <div class="d-flex flex-start flex-column mb-3">
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate text-wrap fw-sb fs-12 fc-dark">Contact Information</p>
+                        </div>
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate text-wrap fw-normal fs-12 fc-light mb-0">Email Address:</p>
+                            <p class="text-truncate text-wrap fw-normal fs-12 fc-dark"><?= $user->email ?></p>
+                        </div>
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate text-wrap fw-normal fs-12 fc-light mb-0">Phone Number:</p>
+                            <?php if ( isset($user->mobile) &&  $user->mobile!=='' ):?>
+                            <p id="dsp_mobile" class="text-truncate text-wrap fw-normal fs-12 fc-dark"><?= $user->mobile ?></p>
+                            <?php else: ?>
+                            <p id="dsp_mobile" class="text-truncate text-wrap fw-normal fs-12 fc-dark">NOT GIVEN</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate text-wrap fw-normal fs-12 fc-light mb-0">Address:</p>
+                            <?php if ( isset($user->address1) &&  $user->address1!=='' ):?>
+                            <p id="dsp_addressL1" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0"><?= $user->address1.' '.$user->address2 ?></p>
+                            <p id="dsp_addressL2" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0"><?= $user->city.' '.$user->country ?></p>
+                            <?php else: ?>
+                            <p id="dsp_addressL1" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0">NOT GIVEN</p>
+                            <p id="dsp_addressL2" class="text-truncate text-wrap fw-normal fs-12 fc-dark mb-0"></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <!--end:::Tab pane-->
-            <?php } ?>
-            
-        </div>
-        <!--end:::Tab content-->
+        </div> 
+
+
+        <div class="col-md-9 col-lg-9">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex flex-column">
+                        
+                        <div class="tabs-container">
+                            <nav>
+                                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                                    <button id="tabbtn_profile" class="nav-link fs-12 active" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="true">Profile</button>
+                                    <!-- <button id="tabbtn_activity" class="nav-link fs-12" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-activitylog" aria-selected="false">Activity Log</button> -->
+                                    <button id="tabbtn_settings" class="nav-link fs-12" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-settings" aria-selected="false">Settings</button>
+                                </div>
+                            </nav>
+                            <div class="tab-content" id="nav-tabContent">
+
+                                <div class="tab-alert pt-4">
+                                    <div id="tab_alert" class="alert d-flex align-items-center alert-dismissible fade show d-none auto-close" role="alert">
+                                        <div id="tab_alertmessage"></div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </div>
+                                
+                                <div id="tabcontent_profile" class="tab-pane fade active show" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                <?= $this->include('modules/configs/users/profile/index') ?>
+                                </div>
+                                <!-- <div id="tabcontent_activity" class="tab-pane fade" role="tabpanel" aria-labelledby="nav-activitylog-tab">
+                                    
+                                </div> -->
+                                <div id="tabcontent_settings" class="tab-pane fade" role="tabpanel" aria-labelledby="nav-settings-tab">
+                                    <?= $this->include('modules/configs/users/settings/index') ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
     </div>
-    <!--end::Content-->
 </div>
-<!--end::Layout-->

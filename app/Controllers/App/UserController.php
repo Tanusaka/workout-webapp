@@ -9,41 +9,34 @@ use App\Controllers\App\AuthController;
 
 use App\Models\App\UserModel;
 use App\Models\App\RoleModel;
-use App\Models\App\LinkedprofileModel;
 
 class UserController extends AuthController
 {
 	protected $usermodel;
+	protected $rolemodel;
 
 	public function __construct() {
 		$this->usermodel = new UserModel();
+		$this->rolemodel = new RoleModel();
   	}
 
 	#users
     public function index()
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('users-read')) {
-            return redirect()->route('/');
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_management')) {
+            return redirect()->route('error/403');
         }
-
-		$users = [];
-
-		$response = $this->usermodel->get();
-
-		if ($response->status==200) {
-			$users = $response->data;
-		}
 
 		$pagedata = [
 			'permissions' => $_SESSION['permissions'],
-            'pageid' => 'overview',
+            'pageid' => 'all',
             'title' => 'Users',
             'breadcrumbs' => [ 
                 'Home' => 'dashboard', 
-                'User Management' => '', 
+                'Configs' => '', 
                 'Users' => '' 
             ],
-			'users' => $users
+			'users' => $this->usermodel->get()->data
 		];
 
 		return view('modules/configs/users/index', $pagedata);
@@ -51,39 +44,28 @@ class UserController extends AuthController
 
 	public function get($id=0)
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('users-read')) {
-            return redirect()->route('/');
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_view_profile')) {
+            return redirect()->route('error/403');
         }
 
-		$user = [];
+		$response = $this->usermodel->getUser([ 'id' => $id ]);
 
-		$response = $this->usermodel->getUser([ 'userid' => $id ]);
-
-		if ($response->status==200) {
-			$user = $response->data;
+		if ($response->status!=200) {
+			return view('errors/pages/general', (array) $response);
 		}
-
-		if (empty($user)) {
-			return view('errors/html/error_404', ['message'=>'User cannot be found.']);
-		}
-
-		$rolemodel = new RoleModel();
-		$linkedprofilemodel = new LinkedprofileModel();
 
 		$pagedata = [
 			'permissions' => $_SESSION['permissions'],
             'title' => 'View User Details',
             'breadcrumbs' => [ 
                 'Home' => 'dashboard', 
-                'User Management' => 'configs/user-management/users', 
-                'Users' => 'configs/user-management/users', 
+                'Configs' => 'configs/users', 
+                'Users' => 'configs/users', 
                 'Profile' => '' 
             ],
             'pageid' => 'view',
-			'user' => $user,
-			'roles' => $rolemodel->get()->data,
-			'linkedprofiles' => $linkedprofilemodel->getLinkedprofiles(['userid'=>$user->id])->data,
-			'usersforlinkedprofile' => $linkedprofilemodel->getUsersForLinkedProfile(['userid'=>$user->id])->data,
+			'user' => $response->data,
+			'roles' => $this->rolemodel->get()->data
 		];
 
 		return view('modules/configs/users/index', $pagedata);
@@ -92,11 +74,9 @@ class UserController extends AuthController
 
     public function create()
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
-            return redirect()->route('/');
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_create_profile')) {
+            return redirect()->route('error/403');
         }
-
-		$rolemodel = new RoleModel();
 
 		$pagedata = [
 			'pageid' => 'create',
@@ -104,11 +84,11 @@ class UserController extends AuthController
             'title' => 'New User',
             'breadcrumbs' => [ 
                 'Home' => 'dashboard', 
-                'User Management' => 'configs/user-management/users', 
-                'Users' => 'configs/user-management/users', 
+                'Configs' => 'configs/users', 
+                'Users' => 'configs/users', 
                 'Create' => '' 
             ],
-            'roles' => $rolemodel->get()->data
+            'roles' => $this->rolemodel->get()->data
 		];
 
 		return view('modules/configs/users/index', $pagedata);
@@ -116,7 +96,7 @@ class UserController extends AuthController
 
 	public function save()
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_create_profile')) {
             $this->response->setJSON([ 
                 'status' => 403,
 				'redirect' => '',
@@ -138,8 +118,9 @@ class UserController extends AuthController
 		if ($response->status==200) {
 			$this->response->setJSON([ 
 				'status' => 200,
-				'redirect' => $this->appconfigs->baseURL.'configs/user-management/users/view/'.$response->data->id,
-				'message'  => $response->messages
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
 			]);
 		} else {
 			$this->response->setJSON([ 
@@ -153,9 +134,9 @@ class UserController extends AuthController
 
 	}
 
-	public function update_profile()
+	public function updateUserProfile()
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_update_profile')) {
             $this->response->setJSON([ 
                 'status' => 403,
 				'redirect' => '',
@@ -167,25 +148,32 @@ class UserController extends AuthController
 
 		$reqdata = $this->request->getJSON();
 
-		$response = $this->usermodel->updateUserProfile([
-			'userid' => trim($reqdata->userid),
-            'firstname' => trim($reqdata->firstname),
-			'lastname' => trim($reqdata->lastname),
-			'gender' => trim($reqdata->gender),
-			'dob' => trim($reqdata->dob),
-			'mobile' => trim($reqdata->mobile),
-			'address1' => trim($reqdata->address1),
-			'address2' => trim($reqdata->address2),
-			'city' => trim($reqdata->city),
-			'country' => trim($reqdata->country)
-        ]);
+		if ($reqdata->profileimage != "") {
+			
+			$reqdata->profileimageid = 0;
+			
+			$file = $this->moveFile($reqdata->profileimage, 'profileimages');
+			if (isset($file->id)) {
+				$reqdata->profileimageid = $file->id;
+			}
+		} 
+
+		$user = json_decode(json_encode($reqdata), true);
+
+		$response = $this->usermodel->updateUserProfile($user);
 
 		if ($response->status==200) {
+
+			$_SESSION['firstname'] = $response->data->user->firstname;
+			$_SESSION['profileimage'] = $response->data->user->profileimage;
+
 			$this->response->setJSON([ 
 				'status' => 200,
 				'redirect' => '',
-				'message'  => $response->messages
+				'message'  => $response->messages,
+				'data' => $response->data
 			]);
+
 		} else {
 			$this->response->setJSON([ 
 				'status' => $response->status,
@@ -198,9 +186,9 @@ class UserController extends AuthController
 
 	}
 
-	public function update_password()
+	public function updateUserPassword()
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_update_password')) {
             $this->response->setJSON([ 
                 'status' => 403,
 				'redirect' => '',
@@ -222,13 +210,12 @@ class UserController extends AuthController
 		if ($response->status==200) {
 			$this->response->setJSON([ 
 				'status' => 200,
-				'redirect' => '',
-				'message'  => $response->messages
+				'message'  => $response->messages,
+				'data' => $response->data
 			]);
 		} else {
 			$this->response->setJSON([ 
 				'status' => $response->status,
-				'redirect' => '',
 				'message'  => $response->messages
 			]);
 		}
@@ -237,9 +224,45 @@ class UserController extends AuthController
 
 	}
 
-	public function update_role()
+	public function updateUserDescription()
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('users-write')) {
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_update_profile')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->updateUserDescription([
+			'userid' => trim($reqdata->userid),
+            'description' => trim($reqdata->description),
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function updateUserRole()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_update_role')) {
             $this->response->setJSON([ 
                 'status' => 403,
 				'redirect' => '',
@@ -259,8 +282,44 @@ class UserController extends AuthController
 		if ($response->status==200) {
 			$this->response->setJSON([ 
 				'status' => 200,
-				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
 				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function getUserProfile()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_view_profile')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->getUser([
+			'id' => trim($reqdata->userid)
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
 			]);
 		} else {
 			$this->response->setJSON([ 
@@ -274,6 +333,292 @@ class UserController extends AuthController
 
 	}
 
+	public function getUserSettings()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_view_profile')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
 
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->getUser([
+			'id' => trim($reqdata->userid)
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function getTrainers()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_view_trainer_profile')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->getTrainers();
+
+		if ($response->status == 200 ) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+                'messages'  => '',
+				'data' => $response->data
+			]);
+        } else {
+            $this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'messages'  => $response->messages
+			]);
+        }
+
+        return $this->response;
+
+	}
+
+	public function getMyProfile()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_view_profile')) {
+            return redirect()->route('error/403');
+        }
+
+		$response = $this->usermodel->getMyProfile();
+
+		if ($response->status!=200) {
+			return view('errors/pages/general', (array) $response);
+		}
+
+		$pagedata = [
+			'permissions' => $_SESSION['permissions'],
+            'title' => 'View User Details',
+            'breadcrumbs' => [ 
+                'Home' => 'dashboard', 
+                'Configs' => 'configs/users', 
+                'Users' => 'configs/users', 
+                'Profile' => '' 
+            ],
+            'pageid' => 'myprofile',
+			'user' => $response->data
+		];
+
+		return view('modules/configs/users/index', $pagedata);
+
+	}
+
+	public function getMyProfileView()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_view_profile')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$response = $this->usermodel->getMyProfile();
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function getMyProfileSettings()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_view_profile')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$response = $this->usermodel->getMyProfile();
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function uploadProfileImage()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_update_profile')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		return $this->uploadFile();
+	}
+
+	public function getUserRoleConnections()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_add_connections')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->getUserRoleConnections(['id' => trim($reqdata->userid)]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function saveUserConnection()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_add_connections')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->saveUserConnection([
+            'userid' => trim($reqdata->userid),
+			'connid' => trim($reqdata->connid)
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function deleteUserConnection()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('user_delete_connections')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->usermodel->deleteUserConnection(['id' => trim($reqdata->id)]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
 
 }

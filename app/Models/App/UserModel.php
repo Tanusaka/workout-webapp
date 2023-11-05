@@ -22,14 +22,7 @@ class UserModel extends BaseModel
             $this->apiPost('/users/get', $data)
         );
     }
-
-    public function getUserData($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/users/getdata', $data)
-        );
-    }
-
+    
     public function saveUser($data=[])
     {
         return json_decode(
@@ -51,10 +44,52 @@ class UserModel extends BaseModel
         );
     }
 
+    public function updateUserDescription($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/update/description', $data)
+        );
+    }
+
     public function updateUserRole($data=[])
     {
         return json_decode(
             $this->apiPost('/users/update/role', $data)
+        );
+    }
+
+    public function getTrainers($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/get/trainers', $data)
+        );
+    }
+
+    public function getMyProfile($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/get/myprofile', $data)
+        );
+    }
+
+    public function getUserRoleConnections($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/get/connections/allroles', $data)
+        );
+    }
+
+    public function saveUserConnection($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/add/connection', $data)
+        );
+    }
+
+    public function deleteUserConnection($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/users/delete/connection', $data)
         );
     }
 }

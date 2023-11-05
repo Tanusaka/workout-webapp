@@ -56,8 +56,8 @@
     <!--begin::Content container-->
     <div id="kt_app_content_container" class="app-container container-xxl">
 
-        <?php if (isset($pageid) && $pageid=='overview') { ?>
-            <?= $this->include('modules/configs/roles/overview') ?>
+        <?php if (isset($pageid) && $pageid=='all') { ?>
+            <?= $this->include('modules/configs/roles/all') ?>
         <?php } elseif (isset($pageid) && $pageid=='view') { ?>
             <?= $this->include('modules/configs/roles/view') ?>
         <?php } ?>    
@@ -72,8 +72,13 @@
 
 
 <?= $this->section('customscripts') ?>
-<!--begin::Custom Javascript-Courses -->
-<script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
-<script src="assets/app/modules/roles/script.js"></script>
-<!--end::Custom Javascript-Courses -->
+<!--begin::Custom Javascript-Roles -->
+<?php if (isset($pageid) && $pageid=='all') { ?>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="app/modules/roles/script-rolegrid.js"></script>
+<?php } elseif (isset($pageid) && $pageid=='view') { ?>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="app/modules/roles/script-roleview.js"></script>
+<?php } ?> 
+<!--end::Custom Javascript-Roles -->
 <?= $this->endSection() ?>

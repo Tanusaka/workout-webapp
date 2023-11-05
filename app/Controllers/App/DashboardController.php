@@ -12,7 +12,6 @@ class DashboardController extends AuthController
 {
     public function index()
 	{
-		
 		if ( !AuthController::auth() ) {
             return redirect()->route('/');
         }

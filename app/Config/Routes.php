@@ -38,59 +38,60 @@ $routes->post('/auth/login', 'App\AuthController::login');
 $routes->get('/auth/logout', 'App\AuthController::logout');
 
 $routes->get('/dashboard', 'App\DashboardController::index');
+$routes->get('/profile', 'App\UserController::getMyProfile');
+$routes->post('/profile/view', 'App\UserController::getMyProfileView');
+$routes->post('/profile/settings', 'App\UserController::getMyProfileSettings');
+$routes->post('/profile/settings/update/password', 'App\UserController::updateUserPassword');
+$routes->post('/profile/settings/update/description', 'App\UserController::updateUserDescription');
+$routes->post('/profile/settings/update/profile', 'App\UserController::updateUserProfile');
 
+$routes->post('/profile/settings/upload/profileimage', 'App\UserController::uploadProfileImage');
 
-
+/*
+ * --------------------------------------------------------------------
+ * Course Management Routes
+ * --------------------------------------------------------------------
+ */
 $routes->get('/libraries/courses', 'App\CourseController::index');
 $routes->get('/libraries/courses/create', 'App\CourseController::create');
-$routes->post('/libraries/courses/save', 'App\CourseController::save');
-$routes->post('/libraries/courses/update', 'App\CourseController::update');
-$routes->post('/libraries/courses/delete', 'App\CourseController::delete');
+$routes->get('/libraries/courses/view/(:num)', 'App\CourseController::view/$1');
 
-$routes->post('/libraries/courses/upload/image', 'App\CourseController::upload_courseimage');
-$routes->post('/libraries/courses/remove/image', 'App\CourseController::remove_courseimage');
+$routes->post('/libraries/courses/get/course', 'App\CourseController::getCourse');
+$routes->post('/libraries/courses/get/section', 'App\CourseController::getSection');
+$routes->post('/libraries/courses/get/lesson', 'App\CourseController::getLesson');
+$routes->post('/libraries/courses/get/instructors', 'App\CourseController::getCourseInstructors');
 
-$routes->get('/libraries/courses/view/(:num)', 'App\CourseController::get/$1');
+$routes->post('/libraries/courses/save/course', 'App\CourseController::saveCourse');
+$routes->post('/libraries/courses/update/course', 'App\CourseController::updateCourse');
+$routes->post('/libraries/courses/update/course/description', 'App\CourseController::updateCourseDescription');
+$routes->post('/libraries/courses/update/course/instructor', 'App\CourseController::updateCourseInstructor');
 
+$routes->post('/libraries/courses/save/section', 'App\CourseController::saveSection');
+$routes->post('/libraries/courses/update/section', 'App\CourseController::updateSection');
+$routes->post('/libraries/courses/delete/section', 'App\CourseController::deleteSection');
 
-$routes->post('/libraries/courses/get/overview', 'App\CourseController::get_overview');
-$routes->post('/libraries/courses/get/contents', 'App\CourseController::get_contents');
-$routes->post('/libraries/courses/get/instructors', 'App\CourseController::get_instructors');
-$routes->post('/libraries/courses/get/reviews', 'App\CourseController::get_reviews');
-$routes->post('/libraries/courses/get/followers', 'App\CourseController::get_followers');
-$routes->post('/libraries/courses/get/settings', 'App\CourseController::get_settings');
+$routes->post('/libraries/courses/save/lesson', 'App\CourseController::saveLesson');
+$routes->post('/libraries/courses/update/lesson', 'App\CourseController::updateLesson');
+$routes->post('/libraries/courses/delete/lesson', 'App\CourseController::deleteLesson');
 
+$routes->post('/libraries/courses/upload/courseimage', 'App\CourseController::uploadCourseImage');
+$routes->post('/libraries/courses/upload/lessonmedia', 'App\CourseController::uploadLessonMedia');
 
-$routes->get('/libraries/courses/instructors/forcourse/(:num)', 'App\CourseController::get_instructors_for_course/$1');
-$routes->post('/libraries/courses/instructors/save', 'App\CourseController::save_instructor');
-$routes->post('/libraries/courses/instructors/delete', 'App\CourseController::delete_instructor');
+$routes->post('/libraries/courses/get/users/for/enroll', 'App\CourseController::getUsersForEnroll');
+$routes->post('/libraries/courses/get/enrollments', 'App\CourseController::getCourseEnrollments');
+$routes->post('/libraries/courses/reset/enrollments', 'App\CourseController::resetCourseEnrollments');
+$routes->post('/libraries/courses/save/enrollment', 'App\CourseController::saveCourseEnrollment');
+$routes->post('/libraries/courses/delete/enrollment', 'App\CourseController::deleteCourseEnrollment');
+$routes->post('/libraries/courses/accept/enrollment', 'App\CourseController::acceptEnrollment');
 
+// $routes->post('/libraries/courses/reviews/save', 'App\CourseController::save_review');
+// $routes->post('/libraries/courses/reviews/delete', 'App\CourseController::delete_review');
 
-$routes->post('/libraries/courses/reviews/save', 'App\CourseController::save_review');
-$routes->post('/libraries/courses/reviews/delete', 'App\CourseController::delete_review');
-
-
-$routes->get('/libraries/courses/followers/forcourse/(:num)', 'App\CourseController::get_followers_for_course/$1');
-$routes->post('/libraries/courses/followers/save', 'App\CourseController::save_follower');
-$routes->post('/libraries/courses/followers/delete', 'App\CourseController::delete_follower');
-
-
-
-
-
-
-$routes->post('/libraries/courses/content/section/get', 'App\CourseController::get_section');
-$routes->post('/libraries/courses/content/section/save', 'App\CourseController::save_section');
-$routes->post('/libraries/courses/content/section/update', 'App\CourseController::update_section');
-$routes->post('/libraries/courses/content/section/delete', 'App\CourseController::delete_section');
-
-$routes->post('/libraries/courses/content/section/lesson/get', 'App\CourseController::get_lesson');
-$routes->post('/libraries/courses/content/section/lesson/save', 'App\CourseController::save_lesson');
-$routes->post('/libraries/courses/content/section/lesson/update', 'App\CourseController::update_lesson');
-$routes->post('/libraries/courses/content/section/lesson/delete', 'App\CourseController::delete_lesson');
-
-$routes->post('/libraries/courses/content/section/lesson/upload', 'App\CourseController::upload_lesson');
-
+/*
+ * --------------------------------------------------------------------
+ * Chat Management Routes
+ * --------------------------------------------------------------------
+ */
 
 $routes->get('/apps/chats', 'App\ChatController::index');
 $routes->get('/apps/chats/view/(:num)', 'App\ChatController::view/$1');
@@ -102,33 +103,41 @@ $routes->post('/apps/chats/save', 'App\ChatController::save');
  * User Management Routes
  * --------------------------------------------------------------------
  */
-$routes->get('/configs/user-management/users', 'App\UserController::index');
-$routes->get('/configs/user-management/users/create', 'App\UserController::create');
-$routes->post('/configs/user-management/users/save', 'App\UserController::save');
-$routes->get('/configs/user-management/users/view/(:num)', 'App\UserController::get/$1');
-$routes->post('/configs/user-management/users/updateprofile', 'App\UserController::update_profile');
-$routes->post('/configs/user-management/users/updatepassword', 'App\UserController::update_password');
-$routes->post('/configs/user-management/users/updaterole', 'App\UserController::update_role');
 
+$routes->get('/configs/users', 'App\UserController::index');
+$routes->get('/configs/users/view/(:num)', 'App\UserController::get/$1');
 
-$routes->post('/configs/user-management/users/linkedprofiles/save', 'App\LinkedprofileController::saveLinkedProfile');
-$routes->post('/configs/user-management/users/linkedprofiles/delete', 'App\LinkedprofileController::deleteLinkedProfile');
+$routes->get('/configs/users/create', 'App\UserController::create');
+$routes->post('/configs/users/save', 'App\UserController::save');
 
+$routes->post('/configs/users/get/profile', 'App\UserController::getUserProfile');
+$routes->post('/configs/users/get/settings', 'App\UserController::getUserSettings');
 
-$routes->get('/configs/user-management/roles', 'App\RoleController::index');
-$routes->get('/configs/user-management/roles/view/(:num)', 'App\RoleController::get/$1');
-$routes->post('/configs/user-management/roles/permissions/update', 'App\RoleController::update_permissions');
+$routes->post('/configs/users/update/role', 'App\UserController::updateUserRole');
+
+$routes->post('/configs/users/get/role/connections', 'App\UserController::getUserRoleConnections');
+$routes->post('/configs/users/save/connection', 'App\UserController::saveUserConnection');
+$routes->post('/configs/users/delete/connection', 'App\UserController::deleteUserConnection');
+
+/*
+ * --------------------------------------------------------------------
+ * Role Management Routes
+ * --------------------------------------------------------------------
+ */
+$routes->get('/configs/roles', 'App\RoleController::index');
+$routes->get('/configs/roles/view/(:num)', 'App\RoleController::get/$1');
+$routes->post('/configs/roles/update/permissions', 'App\RoleController::updatePermissions');
 
 
 /*
  * --------------------------------------------------------------------
- * Medaia Routes
+ * File Routes
  * --------------------------------------------------------------------
  */
-$routes->get('/libraries/media', 'App\MediaController::index');
-$routes->post('/libraries/media/upload', 'App\MediaController::upload');
-$routes->post('/libraries/media/save', 'App\MediaController::save');
-$routes->post('/libraries/media/delete', 'App\MediaController::delete');
+$routes->get('/libraries/files', 'App\FileController::index');
+$routes->post('/libraries/files/upload', 'App\FileController::upload');
+$routes->post('/libraries/files/save', 'App\FileController::save');
+$routes->post('/libraries/files/delete', 'App\FileController::delete');
 
 /*
  * --------------------------------------------------------------------

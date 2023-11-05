@@ -20,28 +20,20 @@ class RoleController extends AuthController
 	#roles
     public function index()
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('roles-read')) {
-            return redirect()->route('/');
+		if (!AuthController::auth() || !AuthController::hasPermissions('role_management')) {
+            return redirect()->route('error/403');
         }
-
-		$roles = [];
-
-		$response = $this->rolemodel->get();
-
-		if ($response->status==200) {
-			$roles = $response->data;
-		}
 
 		$pagedata = [
 			'permissions' => $_SESSION['permissions'],
-            'pageid' => 'overview',
+            'pageid' => 'all',
             'title' => 'Roles',
             'breadcrumbs' => [ 
                 'Home' => 'dashboard', 
-                'User Management' => '', 
+                'Configs' => '', 
                 'Roles' => '' 
             ],
-			'roles' => $roles
+			'roles' => $this->rolemodel->get()->data
 		];
 
 		return view('modules/configs/roles/index', $pagedata);
@@ -49,39 +41,36 @@ class RoleController extends AuthController
 
     public function get($id=0)
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('roles-read')) {
-            return redirect()->route('/');
+		if (!AuthController::auth() || !AuthController::hasPermissions('role_view_permissions')) {
+            return redirect()->route('error/403');
         }
 
-		$role = [];
-
-		$response = $this->rolemodel->getRole([ 'roleid' => $id ]);
-
-		if ($response->status==200) {
-			$role = $response->data;
+		$response = $this->rolemodel->getRole([ 'id' => $id ]);
+		
+		if ($response->status!=200) {
+			return view('errors/pages/general', (array) $response);
 		}
 
 		$pagedata = [
 			'permissions' => $_SESSION['permissions'],
-            'title' => $role->rolename.' - Permissions',
+            'title' => $response->data->rolename.' - Permissions',
             'breadcrumbs' => [ 
                 'Home' => 'dashboard', 
-                'User Management' => 'configs/user-management/roles', 
-                'Roles' => 'configs/user-management/roles', 
+                'Configs' => 'configs/roles', 
+                'Roles' => 'configs/roles', 
                 'Permissions' => '' 
             ],
             'pageid' => 'view',
-			'role' => $role
+			'role' => $response->data
 		];
 
 		return view('modules/configs/roles/index', $pagedata);
 
 	}
 
-
-	public function update_permissions() 
+	public function updatePermissions() 
 	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('roles-write')) {
+		if (!AuthController::auth() || !AuthController::hasPermissions('role_update_permissions')) {
             $this->response->setJSON([ 
                 'status' => 403,
 				'redirect' => '',
@@ -95,7 +84,6 @@ class RoleController extends AuthController
 
 		$response = $this->rolemodel->updatePermissions([
             'permissionid' => $reqdata->permissionid,
-			'mode' => $reqdata->mode,
 			'access' => $reqdata->access
         ]);
 

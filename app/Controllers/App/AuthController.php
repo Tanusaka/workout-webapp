@@ -40,6 +40,14 @@ class AuthController extends BaseController
 
         if ( isset($response->token) ) {
 
+            $auth['id']  = $response->id;
+            $auth['tenantid']  = $response->tenantid;
+            $auth['email']  = $response->email;
+            $auth['roleid']  = $response->roleid;
+            $auth['rolename']  = $response->rolename;
+            $auth['firstname']  = $response->firstname;
+            $auth['lastname']  = $response->lastname;
+            $auth['profileimage']  = $response->profileimage;
             $auth['token']  = $response->token;
             $auth['refreshtoken']  = $response->rtoken;
             $auth['logged_in'] = true;
@@ -79,24 +87,13 @@ class AuthController extends BaseController
 
     public static function hasPermissions($guard=null)
     {
-        $guardTokens = explode('-', $guard);
-
         $permissions = (array) $_SESSION['permissions'];
 
-        if ( !is_null($permissions) ) {
-            if ($guardTokens[1] == 'read') {
-                return $permissions[$guardTokens[0]]->read;
-            } else if ($guardTokens[1] == 'write') {
-                return $permissions[$guardTokens[0]]->write;
-            } else if ($guardTokens[1] == 'delete') {
-                return $permissions[$guardTokens[0]]->delete;
-            } else {
-                return false;
-            }
+        if (isset($permissions[$guard])) {
+            return $permissions[$guard];
         } else {
             return false;
         }
-
     }
 
 

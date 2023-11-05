@@ -1,117 +1,92 @@
-<!--begin::Form-->
-<form class="pt-15 pb-10" novalidate="novalidate" id="kt_create_user_form" action="">
-    <!--begin::Step 1-->
-    <div class="current" data-kt-stepper-element="content">
-        <!--begin::Wrapper-->
-        <div class="w-100">
+<!-- begin: section container -->
+<div id="pagedata-container" class="container" style="margin-top: 15px;" data-pid="0">	
 
-            <!--begin::Heading-->
-            <div class="pb-10 pb-lg-15">
-                <!--begin::Title-->
-                <h4 class="fw-bold d-flex align-items-center text-dark">User Information</h4>
-                <!--end::Title-->
-            </div>
-            <!--end::Heading-->
+    <div class="page-alert">
+        <div id="alert" class="alert d-flex align-items-center alert-dismissible fade show d-none auto-close" role="alert">
+            <div id="alertmessage"></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
 
-            <!--begin::Input group-->
-            <div class="mb-10 row col-md-6">
+    <div class="col-md-12 col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex flex-column">
+                    
+                    <form id="form-createuser" action="" class="">
                 
-                <!--begin::Col-->
-                <div class="col-md-6">
-                    <!--begin::Label-->
-                    <label class="required form-label mb-3">First Name</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" class="form-control form-control-lg form-control-solid" name="firstname" placeholder="Type first name here..." value="" />
-                    <!--end::Input-->
-                </div>
-                <!--end::Col-->
-                <!--begin::Col-->
-                <div class="col-md-6">
-                    <!--begin::Label-->
-                    <label class="required form-label mb-3">Last Name</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" class="form-control form-control-lg form-control-solid" name="lastname" placeholder="Type last name here..." value="" />
-                    <!--end::Input-->
-                </div>
-                <!--end::Col-->
-
-            </div>
-            <!--end::Input group-->
-
-
-            <!--begin::Input group-->
-            <div class="mb-10 row">
-                <!--begin::Col-->
-                <div class="col-md-6">
-                    <!--begin::Label-->
-                    <label class="required form-label mb-3">Email</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="email" class="form-control form-control-lg form-control-solid" name="email" placeholder="Type email address here..." value="" />
-                    <!--end::Input-->
-                </div>
-                <!--end::Col-->
-            </div>
-            <!--end::Input group-->
-
-
-            <!--begin::Input group-->
-            <div class="mb-10 row">
-                <!--begin::Col-->
-                <div class="col-md-6">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-5">Role</label>
-                    <!--end::Label-->
-                    <?php if ( isset($roles) && !empty($roles) ): ?>
-                    <?php foreach($roles as $role): ?>
-                    <!--begin::Input row-->
-                    <div class="d-flex fv-row">
-                        <!--begin::Radio-->
-                        <div class="form-check form-check-custom form-check-solid">
-                            <!--begin::Input--> 
-                            <input class="form-check-input me-3" name="roleid" type="radio" value="<?= $role->id; ?>" id="<?= 'kt_course_type_option_'.$role->id; ?>" />
-                            <!--end::Input-->
-                            <!--begin::Label-->
-                            <label class="form-check-label" for="<?= 'kt_course_type_option_'.$role->id; ?>">
-                                <div class="fw-bold text-gray-800"><?= $role->rolename; ?></div>
-                                <div class="text-gray-600"><?= $role->roledesc; ?></div>
-                            </label>
-                            <!--end::Label-->
+                        <div class="form-alert">
+                        <div id="alert" class="alert d-flex align-items-center alert-dismissible fade show d-none auto-close" role="alert">
+                            <div id="alertmessage"></div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        <!--end::Radio-->
-                    </div>
-                    <!--end::Input row-->
+                        </div>
+                    
+                    
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate fw-sb fs-12 fc-dark">Personal Information</p>
+                        </div>
+                    
+                        <div class="form-group mb-12">
+                            <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">First Name:</label>
+                            <input id="firstname" class="form-control ap-inp-field" placeholder="Type first name here..." name="firstname" type="text" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="1" value="">
+                            <label id="firstname_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
+                        </div>
+                    
+                        <div class="form-group mb-12">
+                            <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">Last Name:</label>
+                            <input id="lastname" class="form-control ap-inp-field" placeholder="Type last name here..." name="lastname" type="text" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="2" value="">
+                            <label id="lastname_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
+                        </div>
+                        
+                    
+                        <div class="top-gap-15"></div>
+                    
+                        
+                        <div class="profile-txtgroup mb-3">
+                            <p class="text-truncate fw-sb fs-12 fc-dark">Account Information</p>
+                        </div>
+                    
+                        <div class="form-group mb-12">
+                            <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">Email Address:</label>
+                            <input id="email" class="form-control ap-inp-field" placeholder="Type email address here..." name="email" type="text" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="3" value="">
+                            <label id="email_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
+                        </div>
+                    
+                        <div class="form-group mb-12">
+                            <label class="text-truncate fw-normal fs-12 fc-light mb-12 required-field">User Role:</label>
+                    
+                            <?php if ( isset($roles) && !empty($roles) ): ?>
+                            <?php foreach($roles as $role): ?>
+                    
+                            <div class="form-check form-check-custom form-check-solid">
+                                <!--begin::Input--> 
+                                <input class="form-check-input me-3" name="roleid" type="radio" tabindex="4" value="<?= $role->id; ?>" id="<?= 'roleid_'.$role->id; ?>">
+                                <!--end::Input-->
+                                <!--begin::Label-->
+                                <label class="form-check-label" for="<?= 'roleid_'.$role->id; ?>">
+                                    <div class="text-truncate fw-sb fs-12 fc-dark"><?= $role->rolename; ?></div>
+                                    <div class="text-truncate fw-normal fs-12 fc-light mb-0"><?= $role->roledesc; ?></div>
+                                </label>
+                                <!--end::Label-->
+                            </div>
+                    
+                            <div class='separator separator-dashed my-5'></div>
+                            <?php endforeach; ?>    
+                            <?php endif; ?> 
+                            
+                            <label id="roleid_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
+                        </div>
+                    
+                        <div class="form-group mb-12 d-flex justify-content-end form-opt-container">
+                            <button id="btn_saveUser" type="button" class="form-action-btn">Save User</a>
+                        </div>
+                    
+                    </form>
 
-                    <div class='separator separator-dashed my-5'></div>
-                    <?php endforeach; ?>    
-                    <?php endif; ?>   
+
                 </div>
-                <!--end::Col-->
             </div>
-            <!--end::Input group-->
-
         </div>
-        <!--end::Wrapper-->
     </div>
-    <!--end::Step 1-->
-    <!--begin::Actions-->
-    <div class="d-flex flex-stack pt-10">
-        <!--begin::Wrapper-->
-        <div>
-            <button type="submit" id="kt_create_user_submit" class="btn btn-lg btn-primary">
-                <span class="indicator-label">Save
-                <i class="ki-duotone ki-arrow-right fs-3 ms-2 me-0">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i></span>
-                <span class="indicator-progress">Please wait...
-                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-            </button>
-        </div>
-        <!--end::Wrapper-->
-    </div>
-    <!--end::Actions-->
-</form>
-<!--end::Form-->
+</div>
