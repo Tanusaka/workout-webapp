@@ -105,6 +105,20 @@ class CourseModel extends BaseModel
         );
     }
 
+    public function getCoursePreviousLesson($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/sections/lessons/get/previous', $data)
+        );
+    }
+
+    public function getCourseNextLesson($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/sections/lessons/get/next', $data)
+        );
+    }
+
     public function saveCourseLesson($data=[])
     {
         return json_decode(
@@ -125,57 +139,6 @@ class CourseModel extends BaseModel
             $this->apiPost('/courses/sections/lessons/delete', $data)
         );
     }
-
-    #instructors
-    // public function getCourseInstructors($data=[])
-    // {
-    //     return json_decode(
-    //         $this->apiPost('/courses/instructors/get', $data)
-    //     );
-    // }
-
-    // public function getInstructorsForCourse($data=[])
-    // {
-    //     return json_decode(
-    //         $this->apiPost('/courses/instructors/get/trainers', $data)
-    //     );
-    // }
-
-    // public function saveCourseInstructor($data=[])
-    // {
-    //     return json_decode(
-    //         $this->apiPost('/courses/instructors/save', $data)
-    //     );
-    // }
-
-    // public function deleteCourseInstructor($data=[])
-    // {
-    //     return json_decode(
-    //         $this->apiPost('/courses/instructors/delete', $data)
-    //     );
-    // }
-
-    #reviews
-    // public function getCourseReviews($data=[])
-    // {
-    //     return json_decode(
-    //         $this->apiPost('/courses/reviews/get', $data)
-    //     );
-    // }
-
-    // public function saveCourseReview($data=[])
-    // {
-    //     return json_decode(
-    //         $this->apiPost('/courses/reviews/save', $data)
-    //     );
-    // }
-
-    // public function deleteCourseReview($data=[])
-    // {
-    //     return json_decode(
-    //         $this->apiPost('/courses/reviews/delete', $data)
-    //     );
-    // }
 
     #enrollments
     public function getUsersForEnroll($data=[])
@@ -219,6 +182,14 @@ class CourseModel extends BaseModel
             $this->apiPost('/courses/enrollments/accept', $data)
         );
     }
+
+     #payments
+     public function createCoursePayment($data=[])
+     {
+         return json_decode(
+             $this->apiPost('/courses/payment/create', $data)
+         );
+     }
     
 
 }

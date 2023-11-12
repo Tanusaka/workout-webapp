@@ -58,7 +58,15 @@
                                         <div class="p-2 flex-grow-1 bd-highlight">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
+
+                                                <?php if ($lesson->type=='image') : ?>
                                                     <span><i class="fas fa-image fa-fw me-4"></i></span>
+                                                <?php elseif ($lesson->type=='video') : ?>
+                                                    <span><i class="fas fa-video fa-fw me-4"></i></span>
+                                                <?php else : ?>
+                                                    <span></span>
+                                                <?php endif; ?>
+
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <?php if (isset($course->enrolled)) : ?>

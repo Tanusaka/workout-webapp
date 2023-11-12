@@ -57,14 +57,3 @@
 <?= $this->include('modules/libraries/courses/modals/viewenrollments') ?>
 <?= $this->include('modules/libraries/courses/modals/addenrollment') ?>
 <?php endif; ?>
-
-
-<?php if (isset($permissions->course_enroll) && $permissions->course_enroll) : ?>
-
-<?php if (isset($course->enrolled)) : ?>
-    <?php if ($course->enrolled == 'P') : ?>
-        <?= $this->include('modules/libraries/courses/modals/a_enroll') ?>
-    <?php endif; ?>               
-<?php endif; ?> 
-
-<?php endif; ?>

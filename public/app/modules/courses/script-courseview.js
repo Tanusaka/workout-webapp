@@ -191,8 +191,14 @@ $(document).ready(function() {
             $('#dsp_view_lessonname').text(response.data.data.lessonname);
             $('#dsp_view_lessonduration').html('Duration: '+ response.data.data.lessonduration);
             $('#dsp_view_lessondescription').html(response.data.data.lessondescription);
-            $('#dsp_view_lessonmedia').attr("src", response.data.data.lessonmedia);
+            $.fn.addMediaPreiviewElement(response.data.data);
+
+            $('#btn_prevLesson').attr("data-actionid", response.data.data.id);
+            $('#btn_nextLesson').attr("data-actionid", response.data.data.id);
+
             $('#viewLessonModal').modal('show');
+            } else if (response.data.status==402) {
+                $.fn.openModalViewPayment(response.data.data);
             } else {
             $.fn.showErrorMessage(response.data.message);
             }
@@ -254,29 +260,119 @@ $(document).ready(function() {
         $('#addEnrollmentModal').modal('hide');
     }
 
-    $.fn.openModalEnrollWithPayment = function(data) { 
+    $.fn.openModalViewPayment = function(data) { 
 
         var paymentPlan;
-        if (data.paymentinfo.coursepriceplan=="OneTime") {
+        if (data.coursepriceplan=="OneTime") {
             paymentPlan = 'One Time';
-        } else if (data.paymentinfo.coursepriceplan=="Monthly") {
+        } else if (data.coursepriceplan=="Monthly") {
             paymentPlan = 'Monthly';
-        } else if (data.paymentinfo.coursepriceplan=="Yearly") {
+        } else if (data.coursepriceplan=="Yearly") {
             paymentPlan = 'Yearly';
         } else {
             paymentPlan = '';
         }
 
-        $('#pi_coursename').html(data.paymentinfo.coursename);
-        $('#pi_note').html('This is a paid course. In order to view the content of this course you have to pay the following amount as a '+paymentPlan+' payment.');
-        $('#pi_amount').html('Total: '+data.paymentinfo.courseprice+' '+data.paymentinfo.coursecurrency);
+        $('#pi_coursename').html(data.coursename);
+        $('#item_note').html('This is a paid course. In order to view the content of this course you have to pay the following amount.');
+        $('#item_payment_type').html(paymentPlan);
+        $('#item_next_payment_date').html('N/A');
+        $('#item_name').html(data.coursename);
+        $('#item_price').html(data.courseprice+' '+data.coursecurrency);
+        $('#item_total_price').html('<strong>'+data.courseprice+' '+data.coursecurrency+'</strong>');
 
-        $('#enrollWithPaymentModal').modal('show');
+        var courseid = data.courseid; var orderamount = data.courseprice; var ordercurrency = data.coursecurrency;
+
+        $('#paypal-button-container').empty();
+        
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            style: {
+                layout: 'horizontal',
+                color:  'gold',
+                shape:  'rect',
+                label:  'pay',
+                tagline: true,
+                height: 35,
+            },
+
+            // Call your server to set up the transaction
+            createOrder: function(data, actions) {
+                
+                $('#btn_closeModalViewPayment').addClass('d-none');
+
+                return fetch(baseurl+'libraries/courses/payment/create/order', {
+                    method: 'post',
+                    body: JSON.stringify({amount: orderamount, currency: ordercurrency})
+                }).then(function(res) {
+                    return res.json();
+                }).then(function(orderData) {
+                    return orderData.id;
+                });
+            },
+
+            // Call your server to finalize the transaction
+            onApprove: function(data, actions) {
+                return fetch(baseurl+'libraries/courses/payment/capture/order', {
+                    method: 'post',
+                    body: JSON.stringify({id: data.orderID, courseid: courseid})
+                }).then(function(res) {
+                    return res.json();
+                }).then(function(orderData) {
+                    // Three cases to handle:
+                    //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                    //   (2) Other non-recoverable errors -> Show a failure message
+                    //   (3) Successful transaction -> Show confirmation or thank you
+
+                    // This example reads a v2/checkout/orders capture response, propagated from the server
+                    // You could use a different API or structure for your 'orderData'
+                    var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
+
+                    if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
+                        return actions.restart(); // Recoverable state, per:
+                        // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
+                    }
+
+                    if (errorDetail) {
+                        var msg = 'Sorry, your transaction could not be processed.';
+                        if (errorDetail.description) msg += '\n\n' + errorDetail.description;
+                        if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
+                        return alert(msg); // Show a failure message (try to avoid alerts in production environments)
+                    }
+
+                    // Successful capture! For demo purposes:
+                    // console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                    // var transaction = orderData.purchase_units[0].payments.captures[0];
+                    // alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+
+                    // Replace the above to show a success message within this page, e.g.
+                    const element = document.getElementById('paypal-button-container');
+                    element.innerHTML = '';
+                    element.innerHTML = '<div class="d-flex bd-highlight">'+
+                    '<div class="flex-grow-1">'+
+                        '<div class="modal-alert">'+
+                            '<div class="alert alert-success text-center fade show" role="alert">'+
+                                '<div>Your payment was successful..!</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                   ' <div class="p-2 p-t-6">'+
+                        '<a href="'+baseurl+'libraries/courses/view/'+courseid+'" class="btn btn-sm fw-bold btn-primary">Start Course</a>'+
+                    '</div>'+
+                    '</div>';
+                    // Or go to another URL:  actions.redirect('thank_you.html');
+                });
+            }
+        }).render('#paypal-button-container');
+
+        $('#btn_closeModalViewPayment').removeClass('d-none');
+        $('#viewPaymentModal').modal('show');
             
     }
 
-    $.fn.closeModalEnrollWithPayment = function() { 
-        $('#enrollWithPaymentModal').modal('hide');
+    $.fn.closeModalViewPayment = function() { 
+        $('#viewPaymentModal').modal('hide');
     }
 
     $.fn.openModalEditInstructor = function() { 
@@ -492,6 +588,52 @@ $(document).ready(function() {
             $.fn.showException(error);
         });
     }
+
+    $.fn.viewPreviousLesson = function(lessonid) { 
+        axios.post(baseurl+'libraries/courses/get/lesson/previous', {
+            courseid: $('#pagedata-container').data('pid'),
+            currentid: lessonid
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+            $('#dsp_view_lessonname').text(response.data.data.lessonname);
+            $('#dsp_view_lessonduration').html('Duration: '+ response.data.data.lessonduration);
+            $('#dsp_view_lessondescription').html(response.data.data.lessondescription);
+            $.fn.addMediaPreiviewElement(response.data.data);
+
+            $('#btn_prevLesson').attr("data-actionid", response.data.data.id);
+            $('#btn_nextLesson').attr("data-actionid", response.data.data.id);
+            } else {
+            $.fn.showErrorMessage(response.data.messages, false);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+    }
+
+    $.fn.viewNextLesson = function(lessonid) { 
+        axios.post(baseurl+'libraries/courses/get/lesson/next', {
+            courseid: $('#pagedata-container').data('pid'),
+            currentid: lessonid
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+            $('#dsp_view_lessonname').text(response.data.data.lessonname);
+            $('#dsp_view_lessonduration').html('Duration: '+ response.data.data.lessonduration);
+            $('#dsp_view_lessondescription').html(response.data.data.lessondescription);
+            $.fn.addMediaPreiviewElement(response.data.data);
+
+            $('#btn_prevLesson').attr("data-actionid", response.data.data.id);
+            $('#btn_nextLesson').attr("data-actionid", response.data.data.id);
+            } else {
+            $.fn.showErrorMessage(response.data.messages, false);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+    }
     //end:lesson functions
 
     //begin:enrollment functions
@@ -561,7 +703,7 @@ $(document).ready(function() {
             if (response.data.status==200) {
                 location.reload(true);
             } else if (response.data.status==402) {
-                $.fn.openModalEnrollWithPayment(response.data.data);
+                $.fn.openModalViewPayment(response.data.data);
             } else {
                 $.fn.showErrorMessage(response.data.message);
             }
@@ -569,9 +711,7 @@ $(document).ready(function() {
             $.fn.showException(error);
         });
     }
-    
     // end:enrollment functions
-
 
     //begin:set response functions
     $.fn.showSuccessResponse = function(component, event, response) {
@@ -993,9 +1133,17 @@ $(document).ready(function() {
         '<div class="d-flex bd-highlight">'+
             '<div class="p-2 flex-grow-1 bd-highlight">'+
                 '<div class="d-flex align-items-center">'+
-                    '<div class="flex-shrink-0">'+
-                        '<span><i class="fas fa-image fa-fw me-4"></i></span>'+
-                    '</div>'+
+                    '<div class="flex-shrink-0">';
+
+        if (lesson.type=='image') {
+            el = el + '<span><i class="fas fa-image fa-fw me-4"></i></span>';
+        } else if (lesson.type=='video') {
+            el = el + '<span><i class="fas fa-video fa-fw me-4"></i></span>';
+        } else {
+            el = el + '<span></span>';
+        }  
+
+        el = el + '</div>'+
                     '<div class="flex-grow-1 ms-3">'+
                         '<a data-lessonid="'+lesson.id+'" id="dsp_lessonname_'+lesson.id+'" class="btn_openModalViewLesson btn-link">'+lesson.lessonname+'</a>'+ 
                     '</div>'+
@@ -1082,7 +1230,7 @@ $(document).ready(function() {
 
         el = el + '</div>'+
             '<div class="d-flex flex-column">'+
-                '<a href="configs/user-management/users/view/3" class="text-gray-800 text-hover-primary mb-1 fs-14">'+datarow.firstname+' '+datarow.lastname+'</a>'+
+                '<a href="" class="text-gray-800 text-hover-primary mb-1 fs-14">'+datarow.firstname+' '+datarow.lastname+'</a>'+
                 '<span class="fs-12">'+datarow.rolename+'</span>'+
             '</div>'+
         '</td>'+
@@ -1108,6 +1256,25 @@ $(document).ready(function() {
         }
 
         $('#enrollmentpreview_group').append(el);
+    }
+
+    $.fn.addMediaPreiviewElement = function(data) {
+
+        var el = '';
+
+        $('#dsp_mediafile').empty();
+
+        if (data.type=='image') {
+            el = '<img id="dsp_view_lessonmedia" src="'+data.lessonmedia+'" alt="image">';
+        } else if (data.type=='video') {
+            el = '<div class="ratio ratio-16x9">'+
+                '<iframe src="'+data.lessonmedia+'" title="'+data.type+'" allowfullscreen sandbox></iframe>'+
+            '</div>';
+        } else {
+            el = el + '<div id="dsp_nocontent" class="fs-6">This lesson content type is not supported with this applicaiotn</div>';
+        }
+
+        $('#dsp_mediafile').append(el);
     }
 
     $.fn.removeSectionElement = function(section) {
@@ -1210,8 +1377,8 @@ $(document).ready(function() {
         $.fn.closeModalAddEnrollment();
     });
 
-    $('.btn_closeModalEnrollWithPayment').click(function() {
-        $.fn.closeModalEnrollWithPayment();
+    $('#btn_closeModalViewPayment').click(function() {
+        $.fn.closeModalViewPayment();
     });
 
     $('#btn_openModalEditInstructor').click(function() {
@@ -1265,8 +1432,15 @@ $(document).ready(function() {
         $.fn.enrollNow($(this).data('actionid'));  
     });
     
+    $('#btn_prevLesson').click(function() {
+        $.fn.viewPreviousLesson($(this).attr("data-actionid"));  
+    });
 
-    
+    $('#btn_nextLesson').click(function() {
+        $.fn.viewNextLesson($(this).attr("data-actionid"));  
+    });
+
+
 
     $('#editcoursename').keypress(function() {
         $("#editcoursename_er").html('').addClass('d-none'); 
@@ -1389,7 +1563,7 @@ $(document).ready(function() {
         paramName: "file", // The name that will be used to transfer the file
         maxFiles: 1,
         maxFilesize: 10, // MB
-        acceptedFiles: ".jpeg,.jpg,.png",
+        acceptedFiles: "image/*",
         addRemoveLinks: true,
         init: function() {
             
@@ -1438,7 +1612,7 @@ $(document).ready(function() {
         paramName: "file", // The name that will be used to transfer the file
         maxFiles: 1,
         maxFilesize: 10, // MB
-        acceptedFiles: ".jpeg,.jpg,.png",
+        acceptedFiles: "image/*,audio/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx",
         addRemoveLinks: true,
         init: function() {
             
@@ -1487,7 +1661,7 @@ $(document).ready(function() {
         paramName: "file", // The name that will be used to transfer the file
         maxFiles: 1,
         maxFilesize: 10, // MB
-        acceptedFiles: ".jpeg,.jpg,.png",
+        acceptedFiles: "image/*,audio/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx",
         addRemoveLinks: true,
         init: function() {
             

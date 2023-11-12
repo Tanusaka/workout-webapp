@@ -6,125 +6,247 @@
 namespace App\Controllers\App;
 
 use App\Controllers\App\AuthController;
-
-
 use App\Models\App\ChatModel;
-use App\Models\App\UserModel;
-
 
 class ChatController extends AuthController
 {
-	protected $chatModel;
-	protected $userModel;
+	protected $chatmodel;
 
 	public function __construct() {
-		$this->chatModel = new ChatModel();
-		$this->userModel = new UserModel();
+		$this->chatmodel = new ChatModel();
   	}
-	
-    public function index()
+
+	public function index()
 	{
-        if ( !AuthController::auth() ) {
-            return redirect()->route('/');
-        }
-	
-	$threads = [];
-
-	$response = $this->chatModel->get();
-	$threads = $response->threads;
-
-	$pagedata = [
-		    'permissions' => $_SESSION['permissions'],
-	            'pageid' => 'overview',
-	            'title' => 'Messaging Page',
-	            'breadcrumbs' => [ 
-	                'Home' => 'dashboard', 
-	                'User Management' => '', 
-	                'Users' => '' 
-	            ],
-		    'threads' => $threads
-	];
-        
-		return view('modules/chat/chats', $pagedata);
-	}
-
-	public function view($id)
-	{
-	        if ( !AuthController::auth() ) {
-	            return redirect()->route('/');
-	        }
-		
-		$thread = [];
-	
-		$response = $this->chatModel->getChat([ "other_user_id"=>$id,"limit"=>100,"offset"=>0 ]);
-		$thread = array_reverse($response->messages);
-
-		//print_r($thread);
-		
-		$threads = [];
-	
-		$response = $this->chatModel->get();
-		$threads = $response->threads;
-
-		$user = [];
-	
-		$response = $this->userModel->getUserData([ 'userid' => $id ]);
-		//print_r($response);
-		
-		if ($response->status==200) {
-			$user = $response->data;
+		if (!AuthController::auth() || !AuthController::hasPermissions('chat_management')) {
+			return redirect()->route('error/403');
 		}
-			
-	        $pagedata = [
-			    'permissions' => $_SESSION['permissions'],
-		            'pageid' => 'overview',
-		            'title' => 'Personal Messaging Page',
-		            'breadcrumbs' => [ 
-		                'Home' => 'dashboard', 
-		                'User Management' => '', 
-		                'Users' => '' 
-		            ],
-			    'messages' => $thread,
-			    'threads' => $threads,
-			    'linked_user' => $user
+
+		$pagedata = [
+			'permissions' => $_SESSION['permissions'],
+			'pageid' => 'all',
+			'title' => 'Chats',
+			'breadcrumbs' => [ 
+				'Home' => 'dashboard', 
+				'Apps' => '', 
+				'Chats' => '' 
+			],
 		];
-        
-		return view('modules/chat/chat', $pagedata);
+
+		return view('modules/apps/chats/index', $pagedata);
 	}
 
-	public function save()
+	public function getAllChats()
 	{
-	    if (!AuthController::auth() || !AuthController::hasPermissions('courses-read')) {
-			$this->response->setJSON([ 
-				'status' => 403,
+		if (!AuthController::auth() || !AuthController::hasPermissions('chat_view')) {
+            $this->response->setJSON([ 
+                'status' => 403,
 				'redirect' => '',
-				'message'  => "You don't have permission to access"
-			]);
+                'message'  => "You don't have permission to access"
+            ]);
 
 			return $this->response;
-		}
+        }
 
-		$reqdata = $this->request->getJSON();
+		$response = $this->chatmodel->getChats();
 
-		$response = $this->chatModel->saveChat([
-			'receiver_id' => $reqdata->receiver_id,
-			'message_text' => $reqdata->message_text
-		]);
-
-		if ($response->status=="success") {
+		if ($response->status==200) {
 			$this->response->setJSON([ 
 				'status' => 200,
 				'redirect' => '',
-				'message'  => $response->message_id
+				'message'  => $response->messages,
+				'data' => $response->data
 			]);
 		} else {
 			$this->response->setJSON([ 
 				'status' => $response->status,
 				'redirect' => '',
-				'message'  => $response->message
+				'message'  => $response->messages
 			]);
 		}
 
-		return $this->response;
+        return $this->response;
+
+	}
+
+	public function getChat()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('chat_view')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->chatmodel->getChat([
+			'id' => trim($reqdata->chatid)
+        ]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function getPersonalChatConnections()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('chat_create')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$response = $this->chatmodel->getPersonalChatConnections();
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function savePersonalChat()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('chat_create')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->chatmodel->savePersonalChat(['userid' => $reqdata->userid]);
+
+		if ($response->status==200) {
+
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function savePersonalChatMessage()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('chat_create')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->chatmodel->savePersonalChatMessage([
+			'chatid' => $reqdata->chatid,
+			'type' => $reqdata->type,
+			'message' => $reqdata->message
+		]);
+
+		if ($response->status==200) {
+
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function deletePersonalChat()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('chat_delete')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->chatmodel->deletePersonalChat(['id' => trim($reqdata->id)]);
+
+		if ($response->status==200) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
 	}
 }

@@ -24,7 +24,7 @@
                             <!--begin::Info-->
                             <div class="ms-4">
                                 <h3 class="fw-bold text-gray-900 mb-1">Drop files here or click to upload.</h3>
-                                <span class="fw-semibold text-muted">Allowed Formats: jpeg, jpg, png</span>
+                                <span class="fw-semibold text-muted">Allowed Formats: jpg, jpeg, png, gif, mp3, wma, mpg, flv, avi, pdf, doc, docx, xls, xlsx</span>
                             </div>
                             <!--end::Info-->
                         </div>

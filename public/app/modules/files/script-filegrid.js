@@ -123,9 +123,20 @@ $(document).ready(function() {
         var el = '<div id="m-item-'+file.id+'" class="col-sm-2 col-md-2 m-item" data-mpath="'+file.path+file.name+'">'+
             '<div class="custom-control custom-checkbox image-checkbox img-thumb-preview">'+
                 '<input type="checkbox" class="multiple-cbox cbx_s custom-control-input" data-mid="'+file.id+'" id="img_cbx_'+file.id+'">'+
-                '<label class="custom-control-label" for="img_cbx_'+file.id+'">'+
-                    '<img src="'+file.path+file.name+'" alt="#" class="img-fluid">'+
-                '</label>'+
+                '<label class="custom-control-label" for="img_cbx_'+file.id+'">';
+                    // '<img src="'+file.path+file.name+'" alt="#" class="img-fluid">'+
+        
+        if (file.type=='image') {
+            el = el + '<img src="'+file.path+file.name+'" alt="#" class="img-fluid">';
+        } else if (file.type=='video') {
+            el = el + '<div class="ratio ratio-16x9">'+
+                '<iframe src="'+file.path+file.name+'" title="'+file.type+'" allowfullscreen sandbox></iframe>'+
+            '</div>';
+        } else {
+            el = el + '<div id="dsp_nocontent" class="fs-6">This lesson content type is not supported with this applicaiotn</div>';
+        }
+        
+        el = el + '</label>'+
                 '<div class="media-g-txt-container">'+
                     '<p href="#" class="text-truncate fw-normal fs-12 fc-dark mb-0">'+file.name+'</p>'+
                     '<p href="#" class="text-truncate fw-normal fs-10 fc-light mb-0">'+file.createdat+'</p>'+
@@ -240,7 +251,7 @@ $(document).ready(function() {
         paramName: "file", // The name that will be used to transfer the file
         maxFiles: 1,
         maxFilesize: 10, // MB
-        acceptedFiles: ".jpeg,.jpg,.png",
+        acceptedFiles: "image/*,audio/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx",
         addRemoveLinks: true,
         init: function() {
             

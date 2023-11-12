@@ -90,6 +90,7 @@
 <?php } elseif (isset($pageid) && $pageid=='create') { ?>
     <script src="app/modules/courses/script-coursecreate.js"></script>
 <?php } elseif (isset($pageid) && $pageid=='view') { ?>
+    <script src="https://www.paypal.com/sdk/js?client-id=AanW5APaxbE3NwBYRMn9VF5KHr5LOYOWJFuOTtKRsyt3jf4Kw-V1fjobw91Cvv68315ykCu4eX31Dzgg&currency=USD"></script>
     <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
     <script src="app/modules/courses/script-courseview.js"></script>
 <?php } ?> 

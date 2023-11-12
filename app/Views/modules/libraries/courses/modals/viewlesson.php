@@ -12,8 +12,8 @@
             </div>
             <div class="modal-body">
 
-            <div class="d-flex justify-content-center modal-media-container">
-                <img id="dsp_view_lessonmedia" src="" alt="image">
+            <div id="dsp_mediafile" class="d-flex justify-content-center modal-media-container">
+                
             </div>
 
             <div id="dsp_view_lessondescription" data-purpose="safely-set-inner-html:description:description">

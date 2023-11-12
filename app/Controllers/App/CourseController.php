@@ -10,6 +10,8 @@ use App\Controllers\App\AuthController;
 use App\Models\App\CourseModel;
 use App\Models\App\UserModel;
 
+use App\Libraries\Paypal;
+
 class CourseController extends AuthController
 {
 	protected $coursemodel;
@@ -567,6 +569,90 @@ class CourseController extends AuthController
 
 		$response = $this->coursemodel->getCourseLesson([ 'id' => $reqdata->lessonid ]);
 
+		if ( $response->status == 200 ) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'messages'  => '',
+				'data' => $response->data
+			]);
+		} elseif ( $response->status == 402 ) {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'messages'  => $response->messages,
+				'data' => $response->data->paymentinfo
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'messages'  => $response->messages,
+				'data' => []
+			]);
+		}
+
+		return $this->response;
+
+	}
+
+	public function getPreviousLesson()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_view')) {
+			$this->response->setJSON([ 
+				'status' => 403,
+				'redirect' => '',
+				'message'  => "You don't have permission to access"
+			]);
+
+			return $this->response;
+		}
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->coursemodel->getCoursePreviousLesson([ 
+			'courseid' => $reqdata->courseid, 
+			'currentid' => $reqdata->currentid 
+		]);
+
+		if ($response->status == 200 ) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'messages'  => '',
+				'data' => $response->data
+			]);
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'messages'  => $response->messages
+			]);
+		}
+
+		return $this->response;
+
+	}
+
+	public function getNextLesson()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_view')) {
+			$this->response->setJSON([ 
+				'status' => 403,
+				'redirect' => '',
+				'message'  => "You don't have permission to access"
+			]);
+
+			return $this->response;
+		}
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->coursemodel->getCourseNextLesson([ 
+			'courseid' => $reqdata->courseid, 
+			'currentid' => $reqdata->currentid 
+		]);
+
 		if ($response->status == 200 ) {
 			$this->response->setJSON([ 
 				'status' => 200,
@@ -986,19 +1072,101 @@ class CourseController extends AuthController
 				'data' => $response->data
 			]);
 
+		} elseif ( $response->status == 402 ) {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'messages'  => $response->messages,
+				'data' => $response->data->paymentinfo
+			]);
 		} else {
-			$data = [];
-			if (isset($response->data)) { $data = $response->data; }
 			$this->response->setJSON([ 
 				'status' => $response->status,
 				'redirect' => '',
 				'message'  => $response->messages,
-				'data' => $data
+				'data' => []
 			]);
 		}
 
         return $this->response;
 
+	}
+
+	public function createPaymentOrder() {
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+	
+		$data = [
+			"intent" => "CAPTURE",
+			"purchase_units" => [
+				[
+					"amount" => [
+						"currency_code" => $reqdata->currency,
+						"value" => $reqdata->amount
+					]
+				]
+			]
+		];
+
+		$this->response->setJSON(Paypal::createOrder($data));
+
+
+		return $this->response;
+	}
+
+	public function capturePaymentOrder() {
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$order = Paypal::captureOrder($reqdata->id);
+
+		
+
+		$jOrder = json_decode(json_encode($order));
+
+		if ($jOrder->status=='COMPLETED') {
+			
+			$capture = $jOrder->purchase_units[0]->payments->captures[0];
+			
+			$payment = [
+				'courseid'=> $reqdata->courseid,
+                'subscriptionid' => 0,
+                'orderreference' => $jOrder->id,
+                'amount' => $capture->amount->value,
+                'currency'=> $capture->amount->currency_code,
+                'method' => 'paypal',
+                'paidon' => $capture->create_time,
+                'payerid' => $jOrder->payer->payer_id,
+                'payername' => $jOrder->payer->name->given_name.' '.$jOrder->payer->name->surname,
+                'payeremail' => $jOrder->payer->email_address,
+                'payeraddress' => $jOrder->payer->address->country_code,
+                'status' => $jOrder->status
+			];
+
+			$this->coursemodel->createCoursePayment($payment);
+		}
+
+		$this->response->setJSON($order);
+
+		return $this->response;
 	}
 
 }

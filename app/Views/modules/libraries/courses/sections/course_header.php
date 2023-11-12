@@ -4,6 +4,10 @@
 <?php if (isset($permissions->course_update) && $permissions->course_update) : ?>
     <div class="card-topbar border-0 pt-5 d-flex justify-content-end">
         <button id="btn_openModalEditCourse" type="button" class="form-action-btn" tabindex="-1">Edit Course</button>
+        
+        <?php if (isset($permissions->course_update_settings) && $permissions->course_update_settings) : ?>
+        <button id="btn_openModalEditCourseSettings" type="button" class="form-action-btn" tabindex="-1">Settings</button>
+        <?php endif; ?>	
     </div>
 <?php endif; ?>		
 

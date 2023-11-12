@@ -88,8 +88,8 @@ abstract class BaseController extends Controller
 		$input = $this->validate([
 			'file' => [
 				'uploaded[file]',
-				'mime_in[file,image/jpg,image/jpeg,image/png]',
-				'max_size[file,1024]',
+				//'mime_in[file,image/jpg,image/jpeg,image/png]',
+				'max_size[file,10000]',
 			]
 		]);
 
@@ -100,7 +100,7 @@ abstract class BaseController extends Controller
 
 			$filename = $file->getRandomName();
 			$filepath = WRITEPATH . 'uploads/temp';
-			$filetype = $file->getMimeType();
+			$filetype = explode('/', $file->getMimeType())[0];
 			$filesize = $file->getSizeByUnit('mb');
 			$fileextn = $file->guessExtension();
 

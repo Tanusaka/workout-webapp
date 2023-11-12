@@ -4,7 +4,7 @@ let baseurl = $("#baseurl").attr('href');
 
 $(document).ready(function() {
 
-    $.fn.showException = function(message) {
+    $.fn.showException = function(message, reload=true) {
         Swal.fire({
             text: message,
             icon: "error",
@@ -14,11 +14,13 @@ $(document).ready(function() {
                 confirmButton: "btn btn-primary"
             }
         }).then(function() {                            
+            if (reload) {
             location.reload(true);
+            }  
         });
     }
 
-    $.fn.showErrorMessage = function(message) {
+    $.fn.showErrorMessage = function(message, reload=true) {
         Swal.fire({
             text: message,
             icon: "error",
@@ -27,12 +29,14 @@ $(document).ready(function() {
             customClass: {
                 confirmButton: "btn btn-primary"
             }
-        }).then(function() {                            
+        }).then(function() {       
+            if (reload) {
             location.reload(true);
+            }                     
         });
     }
 
-    $.fn.showWarningMessage = function(message) {
+    $.fn.showWarningMessage = function(message, reload=true) {
         Swal.fire({
             text: message,
             icon: "warning",
@@ -42,7 +46,9 @@ $(document).ready(function() {
                 confirmButton: "btn btn-primary"
             }
         }).then(function() {                            
+            if (reload) {
             location.reload(true);
+            }  
         });
     }
 

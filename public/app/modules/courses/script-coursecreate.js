@@ -173,7 +173,7 @@ $(document).ready(function() {
         paramName: "file", // The name that will be used to transfer the file
         maxFiles: 1,
         maxFilesize: 10, // MB
-        acceptedFiles: ".jpeg,.jpg,.png",
+        acceptedFiles: "image/*",
         addRemoveLinks: true,
         init: function() {
             

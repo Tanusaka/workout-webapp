@@ -59,6 +59,8 @@ $routes->get('/libraries/courses/view/(:num)', 'App\CourseController::view/$1');
 $routes->post('/libraries/courses/get/course', 'App\CourseController::getCourse');
 $routes->post('/libraries/courses/get/section', 'App\CourseController::getSection');
 $routes->post('/libraries/courses/get/lesson', 'App\CourseController::getLesson');
+$routes->post('/libraries/courses/get/lesson/previous', 'App\CourseController::getPreviousLesson');
+$routes->post('/libraries/courses/get/lesson/next', 'App\CourseController::getNextLesson');
 $routes->post('/libraries/courses/get/instructors', 'App\CourseController::getCourseInstructors');
 
 $routes->post('/libraries/courses/save/course', 'App\CourseController::saveCourse');
@@ -84,6 +86,10 @@ $routes->post('/libraries/courses/save/enrollment', 'App\CourseController::saveC
 $routes->post('/libraries/courses/delete/enrollment', 'App\CourseController::deleteCourseEnrollment');
 $routes->post('/libraries/courses/accept/enrollment', 'App\CourseController::acceptEnrollment');
 
+
+$routes->post('/libraries/courses/payment/create/order', 'App\CourseController::createPaymentOrder');
+$routes->post('/libraries/courses/payment/capture/order', 'App\CourseController::capturePaymentOrder');
+
 // $routes->post('/libraries/courses/reviews/save', 'App\CourseController::save_review');
 // $routes->post('/libraries/courses/reviews/delete', 'App\CourseController::delete_review');
 
@@ -92,10 +98,14 @@ $routes->post('/libraries/courses/accept/enrollment', 'App\CourseController::acc
  * Chat Management Routes
  * --------------------------------------------------------------------
  */
-
 $routes->get('/apps/chats', 'App\ChatController::index');
-$routes->get('/apps/chats/view/(:num)', 'App\ChatController::view/$1');
-$routes->post('/apps/chats/save', 'App\ChatController::save');
+$routes->post('/apps/chats/get/all', 'App\ChatController::getAllChats');
+$routes->post('/apps/chats/get/chat', 'App\ChatController::getChat');
+$routes->post('/apps/chats/get/chat/personal/connections', 'App\ChatController::getPersonalChatConnections');
+
+$routes->post('/apps/chats/save/chat/personal', 'App\ChatController::savePersonalChat');
+$routes->post('/apps/chats/delete/chat/personal', 'App\ChatController::deletePersonalChat');
+$routes->post('/apps/chats/save/chat/personal/message', 'App\ChatController::savePersonalChatMessage');
 
 
 /*
@@ -138,6 +148,14 @@ $routes->get('/libraries/files', 'App\FileController::index');
 $routes->post('/libraries/files/upload', 'App\FileController::upload');
 $routes->post('/libraries/files/save', 'App\FileController::save');
 $routes->post('/libraries/files/delete', 'App\FileController::delete');
+
+
+// $routes->get('/service/chatserver', 'Core\ChatserverController::index');
+// // $routes->cli('service/chatserver', 'Core\ServerController::index');
+
+// $routes->cli('/tools/message/(:segment)', 'Tools::message/$1');
+
+
 
 /*
  * --------------------------------------------------------------------

@@ -10,10 +10,10 @@ use App\Models\Core\BaseModel;
 class ChatModel extends BaseModel
 {
     #chats
-    public function get($data=[])
+    public function getChats($data=[])
     {
         return json_decode(
-            $this->apiPost('/chats', $data)
+            $this->apiGet('/chats', $data)
         );
     }
 
@@ -24,10 +24,31 @@ class ChatModel extends BaseModel
         );
     }
 
-    public function saveChat($data=[])
+    public function getPersonalChatConnections($data=[])
     {
         return json_decode(
-            $this->apiPost('/chats/save', $data)
+            $this->apiPost('/chats/get/personal/connections', $data)
+        );
+    }
+
+    public function savePersonalChat($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/chats/save/personal', $data)
+        );
+    }
+
+    public function savePersonalChatMessage($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/chats/save/personal/message', $data)
+        );
+    }
+
+    public function deletePersonalChat($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/chats/delete/personal', $data)
         );
     }
 }

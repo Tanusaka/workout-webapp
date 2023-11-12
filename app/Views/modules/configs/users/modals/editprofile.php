@@ -54,7 +54,7 @@
                                         <!--begin::Info-->
                                         <div class="ms-4">
                                             <h4 class="fw-bold text-gray-900 mb-1 fs-14">Drop files here or click to upload.</h4>
-                                            <span class="fw-semibold text-muted">Allowed Formats: jpeg, jpg, png</span>
+                                            <span class="fw-semibold text-muted"></span>
                                         </div>
                                         <!--end::Info-->
                                     </div>
@@ -67,7 +67,9 @@
                                 </div>
                             </div>
                             <div class="col-6">
-                                <p class="align-middle">Upload your course image here. It must meet our course image quality standards to be accepted. Important guidelines: 750x422 pixels; .jpg, .jpeg or .png. no text on the image.</p>
+                                <p class="align-middle"><b>Important guidelines:</b></p>
+                                <p class="align-middle">It must meet our profile image quality standards to be accepted.</p>
+                                <p class="align-middle">Allowed Formats: jpg, jpeg, png, gif</p>
                             </div>
                         </div>
                         

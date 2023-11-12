@@ -44,7 +44,19 @@
             <div class="custom-control custom-checkbox image-checkbox img-thumb-preview">
                 <input type="checkbox" class="multiple-cbox cbx_s custom-control-input" data-mid="<?= $file->id ?>" id="<?= 'img_cbx_'.$file->id ?>">
                 <label class="custom-control-label" for="<?= 'img_cbx_'.$file->id ?>">
-                    <img src="<?=$file->path.$file->name?>" alt="#" class="img-fluid">
+                    
+
+                    <?php if ($file->type=='image') : ?>
+                        <img src="<?=$file->path.$file->name?>" alt="#" class="img-fluid">
+                    <?php elseif ($file->type=='video') : ?>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="<?=$file->path.$file->name?>" title="<?=$file->type?>" allowfullscreen sandbox></iframe>
+                        </div>
+                    <?php else : ?>
+                        <span></span>
+                    <?php endif; ?>
+
+
                 </label>
                 <div class="media-g-txt-container">
                     <p href="#" class="text-truncate fw-normal fs-12 fc-dark mb-0"><?= $file->name ?></p>
