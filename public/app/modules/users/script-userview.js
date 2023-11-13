@@ -191,7 +191,7 @@ $(document).ready(function() {
         // });
 
         //use off to prevent calling the function multiples times on each initialization
-        $(document).off().on('click', '.btn_deleteConnection', function() {
+        $(document).on('click', '.btn_deleteConnection', function() {
             $.fn.openAlertDeleteConnection($(this).data('actionid'));
         });
 
@@ -210,7 +210,7 @@ $(document).ready(function() {
 
     $.fn.resetDataTableConnectionAdd = function(dataset) {
 
-        console.log(dataset);
+        //console.log(dataset);
         $('#connectionadd_DT').DataTable().clear().destroy();
         $('#connectionadd_body').empty();
 
@@ -235,7 +235,6 @@ $(document).ready(function() {
             // toggleToolbars();
         // });
 
-        console.log("XXX");
         //use off to prevent calling the function multiples times on each initialization
         $(document).off().on('click', '.btn_addConnection', function() {
             $.fn.addConnection($(this).data('actionid'));
