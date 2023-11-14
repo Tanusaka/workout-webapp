@@ -2,9 +2,16 @@
 
 $(document).ready(function () {
 
-    var chatadd_DT;
+    var chatadd_DT; var tooltipTriggerList;
 
     //begin:function defenitions
+
+    $.fn.initToolTips = function() {
+        tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    }
 
     $.fn.connectToChatServer = function() {
         var conn = new WebSocket('ws://localhost:8892');
@@ -169,14 +176,33 @@ $(document).ready(function () {
     $.fn.openChatView = function(chat) {
 
         $('#chat_messanger_name').html(chat.name);
+
+        $('#chat_messanger_status').empty();
+        $('#chat_status_'+chat.id).removeClass('bg-success bg-secondary');
+
+        if (chat.active=="1") {
+            $('#chat_status_'+chat.id).addClass('bg-success');
+            $('#chat_messanger_status').append('<span class="badge badge-success badge-circle w-10px h-10px me-1"></span><span class="fs-7 fw-semibold text-muted">Online</span>');
+        } else { 
+            $('#chat_status_'+chat.id).addClass('bg-secondary');
+            $('#chat_messanger_status').append('<span class="badge badge-secondary badge-circle w-10px h-10px me-1"></span><span class="fs-7 fw-semibold text-muted">Offline</span>');
+        }
+        
         $('#btn_openModalChatSettings').data("actionid", chat.id);
         $('#btn_sendMessage').data("actionid", chat.id);
 
         $('#chat_messenger_thread').empty();
 
+        var threadHeight = parseInt($('#chat_messenger_thread').height());
+        console.log(threadHeight);
+
         $.each(chat.messages, function(index, message) {
             $.fn.addChatMessageElement(message);
+            threadHeight = threadHeight + parseInt($('#chat_messenger_thread').height());
         });
+
+
+        $('#chat_messenger_thread').animate({scrollTop: threadHeight});
 
         // //use off to prevent calling the function multiples times on each initialization
         // $(document).off().on('click', '.btn_openchat', function() {
@@ -249,14 +275,24 @@ $(document).ready(function () {
 
             if (datarow.chatimage != null) {   
                 el = el + '<div class="symbol symbol-45px symbol-circle">'+
-                    '<img src="'+datarow.chatimage+'" class="" alt="">'+
-                '</div>';
+                    '<img src="'+datarow.chatimage+'" class="" alt="">';
+                    if (datarow.active=="1") {
+                        el = el + '<div id="chat_status_'+datarow.id+'" class="symbol-badge bg-success start-100 top-100 border-4 h-8px w-8px ms-n2 mt-n2"></div>';
+                    } else {
+                        el = el + '<div id="chat_status_'+datarow.id+'" class="symbol-badge bg-secondary start-100 top-100 border-4 h-8px w-8px ms-n2 mt-n2"></div>';
+                    }
+                el = el + '</div>';
             } else {
                 el = el + '<div class="symbol symbol-45px symbol-circle">'+
                     '<span class="symbol-label bg-light-danger text-danger fs-6 fw-bolder">'+
                     datarow.name.charAt(0).toUpperCase()+
-                    '</span>'+
-                '</div>';
+                    '</span>';
+                    if (datarow.active=="1") {
+                        el = el + '<div id="chat_status_'+datarow.id+'" class="symbol-badge bg-success start-100 top-100 border-4 h-8px w-8px ms-n2 mt-n2"></div>';
+                    } else {
+                        el = el + '<div id="chat_status_'+datarow.id+'" class="symbol-badge bg-secondary start-100 top-100 border-4 h-8px w-8px ms-n2 mt-n2"></div>';
+                    }
+                el = el + '</div>';
             }
 
             el = el + '<div class="ms-5">'+
@@ -265,7 +301,7 @@ $(document).ready(function () {
                 '</div>'+
             '</div>'+
             '<div class="d-flex flex-column align-items-end ms-2">'+
-                '<span class="text-muted fs-7 mb-1">1 week</span>'+
+                '<span class="text-muted fs-7 mb-1"></span>'+
             '</div>'+
         '</div>';
 
@@ -283,6 +319,7 @@ $(document).ready(function () {
     }
 
     $.fn.addChatMessageInElement = function(message) {
+
         var el = '<div class="d-flex justify-content-start mb-10">'+
             '<div class="d-flex flex-column align-items-start">'+
                 '<div class="d-flex align-items-center mb-2">';
@@ -301,10 +338,9 @@ $(document).ready(function () {
                 
         el = el + '<div class="ms-3">'+
                         '<a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">'+message.sendername+'</a>'+
-                        '<span class="text-muted fs-7 mb-1">2 mins</span>'+
                     '</div>'+
                 '</div>'+
-                '<div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start" data-kt-element="message-text">'+message.content+'</div>'+
+                '<div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start">'+message.content+'</div>'+
             '</div>'+
         '</div>';
 
@@ -317,7 +353,6 @@ $(document).ready(function () {
             '<div class="d-flex flex-column align-items-end">'+
                 '<div class="d-flex align-items-center mb-2">'+
                     '<div class="me-3">'+
-                        '<span class="text-muted fs-7 mb-1">5 mins</span>'+
                         '<a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary ms-1">You</a>'+
                     '</div>';
 
@@ -334,7 +369,7 @@ $(document).ready(function () {
         }
        
         el = el + '</div>'+
-                '<div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end" data-kt-element="message-text">'+message.content+'</div>'+
+                '<div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end">'+message.content+'</div>'+
             '</div>'+
         '</div>';
 
@@ -397,5 +432,6 @@ $(document).ready(function () {
     //begin:init functions
     $.fn.connectToChatServer();
     $.fn.refreshChats();
+    $.fn.initToolTips();
     //end:init functions
 });

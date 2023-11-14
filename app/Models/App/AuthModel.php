@@ -16,6 +16,13 @@ class AuthModel extends BaseModel
         );
     }
 
+    public function logout($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/auth/logout', $data)
+        );
+    }
+
     public function getPermissions($data=[])
     {
         return json_decode(

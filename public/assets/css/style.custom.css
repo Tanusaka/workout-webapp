@@ -562,3 +562,11 @@ hr.dashed {
 .fs-18 {
   font-size: 18px!important;
 }
+
+.mx-height-228 {
+  max-height: 228px;
+}
+
+.mx-height-470 {
+  max-height: 470px;
+}
