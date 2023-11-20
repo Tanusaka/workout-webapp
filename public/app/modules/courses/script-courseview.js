@@ -9,38 +9,17 @@ $(document).ready(function() {
     var dz_lessonmedia;
     var dz_editlessonmedia;
 
-    var enrollmentpreview_DT;
+    var enrollments_DT;
     var enrollmentadd_DT;
 
     // //jquery function definitions
-    $.fn.openModalEditCourse = function() { 
-
-        axios.post(baseurl+'libraries/courses/get/course', {
-            courseid: $('#pagedata-container').data('pid')
-        }).then(function (response) {
-
-            if (response.data.status==200) {
-            
-            $.fn.resetFormEditCourse();
-            
-            $('#btn_updateCourse').attr("data-actionid", response.data.data.id);
-            $('#editcoursename').val(response.data.data.coursename);
-            $('#editcourseintro').val(response.data.data.courseintro);
-            $("#editcourselevel").val(response.data.data.courselevel).trigger("change");  
-            $("#editcoursetype").val(response.data.data.coursetype).trigger("change");  
-            $('#editCourseModal').modal('show');
-            
-            } else {
-            $.fn.showErrorMessage(response.data.message);
-            }
-
-        }).catch(function (error) {
-            $.fn.showException(error);
-        });
+    $.fn.openModalEditSettings = function() { 
+        $.fn.refreshSettingsGeneralTab();
+        $('#editSettingsModal').modal('show');
     }
 
-    $.fn.closeModalEditCourse = function() { 
-        $('#editCourseModal').modal('hide');
+    $.fn.closeModalEditSettings = function() { 
+        $('#editSettingsModal').modal('hide');
     }
 
     $.fn.openModalEditDescription = function() { 
@@ -102,28 +81,6 @@ $(document).ready(function() {
         $('#editSectionModal').modal('hide');
     }
 
-    $.fn.openModalDeleteSection = function(sectionid) {
-
-        axios.post(baseurl+'libraries/courses/get/section', {
-            sectionid: sectionid
-        }).then(function (response) {
-
-            if (response.data.status==200) {
-            $('#btn_deleteSection').data("actionid", response.data.data.id);
-            $('#deleteSectionModal').modal('show');
-            } else {
-            $.fn.showErrorMessage(response.data.message);
-            }
-
-        }).catch(function (error) {
-            $.fn.showException(error);
-        });
-    }
-
-    $.fn.closeModalDeleteSection = function() { 
-        $('#deleteSectionModal').modal('hide');
-    }
-
     $.fn.openModalAddLesson = function(sectionid) { 
         $.fn.resetFormAddLesson();
         $('#btn_addLesson').data("actionid", sectionid);
@@ -160,27 +117,6 @@ $(document).ready(function() {
         $('#editLessonModal').modal('hide');
     }
 
-    $.fn.openModalDeleteLesson = function(lessonid) { 
-        axios.post(baseurl+'libraries/courses/get/lesson', {
-            lessonid: lessonid
-        }).then(function (response) {
-
-            if (response.data.status==200) {
-            $('#btn_deleteLesson').data("actionid", response.data.data.id);
-            $('#deleteLessonModal').modal('show');
-            } else {
-            $.fn.showErrorMessage(response.data.message);
-            }
-
-        }).catch(function (error) {
-            $.fn.showException(error);
-        });
-    }
-
-    $.fn.closeModalDeleteLesson = function() { 
-        $('#deleteLessonModal').modal('hide');
-    }
-
     $.fn.openModalViewLesson = function(lessonid) { 
 
         axios.post(baseurl+'libraries/courses/get/lesson', {
@@ -191,7 +127,7 @@ $(document).ready(function() {
             $('#dsp_view_lessonname').text(response.data.data.lessonname);
             $('#dsp_view_lessonduration').html('Duration: '+ response.data.data.lessonduration);
             $('#dsp_view_lessondescription').html(response.data.data.lessondescription);
-            $.fn.addMediaPreiviewElement(response.data.data);
+            $.fn.addMediaPreviewElement(response.data.data);
 
             $('#btn_prevLesson').attr("data-actionid", response.data.data.id);
             $('#btn_nextLesson').attr("data-actionid", response.data.data.id);
@@ -212,52 +148,13 @@ $(document).ready(function() {
         $('#viewLessonModal').modal('hide');
     }
 
-    $.fn.openModalViewEnrollments = function() { 
-
-        axios.post(baseurl+'libraries/courses/get/enrollments', {
-            courseid: $('#pagedata-container').data('pid')
-        }).then(function (response) {
-
-            if (response.data.status==200) {
-
-            $.fn.resetDataTableEnrollmentPreview(response.data.data);
-            $('#viewEnrollmentModal').modal('show');
-            
-            } else {
-            $.fn.showErrorMessage(response.data.message);
-            }
-
-        }).catch(function (error) {
-            $.fn.showException(error);
-        });
+    $.fn.openModalEnrollNow = function() {
+        $.fn.resetFormEnrollNowCoupon();
+        $('#enrollNowModal').modal('show');
     }
 
-    $.fn.closeModalViewEnrollments = function() { 
-        $('#viewEnrollmentModal').modal('hide');
-    }
-
-    $.fn.openModalAddEnrollment = function() { 
-
-        axios.post(baseurl+'libraries/courses/get/users/for/enroll', {
-            courseid: $('#pagedata-container').data('pid')
-        }).then(function (response) {
-
-            if (response.data.status==200) {
-
-            $.fn.resetDataTableEnrollmentAdd(response.data.data);
-            $('#addEnrollmentModal').modal('show');
-            
-            } else {
-            $.fn.showErrorMessage(response.data.message);
-            }
-
-        }).catch(function (error) {
-            $.fn.showException(error);
-        });
-    }
-
-    $.fn.closeModalAddEnrollment = function() { 
-        $('#addEnrollmentModal').modal('hide');
+    $.fn.closeModalEnrollNow = function() { 
+        $('#enrollNowModal').modal('hide');
     }
 
     $.fn.openModalViewPayment = function(data) { 
@@ -363,7 +260,14 @@ $(document).ready(function() {
                     '</div>';
                     // Or go to another URL:  actions.redirect('thank_you.html');
                 });
-            }
+            }, 
+            onCancel(data) {
+                $('#btn_closeModalViewPayment').removeClass('d-none');
+            },
+            onError(err) {
+                // For example, redirect to a specific error page
+                location.reload(true);
+              }
         }).render('#paypal-button-container');
 
         $('#btn_closeModalViewPayment').removeClass('d-none');
@@ -372,7 +276,7 @@ $(document).ready(function() {
     }
 
     $.fn.closeModalViewPayment = function() { 
-        $('#viewPaymentModal').modal('hide');
+        location.reload(true);
     }
 
     $.fn.openModalEditInstructor = function() { 
@@ -421,8 +325,6 @@ $(document).ready(function() {
         $('#editInstructorModal').modal('hide');
     }
     
-    
-
     //begin: course functions
     $.fn.updateCourse = function(id) { 
         axios.post(baseurl+'libraries/courses/update/course', {
@@ -438,6 +340,42 @@ $(document).ready(function() {
             $.fn.showSuccessResponse('COURSE', 'EDIT', response.data);
             } else {
             $.fn.showErrorResponse('COURSE', 'EDIT', response.data);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+    }
+
+    $.fn.generateEnrollmentCouponCode = function() { 
+        axios.post(baseurl+'libraries/courses/generate/enrollment/coupon/code', {
+
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+            $("#enrollcouponcode_er").html('').addClass('d-none'); 
+            $('#enrollcouponcode').val(response.data.data);
+            } else {
+            $("#enrollcouponcode_er").html('Unable to generate the coupon code. Please try again.').removeClass('d-none');
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+    }
+
+    $.fn.updateEnrollmentCouponCode = function() { 
+        axios.post(baseurl+'libraries/courses/update/enrollment/coupon/code', {
+            courseid: $('#pagedata-container').data('pid'),
+            couponcode: $('#enrollcouponcode').val(),
+            maxattempts: $('#enrollmaxattempts').val(),
+            couponstatus: $('#enrollcouponstatus').val(),
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+            $.fn.showSuccessResponse('COURSE_ENROLLMENT', 'UPDATE_COUPON', response.data);
+            } else {
+            $.fn.showErrorResponse('COURSE_ENROLLMENT', 'UPDATE_COUPON', response.data);
             }
 
         }).catch(function (error) {
@@ -478,6 +416,60 @@ $(document).ready(function() {
             $.fn.showException(error);
         });
     }
+
+    $.fn.updateCourseStatus = function(state) { 
+
+        axios.post(baseurl+'libraries/courses/update/course/status', {
+            courseid: $('#pagedata-container').data('pid'),
+            status: state
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+                $('#chnagestatus').prop('checked', state);
+                $.fn.showSuccessMessage(response.data.message, false);
+            } else if (response.data.status==400) { 
+                $('#chnagestatus').prop('checked', !state);
+                $.fn.showWarningMessage(response.data.message, false);
+            } else {
+                $('#chnagestatus').prop('checked', !state);
+                $.fn.showErrorMessage(response.data.message, false);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+    }
+
+    $.fn.deleteCourse = function() { 
+
+        Swal.fire({
+            title: 'Delete Confirmation',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Cofirm'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post(baseurl+'libraries/courses/delete/course', {
+                    courseid: $('#pagedata-container').data('pid'),
+                }).then(function (response) {
+        
+                    if (response.data.status==200) {
+                        $.fn.showSuccessMessage(response.data.message, false, baseurl+'libraries/courses');
+                    } else if (response.data.status==400) { 
+                        $.fn.showWarningMessage(response.data.message, false);
+                    } else {
+                        $.fn.showErrorMessage(response.data.message, false);
+                    }
+        
+                }).catch(function (error) {
+                    $.fn.showException(error);
+                });
+            }
+        });
+    }
     //end: course functions
 
     //begin:section functions
@@ -516,18 +508,30 @@ $(document).ready(function() {
     }
 
     $.fn.deleteSection = function(sectionid) { 
-        axios.post(baseurl+'libraries/courses/delete/section', {
-            sectionid: sectionid,
-        }).then(function (response) {
-
-            if (response.data.status==200) {
-            $.fn.showSuccessResponse('SECTION', 'DELETE', response.data);
-            } else {
-            $.fn.showErrorResponse('SECTION', 'DELETE', response.data);
+        Swal.fire({
+            title: 'Delete Confirmation',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Cofirm'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post(baseurl+'libraries/courses/delete/section', {
+                    sectionid: sectionid,
+                }).then(function (response) {
+        
+                    if (response.data.status==200) {
+                    $.fn.showSuccessResponse('SECTION', 'DELETE', response.data);
+                    } else {
+                    $.fn.showErrorResponse('SECTION', 'DELETE', response.data);
+                    }
+        
+                }).catch(function (error) {
+                    $.fn.showException(error);
+                });
             }
-
-        }).catch(function (error) {
-            $.fn.showException(error);
         });
     }
     //end:section functions
@@ -535,6 +539,7 @@ $(document).ready(function() {
     //begin:lesson functions
     $.fn.addLesson = function(sectionid) { 
         axios.post(baseurl+'libraries/courses/save/lesson', {
+            courseid: $('#pagedata-container').data('pid'),
             sectionid: sectionid,
             lessonname: $('#lessonname').val(),
             lessonduration: $('#lessonduration').val(),
@@ -574,18 +579,30 @@ $(document).ready(function() {
     }
 
     $.fn.deleteLesson = function(lessonid) { 
-        axios.post(baseurl+'libraries/courses/delete/lesson', {
-            lessonid: lessonid,
-        }).then(function (response) {
-
-            if (response.data.status==200) {
-            $.fn.showSuccessResponse('LESSON', 'DELETE', response.data);
-            } else {
-            $.fn.showErrorResponse('LESSON', 'DELETE', response.data);
+        Swal.fire({
+            title: 'Delete Confirmation',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Cofirm'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post(baseurl+'libraries/courses/delete/lesson', {
+                    lessonid: lessonid,
+                }).then(function (response) {
+        
+                    if (response.data.status==200) {
+                    $.fn.showSuccessResponse('LESSON', 'DELETE', response.data);
+                    } else {
+                    $.fn.showErrorResponse('LESSON', 'DELETE', response.data);
+                    }
+        
+                }).catch(function (error) {
+                    $.fn.showException(error);
+                });
             }
-
-        }).catch(function (error) {
-            $.fn.showException(error);
         });
     }
 
@@ -599,7 +616,7 @@ $(document).ready(function() {
             $('#dsp_view_lessonname').text(response.data.data.lessonname);
             $('#dsp_view_lessonduration').html('Duration: '+ response.data.data.lessonduration);
             $('#dsp_view_lessondescription').html(response.data.data.lessondescription);
-            $.fn.addMediaPreiviewElement(response.data.data);
+            $.fn.addMediaPreviewElement(response.data.data);
 
             $('#btn_prevLesson').attr("data-actionid", response.data.data.id);
             $('#btn_nextLesson').attr("data-actionid", response.data.data.id);
@@ -622,7 +639,7 @@ $(document).ready(function() {
             $('#dsp_view_lessonname').text(response.data.data.lessonname);
             $('#dsp_view_lessonduration').html('Duration: '+ response.data.data.lessonduration);
             $('#dsp_view_lessondescription').html(response.data.data.lessondescription);
-            $.fn.addMediaPreiviewElement(response.data.data);
+            $.fn.addMediaPreviewElement(response.data.data);
 
             $('#btn_prevLesson').attr("data-actionid", response.data.data.id);
             $('#btn_nextLesson').attr("data-actionid", response.data.data.id);
@@ -644,7 +661,6 @@ $(document).ready(function() {
         }).then(function (response) {
             if (response.data.status==200) {
             $.fn.showSuccessResponse('COURSE_ENROLLMENT', 'ADD', response.data);
-            $.fn.resetEnrollmentPreviewGroup();
             } else {
             $.fn.showErrorResponse('COURSE_ENROLLMENT', 'ADD', response.data);
             }
@@ -653,13 +669,12 @@ $(document).ready(function() {
         });
     }
 
-    $.fn.deleteEnrollment = function(enrollmentid) {
+    $.fn.deleteEnrollment = function(enrolledid) {
         axios.post(baseurl+'libraries/courses/delete/enrollment', {
-            enrollmentid: enrollmentid,
+            enrollmentid: enrolledid,
         }).then(function (response) {
             if (response.data.status==200) {
             $.fn.showSuccessResponse('COURSE_ENROLLMENT', 'DELETE', response.data);
-            $.fn.resetEnrollmentPreviewGroup();
             } else {
             $.fn.showErrorResponse('COURSE_ENROLLMENT', 'DELETE', response.data);
             }
@@ -668,50 +683,102 @@ $(document).ready(function() {
         });
     }
 
-    $.fn.resetEnrollmentPreviewGroup = function() {
-        axios.post(baseurl+'libraries/courses/reset/enrollments', {
-            courseid: $('#pagedata-container').data('pid'),
-        }).then(function (response) {
-            if (response.data.status==200) {
-
-                $('#enrollmentpreview_group').empty();
-                if (response.data.data.length > 0) {
-                    $.each(response.data.data, function(index, datarow) {
-                        $.fn.addEnrollmentPreiviewGroupElement(datarow);
-                    });
-                    $('#enrollmentpreview_group').append('<span id="btn_openModalViewEnrollments" ' +
-                    'class="symbol-label fs-12 mt-2 text-wrap btn-link">&nbsp;&nbsp;View All...</span>');
-                    
-                    $(document).on('click', '#btn_openModalViewEnrollments', function() {
-                        $.fn.openModalViewEnrollments();
-                    });
-                } else {
-                    $('#enrollmentpreview_group').append('<span ' +
-                    'class="symbol-label fs-12 mt-2 text-wrap btn-link">No data available in enrollments</span>');
-                }
-                
-            } 
-        }).catch(function (error) {
-            $.fn.showException(error);
-        });
-    }
-
-    $.fn.enrollNow = function(enrollmentid) {
+    $.fn.enrollNow = function() {
         axios.post(baseurl+'libraries/courses/accept/enrollment', {
-            enrollmentid: enrollmentid,
+            courseid: $('#pagedata-container').data('pid'),
+            couponcode: $('#enrollnowcouponcode').val(),
         }).then(function (response) {
             if (response.data.status==200) {
                 location.reload(true);
             } else if (response.data.status==402) {
+                $('#course_enrollments').empty();
+                $.fn.closeModalEnrollNow();
                 $.fn.openModalViewPayment(response.data.data);
             } else {
-                $.fn.showErrorMessage(response.data.message);
+                $.fn.showErrorResponse('COURSE_ENROLLMENT', 'ACCEPT_COUPON', response.data);
             }
         }).catch(function (error) {
             $.fn.showException(error);
         });
     }
     // end:enrollment functions
+
+    //begin:tab functions
+    $.fn.refreshSettingsGeneralTab = function() { 
+
+        axios.post(baseurl+'libraries/courses/get/course', {
+            courseid: $('#pagedata-container').data('pid')
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+            
+            $.fn.resetFormEditCourse();
+            
+            $('#btn_updateCourse').attr("data-actionid", response.data.data.id);
+            $('#editcoursename').val(response.data.data.coursename);
+            $('#editcourseintro').val(response.data.data.courseintro);
+            $("#editcourselevel").val(response.data.data.courselevel).trigger("change");  
+            $("#editcoursetype").val(response.data.data.coursetype).trigger("change");  
+            $.fn.showTabContent('settingsGeneral');
+            
+            } else {
+            $.fn.showErrorMessage(response.data.message);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+
+    }
+
+    $.fn.refreshSettingsEnrollmentsTab = function() { 
+
+        axios.post(baseurl+'libraries/courses/get/enrollments', {
+            courseid: $('#pagedata-container').data('pid')
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+
+            $.fn.resetFormEditEnrollmentCoupon(response.data.data.coupon);
+            $.fn.resetDataTableEnrollments(response.data.data.enrollments);
+            $.fn.showTabContent('settingsEnrollments');
+            
+            } else {
+            $.fn.showErrorMessage(response.data.message);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+    }
+
+    $.fn.refreshSettingsPaymentsTab = function() { 
+
+        $.fn.showTabContent('settingsPayments');
+
+    }
+
+
+    $.fn.showTabContent = function(id) {
+        $('.tab-link').each(function(i, obj) {
+        if ( $(this).is(".active") ) {
+        $(this).removeClass("active");
+        }
+        });
+
+        $('.tab-pane').each(function(i, obj) {
+        if ( $(this).is(".active.show") ) {
+        $(this).removeClass("active show");
+        }
+        });
+
+        $('#tab_content').animate({ scrollTop: 0 }, 'fast');
+
+        $("#tabbtn_"+id).addClass("active");
+        $("#tabcontent_"+id).addClass("active show");
+    }
+    //end:tab functions
+
 
     //begin:set response functions
     $.fn.showSuccessResponse = function(component, event, response) {
@@ -721,8 +788,8 @@ $(document).ready(function() {
                 $('#dsp_coursename').html(response.data.course.coursename);
                 $('#dsp_courseintro').html(response.data.course.courseintro);
                 $('#dsp_couseimage').attr("src", response.data.course.courseimage);
-                $.fn.closeModalEditCourse();
-                $.fn.showPageAlert('success', response.message);
+                $.fn.resetFormEditCourse();
+                $.fn.showModalAlert('editsettings', 'success', response.message);
             } else if (event=='EDIT_DESCRIPTION') {
                 $('#dsp_coursedescription').html(response.data.course.coursedescription);
                 $.fn.closeModalEditDescription();
@@ -735,7 +802,7 @@ $(document).ready(function() {
                     $('#dsp_instructoremail').html(instructor.email);
 
                     if (instructor.profileimage == null) {
-                        $('#dsp_instructorthumb').attr("src", "/avatar.png");
+                        $('#dsp_instructorthumb').attr("src", "assets/images/avatar.png");
                     } else {
                         $('#dsp_instructorthumb').attr("src", ""+instructor.profileimage);
                     }
@@ -761,7 +828,6 @@ $(document).ready(function() {
                 $.fn.showPageAlert('success', response.message);
             } else if (event=='DELETE') {
                 $.fn.removeSectionElement(response.data.section);
-                $.fn.closeModalDeleteSection();
                 $.fn.showPageAlert('success', response.message);
             }
         } else if (component=='LESSON') {
@@ -776,17 +842,16 @@ $(document).ready(function() {
                 $.fn.showPageAlert('success', response.message);
             } else if (event=='DELETE') {
                 $.fn.removeLessonElement(response.data.lesson);
-                $.fn.closeModalDeleteLesson();
                 $.fn.showPageAlert('success', response.message);
             }
         } else if (component=='COURSE_ENROLLMENT') {
             if (event=='ADD') {
-                $.fn.resetDataTableEnrollmentAdd(response.data);
-                $.fn.showModalAlert('addenrollment', 'success', response.message);
+                $.fn.resetDataTableEnrollments(response.data);
             } else if (event=='DELETE') {
-                $.fn.resetDataTableEnrollmentPreview(response.data);
-                $.fn.showModalAlert('previewenrollment', 'success', response.message);
-            }
+                $.fn.resetDataTableEnrollments(response.data);
+            } else if (event=='UPDATE_COUPON') {
+                $.fn.showModalAlert('editsettings', 'success', response.message);
+            } 
         }
         
     }
@@ -847,7 +912,6 @@ $(document).ready(function() {
                 $("#editsectionname_er").html(response.message['sectionname']).removeClass('d-none');
                 } 
             } else if (event=='DELETE') {
-                $.fn.closeModalDeleteSection();
                 $.fn.showPageAlert('danger', response.message);
             }
         } else if (component=='LESSON') {
@@ -888,16 +952,35 @@ $(document).ready(function() {
                 $("#editlessonmedia_er").html(response.message['lessonmediaid']).removeClass('d-none');
                 } 
             } else if (event=='DELETE') {
-                $.fn.closeModalDeleteLesson();
                 $.fn.showPageAlert('danger', response.message);
             }
         } else if (component=='COURSE_ENROLLMENT') {
             if (event=='ADD') {
-                $.fn.showModalAlert('addenrollment', 'danger', response.message);
+                $.fn.showModalAlert('editsettings', 'danger', response.message);
             } else if (event=='DELETE') {
-                $.fn.showModalAlert('previewenrollment', 'danger', response.message);
-            }
-        }
+                $.fn.showModalAlert('editsettings', 'danger', response.message);
+            } else if (event=='UPDATE_COUPON') {
+                $.fn.resetFormErrorsEditEnrollmentCoupon();
+                if (typeof(response.message['couponcode']) != "undefined" && 
+                response.message['couponcode'] !== null) {
+                    $("#enrollcouponcode_er").html(response.message['couponcode']).removeClass('d-none');
+                }
+                if (typeof(response.message['maxattempts']) != "undefined" && 
+                response.message['maxattempts'] !== null) {
+                    $("#enrollmaxattempts_er").html(response.message['maxattempts']).removeClass('d-none');
+                }
+                if (typeof(response.message['couponstatus']) != "undefined" && 
+                response.message['couponstatus'] !== null) {
+                    $("#enrollcouponstatus_er").html(response.message['couponstatus']).removeClass('d-none');
+                }
+            } else if (event=='ACCEPT_COUPON') {
+                $.fn.resetFormErrorsEnrollNowCoupon();
+                if (typeof(response.message['couponcode']) != "undefined" && 
+                response.message['couponcode'] !== null) {
+                    $("#enrollnowcouponcode_er").html(response.message['couponcode']).removeClass('d-none');
+                }
+            } 
+        } 
         
     }
     //end:set response functions
@@ -916,6 +999,26 @@ $(document).ready(function() {
 
         dz_editcourseimage.files = [];
         //to reset dropzone after adding files
+    }
+
+    $.fn.resetFormEditEnrollmentCoupon = function(data) {
+        
+        if (typeof(data) != "undefined" && data !== null) {
+            $('#enrollcouponcode').val(data.couponcode);
+            $('#enrollmaxattempts').val(data.maxattempts);
+            $("#enrollcouponstatus").val(data.status).trigger("change"); 
+        } else {
+            $('#enrollcouponcode').val('');
+            $('#enrollmaxattempts').val('');
+            $("#enrollcouponstatus").val('').trigger("change"); 
+        }
+
+        $.fn.resetFormErrorsEditEnrollmentCoupon();
+    }
+
+    $.fn.resetFormEnrollNowCoupon = function() {
+        $('#enrollnowcouponcode').val('');
+        $.fn.resetFormErrorsEnrollNowCoupon();
     }
 
     $.fn.resetFormEditCourseDescription = function() {
@@ -983,6 +1086,16 @@ $(document).ready(function() {
         $("#editcourseimage_er").html('').addClass('d-none');  
     }
 
+    $.fn.resetFormErrorsEditEnrollmentCoupon = function() {
+        $("#enrollcouponcode_er").html('').addClass('d-none'); 
+        $("#enrollmaxattempts_er").html('').addClass('d-none');  
+        $("#enrollcouponstatus_er").html('').addClass('d-none');  
+    }
+
+    $.fn.resetFormErrorsEnrollNowCoupon = function() {
+        $("#enrollnowcouponcode_er").html('').addClass('d-none');
+    }
+
     $.fn.resetFormErrorsEditCourseDescription = function() {
         $("#editdescription_er").html('').addClass('d-none');  
     }
@@ -1015,19 +1128,18 @@ $(document).ready(function() {
     //end:reset form error functions
 
     //begin:reset datatable functions
-    $.fn.resetDataTableEnrollmentAdd = function(dataset) {
+    $.fn.resetDataTableEnrollments = function(dataset) {
 
-
-        $('#enrollmentadd_DT').DataTable().clear().destroy();
-        $('#enrollmentadd_body').empty();
+        $('#enrollments_DT').DataTable().clear().destroy();
+        $('#enrollments_body').empty();
 
         $.each(dataset, function(index, datarow) {
-            $.fn.addEnrollmentUserElement(datarow);
+            $.fn.addEnrollmentElement(datarow);
         });
 
-        $('#enrollmentadd_DT_search').val('');
+        $('#enrollments_DT_search').val('');
 
-        enrollmentadd_DT = $('#enrollmentadd_DT').DataTable({
+        enrollments_DT = $('#enrollments_DT').DataTable({
             "info": false,
             'order': [],
             "pageLength": 10,
@@ -1035,46 +1147,18 @@ $(document).ready(function() {
             'columnDefs': [],
             "destroy": true,
         });
-        // enrollmentadd_DT.on('draw', function () {
+        // enrollments_DT.on('draw', function () {
             // initToggleToolbar();
             // handleDeleteRows();
             // toggleToolbars();
         // });
 
-        //use off to prevent calling the function multiples times on each initialization
-        $(document).off().on('click', '.btn_addEnrollment', function() {
+        //attach click event to buttons
+        $(".btn_addEnrollment").on("click", function() {
             $.fn.addEnrollment($(this).data('userid'));
         });
-        
-    }
 
-    $.fn.resetDataTableEnrollmentPreview = function(dataset) {
-
-        $('#enrollmentpreview_DT').DataTable().clear().destroy();
-        $('#enrollmentpreview_body').empty();
-
-        $.each(dataset, function(index, datarow) {
-            $.fn.addEnrollmentPreiviewElement(datarow);
-        });
-
-        $('#enrollmentpreview_DT_search').val('');
-
-        enrollmentpreview_DT = $('#enrollmentpreview_DT').DataTable({
-            "info": false,
-            'order': [],
-            "pageLength": 10,
-            "lengthChange": false,
-            'columnDefs': [],
-            "destroy": true,
-        });
-        // enrollmentpreview_DT.on('draw', function () {
-            // initToggleToolbar();
-            // handleDeleteRows();
-            // toggleToolbars();
-        // });
-
-        //use off to prevent calling the function multiples times on each initialization
-        $(document).off().on('click', '.btn_deleteEnrollment', function() {
+        $(".btn_deleteEnrollment").on("click", function() {
             $.fn.deleteEnrollment($(this).data('enrollmentid'));
         });
 
@@ -1092,18 +1176,18 @@ $(document).ready(function() {
         '</h2>'+
         '<div id="section_panel_collapse_'+section.id+'" class="accordion-collapse collapse show" aria-labelledby="section_panel_'+section.id+'">'+
             
-            '<div class="card-header border-0 pt-0">'+
+            '<div class="card-header border-0">'+
                 '<h3 class="card-title align-items-start flex-column"></h3>'+
                 '<div class="card-toolbar">'+
                     '<button data-sectionid="'+section.id+'" type="button" class="btn_openModalAddLesson form-action-btn justify-content-end" tabindex="-1">Add Lesson</button>'+
                     '<button data-sectionid="'+section.id+'" type="button" class="btn_openModalEditSection form-action-btn justify-content-end" tabindex="-1">Edit Section</button>'+
-                    '<button data-sectionid="'+section.id+'" type="button" class="btn_openModalDeleteSection form-action-btn justify-content-end" tabindex="-1">Delete Section</button>'+
+                    '<button data-sectionid="'+section.id+'" type="button" class="btn_deleteSection form-action-btn justify-content-end" tabindex="-1">Delete Section</button>'+
                 '</div>'+
             '</div>'+
     
             
             '<div class="accordion-body">'+
-                '<ul id="lesson_group'+section.id+'" class="list-group" data-sectionid="'+section.id+'">'+
+                '<ul id="lesson_group_'+section.id+'" class="list-group" data-sectionid="'+section.id+'">'+
                     
                 '</ul>'+
             '</div>'+
@@ -1120,14 +1204,14 @@ $(document).ready(function() {
             $.fn.openModalEditSection($(this).data('sectionid'));
         });
 
-        $(document).on('click', '.btn_openModalDeleteSection', function() {
-            $.fn.openModalDeleteSection($(this).data('sectionid'));
+        $(document).on('click', '.btn_deleteSection', function() {
+            $.fn.deleteSection($(this).data('sectionid'));
         });
 
     }
 
     $.fn.addLessonElement = function(lesson) {
-        
+
         var el = '<li id="lesson_item_'+lesson.id+'" class="list-group-item" data-lessonid="'+lesson.id+'">'+
         
         '<div class="d-flex bd-highlight">'+
@@ -1157,13 +1241,11 @@ $(document).ready(function() {
 
         '<div class="d-flex justify-content-end bd-highlight mb-3">'+
             '<div><a data-lessonid="'+lesson.id+'" class="btn_openModalEditLesson profile-action-btn">Edit</a></div>'+
-            '<div><a data-lessonid="'+lesson.id+'" class="btn_openModalDeleteLesson profile-action-btn">Delete</a></div>'+
+            '<div><a data-lessonid="'+lesson.id+'" class="btn_deleteLesson profile-action-btn">Delete</a></div>'+
         '</div>'+
 
-
-
-        '</li>'+
-        '<div id="lesson_separator_'+lesson.id+'" class="separator separator-dashed col-md-12 my-5"></div>';
+        '</li>';
+        
 
         $('#lesson_group_'+lesson.sectionid).append(el);
 
@@ -1175,90 +1257,49 @@ $(document).ready(function() {
             $.fn.openModalEditLesson($(this).data('lessonid'));
         });
 
-        $(document).on('click', '.btn_openModalDeleteLesson', function() {
-            $.fn.openModalDeleteLesson($(this).data('lessonid'));
+        $(document).on('click', '.btn_deleteLesson', function() {
+            $.fn.deleteLesson($(this).data('lessonid'));
         });
 
     }
 
-    $.fn.addEnrollmentUserElement = function(datarow) {
+    $.fn.addEnrollmentElement = function(datarow) {
 
-        var el = '<tr id="dt_enrolleuser_row_'+datarow.id+'" class="odd">'+
+        var el = '<tr id="dt_enrollment_row_'+datarow.id+'" class="odd">'+
         '<td class="d-flex align-items-center">'+
             '<div class="symbol symbol-circle symbol-25px overflow-hidden me-3">';
+
+        if (datarow.profileimage != null) {   
+            el = el + '<div class="symbol-label">'+
+                '<img src="'+datarow.profileimage+'" class="" alt="">'+
+            '</div>';
+        } else {
+            el = el +' <div class="symbol-label fs-14 bg-light-danger text-danger">'+
+                datarow.firstname.charAt(0).toUpperCase()+
+            '</div>';
+        }
+
+        el = el + '</div>'+
+            '<div class="d-flex flex-column">'+
+                '<a href="" class="text-gray-800 text-hover-primary mb-1 fs-14">'+datarow.firstname+' '+datarow.lastname+'</a>'+
+                '<span class="fs-12">'+datarow.rolename+'</span>'+
+            '</div>'+
+        '</td>'+
+        '<td class="text-end">';
+
+        if (datarow.enrolled=="1") {
+            el = el + '<span>Enrolled On: '+datarow.enrolleddate+'</span> <button data-enrollmentid="'+datarow.enrolledid+'" type="button" class="btn_deleteEnrollment btn-close" aria-label="Close"></button>';
+        } else {
+            el = el + '<button data-userid="'+datarow.id+'" type="button" class="btn_addEnrollment form-action-btn justify-content-end" tabindex="-1">Add Enrollment</button>';
+        }
         
-
-        if (datarow.profileimage != null) {   
-            el = el + '<div class="symbol-label">'+
-                '<img src="'+datarow.profileimage+'" class="" alt="">'+
-            '</div>';
-        } else {
-            el = el +' <div class="symbol-label fs-14 bg-light-danger text-danger">'+
-                datarow.firstname.charAt(0).toUpperCase()+
-            '</div>';
-        }
-
-
-        el = el + '</div>'+
-            '<div class="d-flex flex-column">'+
-                '<a href="" class="text-gray-800 text-hover-primary mb-1 fs-14">'+datarow.firstname+' '+datarow.lastname+'</a>'+
-                '<span class="fs-12">'+datarow.rolename+'</span>'+
-            '</div>'+
-        '</td>'+
-        '<td>'+
-        '<button data-userid="'+datarow.id+'" type="button" class="btn_addEnrollment form-action-btn justify-content-end" tabindex="-1">Add Enrollment</button>'+
-        '</td>'+
+        el = el + '</td>'+
         '</tr>';
 
-        $('#enrollmentadd_body').append(el);
+        $('#enrollments_body').append(el);
     }
 
-    $.fn.addEnrollmentPreiviewElement = function(datarow) {
-        var el = '<tr id="dt_enrollmentpreview_row_'+datarow.id+'" class="odd">'+
-        '<td class="d-flex align-items-center">'+
-            '<div class="symbol symbol-circle symbol-25px overflow-hidden me-3">';
-
-        if (datarow.profileimage != null) {   
-            el = el + '<div class="symbol-label">'+
-                '<img src="'+datarow.profileimage+'" class="" alt="">'+
-            '</div>';
-        } else {
-            el = el +' <div class="symbol-label fs-14 bg-light-danger text-danger">'+
-                datarow.firstname.charAt(0).toUpperCase()+
-            '</div>';
-        }
-
-        el = el + '</div>'+
-            '<div class="d-flex flex-column">'+
-                '<a href="" class="text-gray-800 text-hover-primary mb-1 fs-14">'+datarow.firstname+' '+datarow.lastname+'</a>'+
-                '<span class="fs-12">'+datarow.rolename+'</span>'+
-            '</div>'+
-        '</td>'+
-        '<td>'+
-        '<button data-enrollmentid="'+datarow.id+'" type="button" class="btn_deleteEnrollment form-action-btn justify-content-end" tabindex="-1">Delete Enrollment</button>'+
-        '</td>'+
-        '</tr>';
-
-        $('#enrollmentpreview_body').append(el);
-    }
-
-    $.fn.addEnrollmentPreiviewGroupElement = function(datarow) {
-        var el = '';
-
-        if (datarow.profileimage != null) {   
-            el = el + '<div class="symbol symbol-35px symbol-circle mt-2" data-bs-toggle="tooltip" aria-label="'+datarow.firstname+' '+datarow.lastname+'" data-bs-original-title="'+datarow.firstname+' '+datarow.lastname+'">'+
-                '<img src="'+datarow.profileimage+'" class="" alt="">'+
-            '</div>';
-        } else {
-            el = el + '<div class="symbol symbol-35px symbol-circle mt-2" data-bs-toggle="tooltip" aria-label="'+datarow.firstname+' '+datarow.lastname+'" data-bs-original-title="'+datarow.firstname+' '+datarow.lastname+'">'+
-                '<span class="symbol-label bg-primary text-inverse-primary fw-bold">'+datarow.firstname.charAt(0).toUpperCase()+'</span>'+
-            '</div>';
-        }
-
-        $('#enrollmentpreview_group').append(el);
-    }
-
-    $.fn.addMediaPreiviewElement = function(data) {
+    $.fn.addMediaPreviewElement = function(data) {
 
         var el = '';
 
@@ -1289,12 +1330,12 @@ $(document).ready(function() {
     //end:element functions
 
     // //jquery event triggers
-    $('#btn_openModalEditCourse').click(function() {
-        $.fn.openModalEditCourse();
+    $('#btn_openModalEditSettings').click(function() {
+        $.fn.openModalEditSettings();
     });
 
-    $('#btn_closeModalEditCourse').click(function() {
-        $.fn.closeModalEditCourse();
+    $('#btn_closeModalEditSettings').click(function() {
+        $.fn.closeModalEditSettings();
     });
 
     $('#btn_openModalEditDescription').click(function() {
@@ -1321,14 +1362,6 @@ $(document).ready(function() {
         $.fn.closeModalEditSection();
     });
 
-    $('.btn_openModalDeleteSection').click(function() {
-        $.fn.openModalDeleteSection($(this).data('sectionid'));
-    });
-
-    $('.btn_closeModalDeleteSection').click(function() {
-        $.fn.closeModalDeleteSection();
-    });
-
     $('.btn_openModalAddLesson').click(function() {
         $.fn.openModalAddLesson($(this).data('sectionid'));
     });
@@ -1345,36 +1378,12 @@ $(document).ready(function() {
         $.fn.closeModalEditLesson();
     });
 
-    $('.btn_openModalDeleteLesson').click(function() {
-        $.fn.openModalDeleteLesson($(this).data('lessonid'));
-    });
-
-    $('.btn_closeModalDeleteLesson').click(function() {
-        $.fn.closeModalDeleteLesson();
-    });
-
     $('.btn_openModalViewLesson').click(function() {
         $.fn.openModalViewLesson($(this).data('lessonid'));
     });
 
     $('#btn_closeModalViewLesson').click(function() {
         $.fn.closeModalViewLesson();
-    });
-
-    $('#btn_openModalViewEnrollments').click(function() {
-        $.fn.openModalViewEnrollments();
-    });
-
-    $('#btn_closeModalViewEnrollment').click(function() {
-        $.fn.closeModalViewEnrollments();
-    });
-
-    $('#btn_openModalAddEnrollment').click(function() {
-        $.fn.openModalAddEnrollment();
-    });
-
-    $('#btn_closeModalAddEnrollment').click(function() {
-        $.fn.closeModalAddEnrollment();
     });
 
     $('#btn_closeModalViewPayment').click(function() {
@@ -1388,12 +1397,39 @@ $(document).ready(function() {
     $('#btn_closeModalEditInstructor').click(function() {
         $.fn.closeModalEditInstructor();
     });
+
+    $('#btn_openModalEnrollNow').click(function() {
+        $.fn.openModalEnrollNow();
+    });
+
+    $('#btn_closeModalEnrollNow').click(function() {
+        $.fn.closeModalEnrollNow();
+    });
     
+    $('#tabbtn_settingsGeneral').click(function() {
+        $.fn.refreshSettingsGeneralTab();
+    });
+
+    $('#tabbtn_settingsEnrollments').click(function() {
+        $.fn.refreshSettingsEnrollmentsTab();
+    });
+
+    $('#tabbtn_settingsPayments').click(function() {
+        $.fn.refreshSettingsPaymentsTab();
+    });
 
 
 
     $('#btn_updateCourse').click(function() {
         $.fn.updateCourse($(this).data('actionid'));
+    });
+
+    $('#btn_generateEnrollmentCouponCode').click(function() {
+        $.fn.generateEnrollmentCouponCode();
+    });
+
+    $('#btn_updateEnrollmentCouponCode').click(function() {
+        $.fn.updateEnrollmentCouponCode();
     });
 
     $('#btn_updateDescription').click(function() {
@@ -1412,8 +1448,8 @@ $(document).ready(function() {
         $.fn.updateSection($(this).data('actionid'));
     });
 
-    $('#btn_deleteSection').click(function() {
-        $.fn.deleteSection($(this).data('actionid'));
+    $('.btn_deleteSection').click(function() {
+        $.fn.deleteSection($(this).data('sectionid'));
     });
 
     $('#btn_addLesson').click(function() {
@@ -1424,22 +1460,25 @@ $(document).ready(function() {
         $.fn.updateLesson($(this).data('actionid'));
     });
 
-    $('#btn_deleteLesson').click(function() {
-        $.fn.deleteLesson($(this).data('actionid'));
+    $('.btn_deleteLesson').click(function() {
+        $.fn.deleteLesson($(this).data('lessonid'));
     });
     
     $('#btn_enrollnow').click(function() {
-        $.fn.enrollNow($(this).data('actionid'));  
+        $.fn.enrollNow();  
     });
     
     $('#btn_prevLesson').click(function() {
-        $.fn.viewPreviousLesson($(this).attr("data-actionid"));  
+        //$.fn.viewPreviousLesson($(this).attr("data-actionid"));  
     });
 
     $('#btn_nextLesson').click(function() {
-        $.fn.viewNextLesson($(this).attr("data-actionid"));  
+        //$.fn.viewNextLesson($(this).attr("data-actionid"));  
     });
 
+    $('#btn_deleteCourse').click(function() {
+        $.fn.deleteCourse();
+    });
 
 
     $('#editcoursename').keypress(function() {
@@ -1468,6 +1507,30 @@ $(document).ready(function() {
 
     $('#editcourseimage').change(function() {
         $("#editcourseimage_er").html('').addClass('d-none'); 
+    });
+
+    $('#enrollcouponcode').keypress(function() {
+        $("#enrollcouponcode_er").html('').addClass('d-none'); 
+    });
+
+    $('#enrollcouponcode').on('paste', function(e) {
+        $("#enrollcouponcode_er").html('').addClass('d-none'); 
+    });
+
+    $('#enrollmaxattempts').keypress(function() {
+        $("#enrollmaxattempts_er").html('').addClass('d-none'); 
+    });
+
+    $('#enrollmaxattempts').on('paste', function(e) {
+        $("#enrollmaxattempts_er").html('').addClass('d-none'); 
+    });
+
+    $('#enrollmaxattempts').change(function() {
+        $("#enrollmaxattempts_er").html('').addClass('d-none'); 
+    });
+
+    $('#enrollcouponstatus').change(function() {
+        $("#enrollcouponstatus_er").html('').addClass('d-none'); 
     });
 
     $('#sectionname').keypress(function() {
@@ -1518,16 +1581,25 @@ $(document).ready(function() {
         $("#editlessonduration_er").html('').addClass('d-none'); 
     });
 
-    $('#enrollmentpreview_DT_search').keyup(function(e) {
-        enrollmentpreview_DT.search(e.target.value).draw();
+    $('#enrollnowcouponcode').keypress(function() {
+        $("#enrollnowcouponcode_er").html('').addClass('d-none'); 
+    });
+
+    $('#enrollnowcouponcode').on('paste', function(e) {
+        $("#enrollnowcouponcode_er").html('').addClass('d-none'); 
+    });
+
+    $('#chnagestatus').change(function() {
+        $.fn.updateCourseStatus($(this).is(':checked'));
+    });
+
+    $('#enrollments_DT_search').keyup(function(e) {
+        enrollments_DT.search(e.target.value).draw();
     });
 
     $('#enrollmentadd_DT_search').keyup(function(e) {
         enrollmentadd_DT.search(e.target.value).draw();
     });
-    
-
-    
     
 
     //begin:init functions
@@ -1672,8 +1744,6 @@ $(document).ready(function() {
                                response.data.filetype+'|'+
                                response.data.fileextn+'|'+
                                response.data.filesize;
-
-                               console.log(filedata);
 
                 $("#editlessonmedia").val(filedata);
             } else {

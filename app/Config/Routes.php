@@ -67,6 +67,9 @@ $routes->post('/libraries/courses/save/course', 'App\CourseController::saveCours
 $routes->post('/libraries/courses/update/course', 'App\CourseController::updateCourse');
 $routes->post('/libraries/courses/update/course/description', 'App\CourseController::updateCourseDescription');
 $routes->post('/libraries/courses/update/course/instructor', 'App\CourseController::updateCourseInstructor');
+$routes->post('/libraries/courses/update/course/status', 'App\CourseController::updateCourseStatus');
+
+$routes->post('/libraries/courses/delete/course', 'App\CourseController::deleteCourse');
 
 $routes->post('/libraries/courses/save/section', 'App\CourseController::saveSection');
 $routes->post('/libraries/courses/update/section', 'App\CourseController::updateSection');
@@ -79,12 +82,14 @@ $routes->post('/libraries/courses/delete/lesson', 'App\CourseController::deleteL
 $routes->post('/libraries/courses/upload/courseimage', 'App\CourseController::uploadCourseImage');
 $routes->post('/libraries/courses/upload/lessonmedia', 'App\CourseController::uploadLessonMedia');
 
-$routes->post('/libraries/courses/get/users/for/enroll', 'App\CourseController::getUsersForEnroll');
 $routes->post('/libraries/courses/get/enrollments', 'App\CourseController::getCourseEnrollments');
-$routes->post('/libraries/courses/reset/enrollments', 'App\CourseController::resetCourseEnrollments');
 $routes->post('/libraries/courses/save/enrollment', 'App\CourseController::saveCourseEnrollment');
 $routes->post('/libraries/courses/delete/enrollment', 'App\CourseController::deleteCourseEnrollment');
-$routes->post('/libraries/courses/accept/enrollment', 'App\CourseController::acceptEnrollment');
+$routes->post('/libraries/courses/accept/enrollment', 'App\CourseController::acceptCourseEnrollment');
+
+
+$routes->post('/libraries/courses/generate/enrollment/coupon/code', 'App\CourseController::generateEnrollmentCouponCode');
+$routes->post('/libraries/courses/update/enrollment/coupon/code', 'App\CourseController::updateEnrollmentCouponCode');
 
 
 $routes->post('/libraries/courses/payment/create/order', 'App\CourseController::createPaymentOrder');

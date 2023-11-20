@@ -18,7 +18,7 @@
 
                     <div class="form-group mb-12">
                         <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">Duration:</label>
-                        <input id="lessonduration" class="form-control ap-inp-field" placeholder="Select duration of this lesson..." name="lessonduration" type="time" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="1" value="">
+                        <input id="lessonduration" class="form-control ap-inp-field" placeholder="Select duration of this lesson..." name="lessonduration" type="time" step="1" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="1" value="">
                         <label id="lessonduration_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
                     </div>
 

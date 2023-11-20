@@ -474,11 +474,7 @@ img {
   margin-bottom: 16px;
 }
 
-#enrollmentpreview_DT thead {
-  display: none;
-}
-
-#enrollmentadd_DT thead {
+#enrollments_DT thead {
   display: none;
 }
 
@@ -489,7 +485,6 @@ img {
 #connectionadd_DT thead {
   display: none;
 }
-
 
 #chatadd_DT thead {
   display: none;
@@ -569,4 +564,78 @@ hr.dashed {
 
 .mx-height-470 {
   max-height: 470px;
+}
+
+
+.accordion-item .accordion-button {
+  border-top-left-radius: var(--bs-accordion-inner-border-radius);
+  border-top-right-radius: var(--bs-accordion-inner-border-radius);
+  background-color: #f7f9fa;
+  color: #000;
+  font-weight: bold;
+  font-size: 14px;
+  border-top: 1px solid #d1d7dc;
+  border-bottom: 1px solid #d1d7dc;
+}
+
+.accordion-item:first-of-type .accordion-button {
+  border-top: 1px solid transparent;
+}
+
+.accordion-item {
+  border-left: 1px solid #d1d7dc;
+  border-right: 1px solid #d1d7dc;
+}
+
+.accordion-item:first-of-type {
+  border-top-left-radius: var(--bs-accordion-inner-border-radius);
+  border-top-right-radius: var(--bs-accordion-inner-border-radius);
+  border-top: 1px solid #d1d7dc;
+}
+
+.accordion-item:last-of-type {
+  border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
+  border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
+  border-bottom: 1px solid #d1d7dc;
+}
+
+
+.accordion-item .accordion-button.collapsed {
+  border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
+  border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
+  background-color: #f7f9fa;
+  color: #000;
+  border-bottom: 1px solid transparent;
+}
+
+
+.accordion-item:last-of-type .accordion-button.collapsed {
+  border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
+  border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
+  background-color: #f7f9fa;
+  color: #000;
+  border-bottom: 1px solid transparent;
+}
+
+.modal-fixed-height-dialog,
+.modal-fixed-height-content {
+    /* 80% of window height */
+    height: 80%;
+}
+
+.modal-fixed-height-body {
+    /* 100% = dialog height, 120px = header + footer */
+    max-height: calc(100vh - 210px);  
+    overflow-y: auto;
+}
+
+.tab-content-scroll {
+  max-height: 340px;
+  overflow: auto;
+  padding: 15px 20px;
+}
+
+.w-32px {
+  width: 32px!important;
+  height: 32px!important;
 }

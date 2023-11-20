@@ -60,6 +60,12 @@ class CourseModel extends BaseModel
         );
     }
 
+    public function updateCourseStatus($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/update/status', $data)
+        );
+    }
 
     public function deleteCourse($data=[])
     {
@@ -141,24 +147,10 @@ class CourseModel extends BaseModel
     }
 
     #enrollments
-    public function getUsersForEnroll($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/courses/enrollments/get/users', $data)
-        );
-    }
-
     public function getCourseEnrollments($data=[])
     {
         return json_decode(
-            $this->apiPost('/courses/enrollments/course', $data)
-        );
-    }
-
-    public function resetCourseEnrollments($data=[])
-    {
-        return json_decode(
-            $this->apiPost('/courses/enrollments/course/reset', $data)
+            $this->apiPost('/courses/enrollments/get', $data)
         );
     }
 
@@ -180,6 +172,13 @@ class CourseModel extends BaseModel
     {
         return json_decode(
             $this->apiPost('/courses/enrollments/accept', $data)
+        );
+    }
+
+    public function updateCourseEnrollmentCoupon($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/enrollments/update/coupon', $data)
         );
     }
 

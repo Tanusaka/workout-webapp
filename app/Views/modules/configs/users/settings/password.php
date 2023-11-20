@@ -9,25 +9,25 @@
              </div>
          
              <div class="form-group mb-12">
-                 <label class="text-truncate fw-normal fs-12 fc-light mb-0">Current Password:</label>
+                 <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">Current Password:</label>
                  <input id="current_password" class="form-control ap-inp-field" placeholder="Type your current password here..." name="current_password" type="password" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="-1" value="">
                  <label id="current_password_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
              </div>
          
              <div class="form-group mb-12">
-                 <label class="text-truncate fw-normal fs-12 fc-light mb-0">New Password:</label>
+                 <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">New Password:</label>
                  <input id="password" class="form-control ap-inp-field" placeholder="Type your new password here..." name="password" type="password" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="-1" value="">
                  <label id="password_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
              </div>
          
              <div class="form-group mb-12">
-                 <label class="text-truncate fw-normal fs-12 fc-light mb-0">Confirm Password:</label>
+                 <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">Confirm Password:</label>
                  <input id="confirm_password" class="form-control ap-inp-field" placeholder="Type your new password again..." name="confirm_password" type="password" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="-1" value="">
                  <label id="confirm_password_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
              </div>
          
              <div class="form-group mb-12 d-flex justify-content-end form-opt-container">
-                 <button id="btn_updatePassword" type="button" class="form-action-btn" tabindex="-1">Save Changes</a>
+                 <button id="btn_updatePassword" type="button" class="form-action-btn" tabindex="-1">Save Changes</button>
              </div>
          </form>
     </div>

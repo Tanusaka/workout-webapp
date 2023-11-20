@@ -352,8 +352,9 @@ class CourseController extends AuthController
 
 	}
 
-	public function delete() {
-        if (!AuthController::auth() || !AuthController::hasPermissions('courses-delete')) {
+	public function updateCourseStatus()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_update')) {
             $this->response->setJSON([ 
                 'status' => 403,
 				'redirect' => '',
@@ -365,33 +366,72 @@ class CourseController extends AuthController
 
 		$reqdata = $this->request->getJSON();
 
-		$response = $this->coursemodel->deleteCourse([
-            'id' => trim($reqdata->id)
-        ]);
+		$status = 'I';
+		if ($reqdata->status) { $status = 'A'; }
 
-        
-        if (!isset($response->status)) {
+		$course = [
+			'courseid' => $reqdata->courseid,
+			'status' => $status
+		];
+		
+		$response = $this->coursemodel->updateCourseStatus($course);
+
+		if ($response->status==200) {
+			
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function deleteCourse() {
+        if (!AuthController::auth() || !AuthController::hasPermissions('course_delete')) {
             $this->response->setJSON([ 
-                'status' => 500,
-                'redirect' => '',
-                'message'  => $response->message
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
             ]);
-        } else {
-            if ($response->status==200) {
-                $this->response->setJSON([ 
-                    'status' => 200,
-                    'redirect' => '',
-                    'message'  => $response->messages,
-                    'data' => $response->data
-                ]);
-            } else {
-                $this->response->setJSON([ 
-                    'status' => $response->status,
-                    'redirect' => '',
-                    'message'  => $response->messages
-                ]);
-            }
+
+			return $this->response;
         }
+
+		$reqdata = $this->request->getJSON();
+
+		$course = [
+			'courseid' => $reqdata->courseid,
+		];
+		
+		$response = $this->coursemodel->deleteCourse($course);
+
+		if ($response->status==200) {
+			
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
 
         return $this->response;
     }
@@ -699,6 +739,7 @@ class CourseController extends AuthController
 		}
 
 		$lesson = [
+			'courseid' => $reqdata->courseid,
 			'sectionid' => $reqdata->sectionid,
 			'lessonname' => $reqdata->lessonname,
 			'lessonduration' => $reqdata->lessonduration,
@@ -852,7 +893,7 @@ class CourseController extends AuthController
 		return $this->uploadFile();
 	}
 
-	public function getUsersForEnroll()
+	public function getCourseEnrollments()
 	{
 		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll_users')) {
             $this->response->setJSON([ 
@@ -866,7 +907,7 @@ class CourseController extends AuthController
 
 		$reqdata = $this->request->getJSON();
 
-		$response = $this->coursemodel->getUsersForEnroll([ 'courseid' => $reqdata->courseid ]);
+		$response = $this->coursemodel->getCourseEnrollments([ 'courseid' => $reqdata->courseid ]);
 
 		if ($response->status == 200 ) {
 			$this->response->setJSON([ 
@@ -929,76 +970,6 @@ class CourseController extends AuthController
 
 	}
 
-	public function getCourseEnrollments()
-	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll_users')) {
-            $this->response->setJSON([ 
-                'status' => 403,
-				'redirect' => '',
-                'message'  => "You don't have permission to access"
-            ]);
-
-			return $this->response;
-        }
-
-		$reqdata = $this->request->getJSON();
-
-		$response = $this->coursemodel->getCourseEnrollments([ 'courseid' => $reqdata->courseid ]);
-
-		if ($response->status == 200 ) {
-			$this->response->setJSON([ 
-				'status' => 200,
-				'redirect' => '',
-                'messages'  => '',
-				'data' => $response->data
-			]);
-        } else {
-            $this->response->setJSON([ 
-				'status' => $response->status,
-				'redirect' => '',
-				'messages'  => $response->messages
-			]);
-        }
-
-        return $this->response;
-
-	}
-
-	public function resetCourseEnrollments()
-	{
-		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll_users')) {
-            $this->response->setJSON([ 
-                'status' => 403,
-				'redirect' => '',
-                'message'  => "You don't have permission to access"
-            ]);
-
-			return $this->response;
-        }
-
-		$reqdata = $this->request->getJSON();
-
-		$response = $this->coursemodel->resetCourseEnrollments([ 'courseid' => $reqdata->courseid ]);
-
-		if ($response->status == 200 ) {
-			$this->response->setJSON([ 
-				'status' => 200,
-				'redirect' => '',
-                'messages'  => '',
-				'data' => $response->data
-			]);
-        } else {
-            $this->response->setJSON([ 
-				'status' => $response->status,
-				'redirect' => '',
-				'messages'  => $response->messages
-			]);
-        }
-
-        return $this->response;
-
-	}
-
 	public function deleteCourseEnrollment() {
         if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll_users')) {
             $this->response->setJSON([ 
@@ -1043,7 +1014,7 @@ class CourseController extends AuthController
         return $this->response;
     }
 
-	public function acceptEnrollment()
+	public function acceptCourseEnrollment()
 	{
 		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll')) {
             $this->response->setJSON([ 
@@ -1057,11 +1028,9 @@ class CourseController extends AuthController
 
 		$reqdata = $this->request->getJSON();
 
-		$enrollment = [
-			'id' => $reqdata->enrollmentid
-        ];
-
-		$response = $this->coursemodel->acceptCourseEnrollment($enrollment);
+		$coupon = json_decode(json_encode($reqdata), true);
+		
+		$response = $this->coursemodel->acceptCourseEnrollment($coupon);
 
 		if ($response->status==200) {
 
@@ -1167,6 +1136,62 @@ class CourseController extends AuthController
 		$this->response->setJSON($order);
 
 		return $this->response;
+	}
+
+	public function generateEnrollmentCouponCode()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll_users')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$couponcode = $this->getCurrentMonth().$this->getCurrentDay().'-'.strtoupper(random_string('alpha', 6));
+		return $this->response->setJSON([ 'status' => 200, 'data' => $couponcode]);
+
+	}
+
+	public function updateEnrollmentCouponCode()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll_users')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$coupon = json_decode(json_encode($reqdata), true);
+		
+		$response = $this->coursemodel->updateCourseEnrollmentCoupon($coupon);
+
+		if ($response->status==200) {
+			
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages,
+			]);
+		}
+
+        return $this->response;
+
 	}
 
 }

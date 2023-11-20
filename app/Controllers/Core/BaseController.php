@@ -3,6 +3,7 @@
 namespace App\Controllers\Core;
 
 use CodeIgniter\Controller;
+use CodeIgniter\I18n\Time;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
@@ -38,7 +39,7 @@ abstract class BaseController extends Controller
      *
      * @var array
      */
-    protected $helpers = ['form', 'url', 'filesystem', 'file'];
+    protected $helpers = ['form', 'url', 'filesystem', 'file', 'text'];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -82,6 +83,22 @@ abstract class BaseController extends Controller
         return date_format($date, $format);
 
     }
+
+	public function getCurrentDate() {
+		return Time::today()->toDateString();
+	}
+
+	public function getCurrentYear() {
+		return Time::today()->getYear();
+	}
+
+	public function getCurrentMonth() {
+		return Time::today()->getMonth();
+	}
+
+	public function getCurrentDay() {
+		return Time::today()->getDay();
+	}
 
     public function uploadFile() {
 

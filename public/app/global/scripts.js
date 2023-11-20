@@ -20,7 +20,27 @@ $(document).ready(function() {
         });
     }
 
-    $.fn.showErrorMessage = function(message, reload=true) {
+    $.fn.showSuccessMessage = function(message, reload=true, url='') {
+        Swal.fire({
+            text: message,
+            icon: "success",
+            buttonsStyling: false,
+            confirmButtonText: "Ok, got it!",
+            customClass: {
+                confirmButton: "btn btn-primary"
+            }
+        }).then(function() {       
+            if (reload) {
+                location.reload(true);
+            } else {
+                if (url!='') {
+                    window.location.replace(url);   
+                }
+            }                     
+        });
+    }
+
+    $.fn.showErrorMessage = function(message, reload=true, url='') {
         Swal.fire({
             text: message,
             icon: "error",
@@ -31,12 +51,16 @@ $(document).ready(function() {
             }
         }).then(function() {       
             if (reload) {
-            location.reload(true);
-            }                     
+                location.reload(true);
+            } else {
+                if (url!='') {
+                    window.location.replace(url);   
+                }
+            }                       
         });
     }
 
-    $.fn.showWarningMessage = function(message, reload=true) {
+    $.fn.showWarningMessage = function(message, reload=true, url='') {
         Swal.fire({
             text: message,
             icon: "warning",
@@ -47,8 +71,12 @@ $(document).ready(function() {
             }
         }).then(function() {                            
             if (reload) {
-            location.reload(true);
-            }  
+                location.reload(true);
+            } else {
+                if (url!='') {
+                    window.location.replace(url);   
+                }
+            }   
         });
     }
 
