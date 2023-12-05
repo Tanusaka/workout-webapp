@@ -77,6 +77,7 @@ $routes->post('/libraries/courses/delete/section', 'App\CourseController::delete
 
 $routes->post('/libraries/courses/save/lesson', 'App\CourseController::saveLesson');
 $routes->post('/libraries/courses/update/lesson', 'App\CourseController::updateLesson');
+$routes->post('/libraries/courses/update/lesson/order', 'App\CourseController::updateLessonOrder');
 $routes->post('/libraries/courses/delete/lesson', 'App\CourseController::deleteLesson');
 
 $routes->post('/libraries/courses/upload/courseimage', 'App\CourseController::uploadCourseImage');

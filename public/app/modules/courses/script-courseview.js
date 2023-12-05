@@ -2,6 +2,7 @@
 
 $(document).ready(function() {
 
+
     var editdescription_RTE; 
     var lessondescription_RTE; 
     var editlessondescription_RTE;
@@ -12,7 +13,74 @@ $(document).ready(function() {
     var enrollments_DT;
     var enrollmentadd_DT;
 
+    //jquery-ui initializations
+    var contentList = $("#accordion").accordion({
+        header: "> div > h3",
+        event: "click",
+        active: false,
+        collapsible: true,
+        heightStyle: "100%",
+    });
+
+    // contentList.sortable({
+    //     items: "> div",
+    //     handle: "h3",
+    //     revert: false,
+    //     stop: function(e, ui) {
+    //         var sectionList = $(this).sortable("toArray", { attribute: "data-section-id" });
+    //         var sectionId = ui.item.context.dataset.sectionId;
+    //         var index = ui.item.index();
+    //         $.fn.updateLessonOrder({sectionId, sectionList});
+    //         ui.item.children("h3").triggerHandler("focusout");
+    //         $(this).accordion("refresh");
+    //     }
+    // });
+    
+    if ($(".update-sortable")[0]) {
+        $(".update-sortable").sortable({
+            items: "> li",
+            handle: ".draggable",
+            revert: false,
+            revertDuration: 50,
+            placeholder: "ui-sortable-placeholder",
+            sort: function(event, ui){ ui.item.addClass("selected"); },
+            stop: function(event, ui){ ui.item.removeClass("selected"); },
+            update: function(e, ui) {
+              var questionList = $(this).sortable("toArray", { attribute: "data-item-id" });
+              var sectionId = e.target.dataset.listId;
+              var questionId = ui.item.context.dataset.itemId;
+              var index = ui.item.index();
+              //$.fn.updateLessonOrder({index, sectionId, questionId, questionList});
+              $.fn.updateLessonOrder();
+            }
+        });
+    }
+    //jquery-ui initializations
+
     // //jquery function definitions
+    $.fn.updateLessonOrder = function() {
+
+        var orderList = [];
+        $('.sortable-item').each(function(i, obj) {
+            orderList[i] = $(this).data("item-id");
+        });
+
+        axios.post(baseurl+'libraries/courses/update/lesson/order', {
+            orderList: orderList,
+        }).then(function (response) {
+
+            if (!response.data.status==200) {
+            $.fn.showErrorMessage(response.data.message);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+
+        // var data = JSON.stringify(obj, null, 2);
+        // $('.data').text(data);
+    }
+
     $.fn.openModalEditSettings = function() { 
         $.fn.refreshSettingsGeneralTab();
         $('#editSettingsModal').modal('show');
@@ -823,7 +891,8 @@ $(document).ready(function() {
                 $.fn.closeModalAddSection();
                 $.fn.showPageAlert('success', response.message);
             } else if (event=='EDIT') {
-                $('#accordion_button_'+response.data.section.id).text(response.data.section.sectionname);
+                $('#accordion-group-title-'+response.data.section.id).text(response.data.section.sectionname);
+                contentList.accordion( "refresh" );
                 $.fn.closeModalEditSection();
                 $.fn.showPageAlert('success', response.message);
             } else if (event=='DELETE') {
@@ -833,6 +902,7 @@ $(document).ready(function() {
         } else if (component=='LESSON') {
             if (event=='ADD') {
                 $.fn.addLessonElement(response.data.lesson);
+                $.fn.updateLessonOrder();
                 $.fn.closeModalAddLesson();
                 $.fn.showPageAlert('success', response.message);
             } else if (event=='EDIT') {
@@ -842,6 +912,7 @@ $(document).ready(function() {
                 $.fn.showPageAlert('success', response.message);
             } else if (event=='DELETE') {
                 $.fn.removeLessonElement(response.data.lesson);
+                $.fn.updateLessonOrder();
                 $.fn.showPageAlert('success', response.message);
             }
         } else if (component=='COURSE_ENROLLMENT') {
@@ -1167,34 +1238,46 @@ $(document).ready(function() {
 
     //begin:element functions
     $.fn.addSectionElement = function(section) {
-        
-        var el = '<div id="accordion_item_'+section.id+'" class="accordion-item" data-itemid="'+section.id+'">'+
-        '<h2 id="section_panel_'+section.id+'" class="accordion-header">'+
-        '<button id="accordion_button_'+section.id+'" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#section_panel_collapse_'+section.id+'" aria-expanded="true" aria-controls="section_panel_collapse_'+section.id+'">'+
-            section.sectionname+
-        '</button>'+
-        '</h2>'+
-        '<div id="section_panel_collapse_'+section.id+'" class="accordion-collapse collapse show" aria-labelledby="section_panel_'+section.id+'">'+
-            
-            '<div class="card-header border-0">'+
-                '<h3 class="card-title align-items-start flex-column"></h3>'+
-                '<div class="card-toolbar">'+
-                    '<button data-sectionid="'+section.id+'" type="button" class="btn_openModalAddLesson form-action-btn justify-content-end" tabindex="-1">Add Lesson</button>'+
-                    '<button data-sectionid="'+section.id+'" type="button" class="btn_openModalEditSection form-action-btn justify-content-end" tabindex="-1">Edit Section</button>'+
-                    '<button data-sectionid="'+section.id+'" type="button" class="btn_deleteSection form-action-btn justify-content-end" tabindex="-1">Delete Section</button>'+
-                '</div>'+
-            '</div>'+
     
-            
-            '<div class="accordion-body">'+
-                '<ul id="lesson_group_'+section.id+'" class="list-group" data-sectionid="'+section.id+'">'+
-                    
+        var el = '<div id="accordion-group-'+section.id+'" class="group" data-section-id="'+section.id+'">'+
+            '<h3 id="accordion-group-title-'+section.id+'">'+section.sectionname+'</h3>'+
+            '<div>'+
+                '<div class="card-header border-0">'+
+                    '<h3 class="card-title align-items-start flex-column"></h3>'+
+                    '<div class="card-toolbar">'+
+                        '<button data-sectionid="'+section.id+'" type="button" class="btn_openModalAddLesson form-action-btn justify-content-end" tabindex="-1">Add Lesson</button>'+
+                        '<button data-sectionid="'+section.id+'" type="button" class="btn_openModalEditSection form-action-btn justify-content-end" tabindex="-1">Edit Section</button>'+
+                        '<button data-sectionid="'+section.id+'" type="button" class="btn_deleteSection form-action-btn justify-content-end" tabindex="-1">Delete Section</button>'+
+                    '</div>'+
+                '</div>'+
+                
+                '<ul id="sortable-left-'+section.id+'" class="connectedSortable sortable update-sortable" data-list-id="'+section.id+'">'+
+        
                 '</ul>'+
             '</div>'+
-        '</div>'+
         '</div>';
 
-        $('#course_content_accordion').append(el);
+        $('#accordion').append(el);
+
+        contentList.accordion( "refresh" );
+
+        $(".update-sortable").sortable({
+            items: "> li",
+            handle: ".draggable",
+            revert: false,
+            revertDuration: 50,
+            placeholder: "ui-sortable-placeholder",
+            sort: function(event, ui){ ui.item.addClass("selected"); },
+            stop: function(event, ui){ ui.item.removeClass("selected"); },
+            update: function(e, ui) {
+              var questionList = $(this).sortable("toArray", { attribute: "data-item-id" });
+              var sectionId = e.target.dataset.listId;
+              var questionId = ui.item.context.dataset.itemId;
+              var index = ui.item.index();
+              //$.fn.updateLessonOrder({index, sectionId, questionId, questionList});
+              $.fn.updateLessonOrder();
+            }
+        });
 
         $(document).on('click', '.btn_openModalAddLesson', function() {
             $.fn.openModalAddLesson($(this).data('sectionid'));
@@ -1212,8 +1295,10 @@ $(document).ready(function() {
 
     $.fn.addLessonElement = function(lesson) {
 
-        var el = '<li id="lesson_item_'+lesson.id+'" class="list-group-item" data-lessonid="'+lesson.id+'">'+
+        var el = '<li id="sortable-left-item-'+lesson.id+'" data-item-id="'+lesson.id+'" class="sortable-item">'+
         
+        '<span class="draggable"></span>'+
+
         '<div class="d-flex bd-highlight">'+
             '<div class="p-2 flex-grow-1 bd-highlight">'+
                 '<div class="d-flex align-items-center">'+
@@ -1247,8 +1332,10 @@ $(document).ready(function() {
         '</li>';
         
 
-        $('#lesson_group_'+lesson.sectionid).append(el);
+        $('#sortable-left-'+lesson.sectionid).append(el);
 
+        $(".update-sortable").sortable( "refresh" );
+        
         $(document).on('click', '.btn_openModalViewLesson', function() {
             $.fn.openModalViewLesson($(this).data('lessonid'));
         });
@@ -1319,12 +1406,13 @@ $(document).ready(function() {
     }
 
     $.fn.removeSectionElement = function(section) {
-        $("#accordion_item_"+section.id).remove();
+        $("#accordion-group-"+section.id).remove();
+        contentList.accordion( "refresh" );
     }
 
     $.fn.removeLessonElement = function(lesson) {
-        $("#lesson_item_"+lesson.id).remove();
-        $("#lesson_separator_"+lesson.id).remove();
+        $("#sortable-left-item-"+lesson.id).remove();
+        $(".update-sortable").sortable( "refresh" );
     }
     
     //end:element functions
@@ -1469,11 +1557,11 @@ $(document).ready(function() {
     });
     
     $('#btn_prevLesson').click(function() {
-        //$.fn.viewPreviousLesson($(this).attr("data-actionid"));  
+        $.fn.viewPreviousLesson($(this).attr("data-actionid"));  
     });
 
     $('#btn_nextLesson').click(function() {
-        //$.fn.viewNextLesson($(this).attr("data-actionid"));  
+        $.fn.viewNextLesson($(this).attr("data-actionid"));  
     });
 
     $('#btn_deleteCourse').click(function() {

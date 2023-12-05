@@ -819,6 +819,55 @@ class CourseController extends AuthController
 
 	}
 
+	public function updateLessonOrder()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_update')) {
+			$this->response->setJSON([ 
+				'status' => 403,
+				'redirect' => '',
+				'message'  => "You don't have permission to access"
+			]);
+
+			return $this->response;
+		}
+
+		$reqdata = $this->request->getJSON();
+		
+
+		if ( !empty($reqdata->orderList) ) {
+
+			$response = $this->coursemodel->updateCourseLessonOrder(['orderList' => $reqdata->orderList]);
+		
+			if ($response->status==200) {
+
+				$this->response->setJSON([ 
+					'status' => 200,
+					'redirect' => '',
+					'message'  => $response->messages,
+					'data' => $response->data
+				]);
+
+			} else {
+				$this->response->setJSON([ 
+					'status' => $response->status,
+					'redirect' => '',
+					'message'  => $response->messages
+				]);
+			}
+
+
+		} else {
+			$this->response->setJSON([ 
+				'status' => 400,
+				'redirect' => '',
+				'message'  => "Invalid Request."
+			]);
+		}
+
+        return $this->response;
+
+	}
+
 	public function deleteLesson() {
         if (!AuthController::auth() || !AuthController::hasPermissions('course_update')) {
             $this->response->setJSON([ 

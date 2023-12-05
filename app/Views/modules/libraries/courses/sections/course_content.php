@@ -14,25 +14,12 @@
 
     <div class="card-body border-0 pt-5">
         
-        <!-- <div class="curriculum--curriculum-sub-header--m_N_0 mb-5">
-            <div class="ud-text-sm" data-purpose="curriculum-stats">
-                <span class="curriculum--content-length--5Nict">23 sections • 277 lectures • <span>
-                    <span>14h&nbsp;47m</span> total length</span></span>
-            </div>
-        </div> -->
-        
-        <div id="course_content_accordion" class="accordion course_accordion">
-            
-            <?php if (isset($course->sections)): ?>
-            <?php foreach ($course->sections as $section): ?>
-            <div id="<?= 'accordion_item_'.$section->id ?>" class="accordion-item" data-itemid="<?= $section->id ?>">
-                <h4 id="<?= 'section_panel_'.$section->id ?>" class="accordion-header">
-                <button id="<?= 'accordion_button_'.$section->id ?>" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="<?= '#section_panel_collapse_'.$section->id ?>" aria-expanded="true" aria-controls="<?= 'section_panel_collapse_'.$section->id ?>">
-                    <?= $section->sectionname ?>
-                </button>
-                </h4>
-                <div id="<?= 'section_panel_collapse_'.$section->id ?>" class="accordion-collapse collapse show course-accordion-collapse" aria-labelledby="<?= 'section_panel_'.$section->id ?>">
-                    
+        <div id="accordion">
+        <?php if (isset($course->sections)): ?>   
+        <?php foreach ($course->sections as $section): ?>
+            <div id="<?= 'accordion-group-'.$section->id ?>" class="group" data-section-id="<?= $section->id ?>">
+                <h3 id="<?= 'accordion-group-title-'.$section->id ?>"><?=$section->sectionname?></h3>
+                <div>  
                     <?php if (isset($permissions->course_update) && $permissions->course_update) : ?>
                     <div class="card-header border-0">
                         <h3 class="card-title align-items-start flex-column"></h3>
@@ -42,65 +29,73 @@
                             <button data-sectionid="<?= $section->id ?>" type="button" class="btn_deleteSection form-action-btn justify-content-end" tabindex="-1">Delete Section</button>
                         </div>
                     </div>
-                    <?php endif; ?>	
+                    <?php endif; ?>	 
+
+                    <?php if (isset($permissions->course_update) && $permissions->course_update) : ?>
+                    <ul id="<?= 'sortable-left-'.$section->id ?>" class="connectedSortable sortable update-sortable" data-list-id="<?= $section->id ?>">
+                    <?php else: ?>	 
+                    <ul id="<?= 'sortable-left-'.$section->id ?>" class="connectedSortable sortable" data-list-id="<?= $section->id ?>">
+                    <?php endif; ?>	 
+                        <?php if (isset($section->lessons)): ?>
+                        <?php foreach ($section->lessons as $index=>$lesson): ?>   
+                        <li id="<?= 'sortable-left-item-'.$lesson->id ?>" data-item-id="<?= $lesson->id ?>" class="sortable-item">
+                            
+                            <?php if (isset($permissions->course_update) && $permissions->course_update) : ?>
+                                <span class="draggable"></span>
+                            <?php endif; ?>	 
+                            
                     
-                    <div class="accordion-body">
-                        <ul id="<?= 'lesson_group_'.$section->id ?>" class="list-group" data-sectionid="<?= $section->id ?>">
-                            <?php if (isset($section->lessons)): ?>
-                                <?php foreach ($section->lessons as $index=>$lesson): ?>
-                                <li id="<?= 'lesson_item_'.$lesson->id ?>" class="list-group-item" data-lessonid="<?= $lesson->id ?>">
+                            <div class="d-flex bd-highlight">
+                                <div class="p-2 flex-grow-1 bd-highlight">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
 
-                                    <div class="d-flex bd-highlight">
-                                        <div class="p-2 flex-grow-1 bd-highlight">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
+                                        <?php if ($lesson->type=='image') : ?>
+                                            <span><i class="fas fa-image fa-fw me-4"></i></span>
+                                        <?php elseif ($lesson->type=='video') : ?>
+                                            <span><i class="fas fa-video fa-fw me-4"></i></span>
+                                        <?php else : ?>
+                                            <span></span>
+                                        <?php endif; ?>
 
-                                                <?php if ($lesson->type=='image') : ?>
-                                                    <span><i class="fas fa-image fa-fw me-4"></i></span>
-                                                <?php elseif ($lesson->type=='video') : ?>
-                                                    <span><i class="fas fa-video fa-fw me-4"></i></span>
-                                                <?php else : ?>
-                                                    <span></span>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <?php if (isset($course->isEnrolled)) : ?>
+                                                <?php if ($course->isEnrolled) : ?>
+                                                    <a data-lessonid="<?= $lesson->id ?>" id="<?= 'dsp_lessonname_'.$lesson->id ?>" class="btn_openModalViewLesson btn-link"><?=$lesson->lessonname?></a>                
+                                                <?php else: ?>       
+                                                    <span><?=$lesson->lessonname?></span>
                                                 <?php endif; ?>
-
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <?php if (isset($course->isEnrolled)) : ?>
-                                                        <?php if ($course->isEnrolled) : ?>
-                                                            <a data-lessonid="<?= $lesson->id ?>" id="<?= 'dsp_lessonname_'.$lesson->id ?>" class="btn_openModalViewLesson btn-link"><?=$lesson->lessonname?></a>                
-                                                        <?php else: ?>       
-                                                            <span><?=$lesson->lessonname?></span>
-                                                        <?php endif; ?>
-                                                    <?php else: ?>
-                                                        <a data-lessonid="<?= $lesson->id ?>" id="<?= 'dsp_lessonname_'.$lesson->id ?>" class="btn_openModalViewLesson btn-link"><?=$lesson->lessonname?></a>                
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
+                                            <?php else: ?>
+                                                <a data-lessonid="<?= $lesson->id ?>" id="<?= 'dsp_lessonname_'.$lesson->id ?>" class="btn_openModalViewLesson btn-link"><?=$lesson->lessonname?></a>                
+                                            <?php endif; ?>
                                         </div>
-                                        <div class="p-2 bd-highlight">
-                                            <span id="<?= 'dsp_lessonduration_'.$lesson->id ?>" class="align-middle"><?= $lesson->lessonduration ?></span>
-                                        </div>
-                                        
                                     </div>
-
-                                    <?php if (isset($permissions->course_update) && $permissions->course_update) : ?>
-                                    <div class="d-flex justify-content-end bd-highlight mb-3">
-                                        <div><a data-lessonid="<?= $lesson->id ?>" class="btn_openModalEditLesson profile-action-btn">Edit</a></div>
-                                        <div><a data-lessonid="<?= $lesson->id ?>" class="btn_deleteLesson profile-action-btn">Delete</a></div>
-                                    </div>
-                                    <?php endif; ?>	
-
-                                </li>
+                                </div>
+                                <div class="p-2 bd-highlight">
+                                    <span id="<?= 'dsp_lessonduration_'.$lesson->id ?>" class="align-middle"><?= $lesson->lessonduration ?></span>
+                                </div>
                                 
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </ul>
-                    </div>
+                            </div>
+
+                            <?php if (isset($permissions->course_update) && $permissions->course_update) : ?>
+                            <div class="d-flex justify-content-end bd-highlight mb-3">
+                                <div><a data-lessonid="<?= $lesson->id ?>" class="btn_openModalEditLesson profile-action-btn">Edit</a></div>
+                                <div><a data-lessonid="<?= $lesson->id ?>" class="btn_deleteLesson profile-action-btn">Delete</a></div>
+                            </div>
+                            <?php endif; ?>	
+
+                        </li>
+
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </ul>
                 </div>
             </div>
-            <?php endforeach; ?>
-            <?php endif; ?>
-        </div> 
+        <?php endforeach; ?>
+        <?php endif; ?>
+        </div>
+
     </div>
 </div>
 

@@ -139,6 +139,13 @@ class CourseModel extends BaseModel
         );
     }
 
+    public function updateCourseLessonOrder($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/sections/lessons/update/order', $data)
+        );
+    }
+
     public function deleteCourseLesson($data=[])
     {
         return json_decode(

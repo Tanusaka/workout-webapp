@@ -6,18 +6,18 @@
 		<base id="baseurl" href="<?php echo base_url(); ?>" target="_self">
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<!--begin::Fonts(mandatory for all pages)-->
-		<!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" /> -->
-		<!--end::Fonts-->
+
 		<!--begin::Vendor Stylesheets(used for this page only)-->
 		<link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
-		<link href="assets/plugins/custom/vis-timeline/vis-timeline.bundle.css" rel="stylesheet" type="text/css" />
 		<link href="assets/plugins/vendor/richtexteditor/rte_theme_default.css" rel="stylesheet" type="text/css" />
+		<link href="assets/plugins/vendor/jquery-ui/jquery-ui-1.12.1.css" rel="stylesheet" type="text/css" />
 		<!--end::Vendor Stylesheets-->
+
 		<!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
 		<link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
 		<link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
 		<!--end::Global Stylesheets Bundle-->
+
 		<!--begin::Custom Stylesheets-->
 		<link href="assets/css/style.custom.css" rel="stylesheet" type="text/css" />
 		<!--end::Custom Stylesheets-->
@@ -372,6 +372,11 @@
 		<!--begin::Global Javascript Bundle(mandatory for all pages)-->
 		<script src="assets/plugins/global/plugins.bundle.js"></script>
 		<script src="assets/js/scripts.bundle.js"></script>
+		
+		
+		<script src="assets/plugins/vendor/jquery/jquery-1.12.4.js"></script>
+  		<script src="assets/plugins/vendor/jquery-ui/jquery-ui-1.12.1.js"></script>
+		
 		<!--end::Global Javascript Bundle-->
 
 		<!--begin::Render Vendor Javascripts-->
