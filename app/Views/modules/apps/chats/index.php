@@ -86,6 +86,7 @@
 <!--begin::Custom Javascript-Courses -->
 <?php if (isset($pageid) && $pageid=='all') { ?>
     <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="assets/plugins/vendor/lightbox/lightbox.bundle.min.js"></script>
     <script src="app/modules/chats/script-chat.js"></script>
 <?php } elseif (isset($pageid) && $pageid=='create') { ?>
 

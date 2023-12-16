@@ -376,6 +376,7 @@
 		
 		<script src="assets/plugins/vendor/jquery/jquery-1.12.4.js"></script>
   		<script src="assets/plugins/vendor/jquery-ui/jquery-ui-1.12.1.js"></script>
+										
 		
 		<!--end::Global Javascript Bundle-->
 

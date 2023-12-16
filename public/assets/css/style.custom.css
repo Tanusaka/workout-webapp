@@ -529,6 +529,10 @@ img {
   background: #f8f5ff;
 }
 
+.chat-attachment-preview-item {
+  cursor: pointer;
+}
+
 .p-t-6 {
   padding-top: 6px!important;
 }
@@ -640,6 +644,30 @@ hr.dashed {
   height: 32px!important;
 }
 
+
+.btn.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 8px;
+  height: 50px;
+  width: 50px;
+  margin-right: 8px;
+  background-color: #f1faff!important;
+  color: #009ef7;
+}
+
+.pr-5 {
+  padding-right: 5px!important;
+}
+
+.mr-10 {
+  margin-right: 10px!important;
+}
+
+.mt-4px {
+  margin-top: 4px!important;
+}
 
 /*************************/
 /* JQuery UI - Accordion */

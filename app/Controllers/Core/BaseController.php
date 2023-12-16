@@ -100,6 +100,59 @@ abstract class BaseController extends Controller
 		return Time::today()->getDay();
 	}
 
+	public function uploadFiles() {
+
+		$input = $this->validate([
+			'file' => [
+				'uploaded[files]',
+				//'mime_in[file,image/jpg,image/jpeg,image/png]',
+				'max_size[files,10000]',
+			]
+		]);
+
+		$filename = ''; $filepath = ''; $filetype = ''; $filesize = ''; $fileextn= ''; $status=400;
+
+		$uploadedFiles = [];
+		
+		if ($input) {
+	
+			if ($files = $this->request->getFiles()) {
+
+				foreach($files['files'] as $file)
+             	{ 
+					$uploadedFile = [
+						'filename' => $file->getRandomName(),
+						'filepath' => WRITEPATH . 'uploads/temp',
+						'filetype' => explode('/', $file->getMimeType())[0],
+						'filesize' => $file->getSizeByUnit('mb'),
+						'fileextn' => $file->guessExtension(),
+					];
+
+					$file->move($uploadedFile['filepath'], $uploadedFile['filename']);
+					array_push($uploadedFiles, $uploadedFile);
+				}
+
+			}
+
+			$status = 200;
+
+		} else {
+			$status = 400;     
+		}
+
+		$this->response->setJSON([ 
+			'status' => 200,
+			'redirect' => '',
+			'messages'  => '',
+			'data' => [
+				'status' => $status,  
+				'uploadedFiles' => $uploadedFiles
+			]
+		]);
+
+		return $this->response;
+    }
+
     public function uploadFile() {
 
 		$input = $this->validate([
@@ -146,7 +199,7 @@ abstract class BaseController extends Controller
 		return $this->response;
     }
 
-    public function moveFile($fileData="", $root='public') {
+    public function moveFile($fileData="", $root="public", $sub="") {
 
 		$file = [];
 
@@ -160,9 +213,16 @@ abstract class BaseController extends Controller
 		$userFolder = hash('crc32b', (string)$_SESSION['id']);
 		$rootFolder = hash('crc32b', $root);
 
+		$path = 'uploads/'.$tenantFolder.'/'.$userFolder.'/'.$rootFolder.'/';
+
+		if ($sub != "") {
+			$subFolder = hash('crc32b', $sub);
+			$path = $path.$subFolder.'/';
+		}
+
         $upload = [
 			'rootdir' => $root,
-			'path' => 'uploads/'.$tenantFolder.'/'.$userFolder.'/'.$rootFolder.'/',
+			'path' => $path,
 			'name' => $file[0],
 			'type' => $file[1],
 			'ext' => $file[2],

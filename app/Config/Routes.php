@@ -113,6 +113,8 @@ $routes->post('/apps/chats/save/chat/personal', 'App\ChatController::savePersona
 $routes->post('/apps/chats/delete/chat/personal', 'App\ChatController::deletePersonalChat');
 $routes->post('/apps/chats/save/chat/personal/message', 'App\ChatController::savePersonalChatMessage');
 
+$routes->post('/apps/chats/upload/attachments', 'App\ChatController::uploadAttachments');
+
 
 /*
  * --------------------------------------------------------------------

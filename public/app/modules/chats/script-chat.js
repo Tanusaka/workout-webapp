@@ -2,7 +2,7 @@
 
 $(document).ready(function () {
 
-    var chatadd_DT; var tooltipTriggerList;
+    var chatadd_DT; var tooltipTriggerList; var dz_chatattchments;
 
     //begin:function defenitions
 
@@ -115,19 +115,25 @@ $(document).ready(function () {
     $.fn.sendMessage = function(id) {
 
         var textMessage = $('#chat_messenger_text').val();
+        var attachments = $('#chat_messenger_attchments').val();
 
-        if (textMessage!=="") {
+        console.log(attachments);
+
+        if (textMessage!=="" || attachments!=="") {
             axios.post(baseurl+'apps/chats/save/chat/personal/message', {
                 chatid: id, 
                 type: "text",
-                message: textMessage
+                message: textMessage,
+                attachments: attachments
             }).then(function (response) {
 
                 if (response.data.status==200) {
                 $.fn.openChat(id);
                 $('#chat_messenger_text').val('');
+                $('#chat_messenger_attchments').val('');
                 } else {
                 $('#chat_messenger_text').val('');
+                $('#chat_messenger_attchments').val('');
                 }
 
             }).catch(function (error) {
@@ -150,7 +156,7 @@ $(document).ready(function () {
             });
 
             //use off to prevent calling the function multiples times on each initialization
-            $(document).off().on('click', '.btn_openchat', function() {
+            $(document).on('click', '.btn_openchat', function() {
 
                 $('#chat_list_conatiner div.chat-active').removeClass('chat-active');
                 $(this).addClass('chat-active');
@@ -205,7 +211,7 @@ $(document).ready(function () {
         $('#chat_messenger_thread').animate({scrollTop: threadHeight});
 
         // //use off to prevent calling the function multiples times on each initialization
-        // $(document).off().on('click', '.btn_openchat', function() {
+        // $(document).on('click', '.btn_openchat', function() {
         //     $.fn.openChat($(this).data('actionid'));
         // });
 
@@ -260,7 +266,7 @@ $(document).ready(function () {
         // });
 
         //use off to prevent calling the function multiples times on each initialization
-        $(document).off().on('click', '.btn_chatnow', function() {
+        $(document).on('click', '.btn_chatnow', function() {
             $.fn.createChat($(this).data('chatconnectionid'));
         });
 
@@ -339,12 +345,18 @@ $(document).ready(function () {
         el = el + '<div class="ms-3">'+
                         '<a href="#" class="fs-5 fw-bold text-gray-900 text-hover-primary me-1">'+message.sendername+'</a>'+
                     '</div>'+
-                '</div>'+
-                '<div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start">'+message.content+'</div>'+
-            '</div>'+
-        '</div>';
+                '</div>';
+
+        
+        el = el + '<div class="p-5 rounded bg-light-info text-dark fw-semibold mw-lg-400px text-start mb-2">'+message.content+'</div>';
+            
+        el = el + '</div></div>';
 
         $('#chat_messenger_thread').append(el);
+
+        $(document).on('click', '.chat-attachment-preview-item', function() {
+            $.fn.previewAttachment($(this));
+        });
     }
 
     $.fn.addChatMessageOutElement = function(message) {
@@ -368,12 +380,38 @@ $(document).ready(function () {
             '</div>';
         }
        
-        el = el + '</div>'+
-                '<div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end">'+message.content+'</div>'+
-            '</div>'+
-        '</div>';
+        el = el + '</div>';
+        
+        el = el + '<div class="p-5 rounded bg-light-primary text-dark fw-semibold mw-lg-400px text-end mb-2">'+message.content+'</div>';
+                
+        el = el + '</div></div>';
 
         $('#chat_messenger_thread').append(el);
+
+        
+
+        $(document).on('click', '.chat-attachment-preview-item', function() {
+            $.fn.previewAttachment($(this));
+        });
+    }
+
+    $.fn.previewAttachment = function(attachment) {
+
+        var el = '';
+
+        $('#chatAttachmentPreviewBody').empty();
+
+        if (attachment.data('attachmenttype')=='image') {
+            el = el+'<img class="" src="'+attachment.data('attachmentpath')+'"></img>';
+        } else if (attachment.data('attachmenttype')=='video') {
+            el = el+'<div class="ratio ratio-16x9"><iframe src="'+attachment.data('attachmentpath')+'" title="'+attachment.data('attachmenttype')+'" allowfullscreen sandbox></iframe></div>';
+        } else {
+            el = el+'<div class="ratio ratio-16x9"><iframe src="'+attachment.data('attachmentpath')+'" title="'+attachment.data('attachmenttype')+'" allowfullscreen></iframe></div>';
+        }
+
+        $('#chatAttachmentPreviewBody').append(el);
+
+        $('#viewChatAttchmentModal').modal('show');
     }
 
     $.fn.addChatAddElement = function(datarow) {
@@ -419,7 +457,35 @@ $(document).ready(function () {
         $.fn.openModalChatSettings($(this).data('actionid'));
     });
 
+    //disable on click for dropzone wrapper click event
+    $('.img-dropzone-wrapper').click(function(e) {
+        $(".dz-hidden-input").prop("disabled",true);
+    });
+
+    $('#btn_uploadAttachments').click(function() {
+
+        //enable on click for dropzone wrapper click event
+        $(".dz-hidden-input").prop("disabled",false);
+
+        $("#dz_chatattchments").addClass('d-none');
+
+        dz_chatattchments.hiddenFileInput.click();
+
+        //to reset dropzone after adding files
+        //array index should be change base on number of dropzones in the page
+        $('.dropzone')[0].dropzone.files.forEach(function(file) { 
+            file.previewElement.remove(); 
+        });
+        
+        $('.dropzone').removeClass('dz-started');
+
+        dz_chatattchments.files = [];
+        //to reset dropzone after adding files
+        
+    });
+
     $('#btn_sendMessage').click(function() {
+        $("#dz_chatattchments").addClass('d-none');
         $.fn.sendMessage($(this).data('actionid'));
     });
 
@@ -430,6 +496,79 @@ $(document).ready(function () {
     
 
     //begin:init functions
+    dz_chatattchments = new Dropzone("#dz_chatattchments", { 
+        url: baseurl+"apps/chats/upload/attachments", // Set the url for your upload script location
+        paramName: "files", // The name that will be used to transfer the file
+        parallelUploads: 3,
+        uploadMultiple: true,
+        maxFiles: 3,
+        maxFilesize: 10, // MB
+        thumbnailWidth: 120,
+        thumbnailHeight: 120,
+        acceptedFiles: "image/*,audio/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx",
+        addRemoveLinks: false,
+        clickable: true,
+        init: function() {
+            
+            this.on("success", function (file, response) {
+            if (response.data.status == 200) {
+
+                var filedata = ''; var fileCount = response.data.uploadedFiles.length;
+
+                response.data.uploadedFiles.forEach(function (file, i) {
+                    filedata = filedata + 
+                    file.filename+'|'+
+                    file.filetype+'|'+
+                    file.fileextn+'|'+
+                    file.filesize;
+
+                    if (i < fileCount-1) {
+                        filedata = filedata + '-';
+                    }
+                });
+
+                $("#chat_messenger_attchments").val(filedata);
+                $("#dz_chatattchments").removeClass('d-none');
+
+            } else {
+                $("#chat_messenger_attchments").val('');
+                $("#dz_chatattchments").addClass('d-none');
+            }
+            // response.image will be the relative path to your uploaded image.
+            // You could also use response.status to check everything went OK,
+            // maybe show an error msg from the server if not.
+            });
+
+            this.on("removedfile", function (files) {
+                console.log(files);
+                $("#chat_messenger_attchments").val('');
+                $("#chat_messenger_attchments_er").html('').addClass('d-none'); 
+            });
+
+            this.on("addedfiles", function (files) {
+                $("#chat_messenger_attchments").val('');
+                $("#chat_messenger_attchments_er").html('').addClass('d-none'); 
+            });
+
+            this.on("maxfilesexceeded", function (file) {
+                this.removeFile(file);
+            });
+
+            // for select multiple files but add only one file 
+            // enable this code and remove maxFiles config
+            // this.on("addedfile", function() {
+            //     if (this.files[1]!=null){
+            //         this.removeFile(this.files[0]);
+            //     }
+            //     $("#chat_messenger_attchments").val('');
+            //     $("#chat_messenger_attchments_er").html('').addClass('d-none');
+            // });
+
+        }
+    }); 
+
+    
+
     $.fn.connectToChatServer();
     $.fn.refreshChats();
     $.fn.initToolTips();

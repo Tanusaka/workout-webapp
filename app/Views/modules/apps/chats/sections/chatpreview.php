@@ -43,30 +43,53 @@
     <!--end::Card body-->
     <!--begin::Card footer-->
     <div class="card-footer pt-4" id="chat_messenger_footer">
-        <!--begin::Input-->
-        <textarea id="chat_messenger_text" class="form-control form-control-flush mb-3" rows="1" data-kt-element="input" placeholder="Type a message"></textarea>
-        <!--end::Input-->
-        <!--begin:Toolbar-->
-        <div class="d-flex flex-stack">
-            <!--begin::Actions-->
-            <div class="d-flex align-items-center me-2">
-                <!-- <button class="btn btn-sm btn-icon btn-active-light-primary me-1" type="button" data-bs-toggle="tooltip" aria-label="Coming soon" data-bs-original-title="Coming soon" data-kt-initialized="1">
-                    <i class="ki-duotone ki-paper-clip fs-3"></i>
-                </button> -->
-                <!-- <button class="btn btn-sm btn-icon btn-active-light-primary me-1" type="button" data-bs-toggle="tooltip" aria-label="Coming soon" data-bs-original-title="Coming soon" data-kt-initialized="1">
-                    <i class="ki-duotone ki-exit-up fs-3">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                </button> -->
+
+
+        <!--begin::Dropzone-->
+        <div class="dropzone img-dropzone-wrapper d-none" id="dz_chatattchments">
+        <!--begin::Message-->
+        <div class="dz-message needsclick">
+            <!--begin::Icon-->
+            <i class="ki-duotone ki-file-up fs-3hx text-primary">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+            <!--end::Icon-->
+            <!--begin::Info-->
+            <div class="ms-4">
+                <h4 class="fw-bold text-gray-900 mb-1 fs-14">Drop files here or click to upload.</h4>
+                <span class="fw-semibold text-muted"></span>
             </div>
+            <!--end::Info-->
+        </div>
+        </div>
+        <!--end::Dropzone-->
+        <div class="inp-hidden">
+            <!--begin::Input-->
+            <input id="chat_messenger_attchments" type="hidden" class="inp-hidden-txt" name="chat_messenger_attchments" placeholder="" value="">
+            <!--end::Input-->
+        </div>
+        
+        <!--begin:Toolbar-->
+        <div class="d-flex justify-content-end mt-4">
+            <!--begin::Input-->
+            <textarea id="chat_messenger_text" class="form-control form-control-flush mb-3 mr-10" rows="1" data-kt-element="input" placeholder="Type a message"></textarea>
+            <!--end::Input-->
+            <!--begin::Actions-->
+            <button id="btn_uploadAttachments" class="btn btn-icon btn-active-light-primary" type="button">
+                <i class="ki-duotone ki-paper-clip fs-3"></i>
+            </button>
             <!--end::Actions-->
             <!--begin::Send-->
             <button id="btn_sendMessage" class="btn btn-primary" type="button">Send</button>
             <!--end::Send-->
         </div>
         <!--end::Toolbar-->
+        
     </div>
     <!--end::Card footer-->
 </div>
 <!--end::Messenger-->
+
+
+<?= $this->include('modules/apps/chats/modals/viewattachment') ?>
