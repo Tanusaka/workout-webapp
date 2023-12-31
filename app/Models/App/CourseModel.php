@@ -60,6 +60,13 @@ class CourseModel extends BaseModel
         );
     }
 
+    public function updateCoursePaymentInfo($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/update/paymentinfo', $data)
+        );
+    }
+
     public function updateCourseStatus($data=[])
     {
         return json_decode(
@@ -189,13 +196,27 @@ class CourseModel extends BaseModel
         );
     }
 
-     #payments
-     public function createCoursePayment($data=[])
-     {
-         return json_decode(
-             $this->apiPost('/courses/payment/create', $data)
-         );
-     }
+    #payments
+    public function getCoursePayments($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/payment/get', $data)
+        );
+    }
+
+    public function getCoursePayment($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/payment/info', $data)
+        );
+    }
+
+    public function createCoursePayment($data=[])
+    {
+        return json_decode(
+            $this->apiPost('/courses/payment/create', $data)
+        );
+    }
     
 
 }

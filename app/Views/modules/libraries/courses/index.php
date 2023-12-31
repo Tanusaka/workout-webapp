@@ -82,6 +82,8 @@
 <?= $this->endSection() ?>
 
 
+<?php $CI =& get_instance(); ?>
+
 <?= $this->section('customscripts') ?>
 <!--begin::Custom Javascript-Courses -->
 <?php if (isset($pageid) && $pageid=='all') { ?>
@@ -90,7 +92,7 @@
 <?php } elseif (isset($pageid) && $pageid=='create') { ?>
     <script src="app/modules/courses/script-coursecreate.js"></script>
 <?php } elseif (isset($pageid) && $pageid=='view') { ?>
-    <script src="https://www.paypal.com/sdk/js?client-id=AanW5APaxbE3NwBYRMn9VF5KHr5LOYOWJFuOTtKRsyt3jf4Kw-V1fjobw91Cvv68315ykCu4eX31Dzgg&currency=USD"></script>
+    <script src="<?=$CI->appconfigs->PI_PP_SDK_URL?>"></script>
     <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
     <script src="app/modules/courses/script-courseview.js"></script>
 <?php } ?> 

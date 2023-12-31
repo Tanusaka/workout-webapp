@@ -252,7 +252,7 @@ $(document).ready(function() {
         $('#firstname').val(data.firstname);
         $('#lastname').val(data.lastname);
         $('#dob').val(data.dob);
-        $('#gender').select2("val", data.gender);
+        $("#gender").val(data.gender).trigger("change");  
         $('#mobile').val(data.mobile);
         $('#address1').val(data.address1);
         $('#address2').val(data.address2);
@@ -294,6 +294,7 @@ $(document).ready(function() {
     }
 
     $.fn.resetProfile = function(data) {
+
         $('#dsp_profilename').html(data.firstname+' '+data.lastname);
         $('#dsp_header_profilename').html(data.firstname);
 
@@ -324,14 +325,14 @@ $(document).ready(function() {
             $('#dsp_addressL2').html(data.city+' '+data.country);
         }
 
-        if (data.profileimage == '') {
-            $('#dsp_profileimage').attr("src", "assets/images/avatar.png");
-            $('#dsp_header_profileimage').attr("src", "assets/images/avatar.png");
-            $('#dsp_header_profileimage_avatar').attr("src", "assets/images/avatar.png");
-        } else {
+        if (typeof(data.profileimage) != "undefined" && data.profileimage !== null) {
             $('#dsp_profileimage').attr("src", data.profileimage);
             $('#dsp_header_profileimage').attr("src", data.profileimage);
             $('#dsp_header_profileimage_avatar').attr("src", data.profileimage);
+        } else {
+            $('#dsp_profileimage').attr("src", "assets/images/avatar.png");
+            $('#dsp_header_profileimage').attr("src", "assets/images/avatar.png");
+            $('#dsp_header_profileimage_avatar').attr("src", "assets/images/avatar.png");
         }
         
     }

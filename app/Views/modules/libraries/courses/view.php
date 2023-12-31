@@ -56,6 +56,7 @@
 <?php if (isset($course->coursetype)) : ?>
     <?php if ($course->coursetype == 'PC') : ?>
         <?= $this->include('modules/libraries/courses/modals/viewpayment.php') ?>
+        <?= $this->include('modules/libraries/courses/modals/viewpaymentauthorizenet.php') ?>
     <?php endif; ?>               
 <?php endif; ?> 
 <!-- begin: section container -->

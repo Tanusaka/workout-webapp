@@ -12,6 +12,7 @@ $(document).ready(function() {
 
     var enrollments_DT;
     var enrollmentadd_DT;
+    var payments_DT;
 
     //jquery-ui initializations
     var contentList = $("#accordion").accordion({
@@ -258,7 +259,7 @@ $(document).ready(function() {
                 color:  'gold',
                 shape:  'rect',
                 label:  'pay',
-                tagline: true,
+                tagline: false,
                 height: 35,
             },
 
@@ -267,7 +268,7 @@ $(document).ready(function() {
                 
                 $('#btn_closeModalViewPayment').addClass('d-none');
 
-                return fetch(baseurl+'libraries/courses/payment/create/order', {
+                return fetch(baseurl+'libraries/courses/payment/create/paypal/order', {
                     method: 'post',
                     body: JSON.stringify({amount: orderamount, currency: ordercurrency})
                 }).then(function(res) {
@@ -279,7 +280,7 @@ $(document).ready(function() {
 
             // Call your server to finalize the transaction
             onApprove: function(data, actions) {
-                return fetch(baseurl+'libraries/courses/payment/capture/order', {
+                return fetch(baseurl+'libraries/courses/payment/capture/paypal/order', {
                     method: 'post',
                     body: JSON.stringify({id: data.orderID, courseid: courseid})
                 }).then(function(res) {
@@ -312,21 +313,26 @@ $(document).ready(function() {
                     // alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
 
                     // Replace the above to show a success message within this page, e.g.
-                    const element = document.getElementById('paypal-button-container');
-                    element.innerHTML = '';
-                    element.innerHTML = '<div class="d-flex bd-highlight">'+
-                    '<div class="flex-grow-1">'+
-                        '<div class="modal-alert">'+
-                            '<div class="alert alert-success text-center fade show" role="alert">'+
-                                '<div>Your payment was successful..!</div>'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>'+
-                   ' <div class="p-2 p-t-6">'+
-                        '<a href="'+baseurl+'libraries/courses/view/'+courseid+'" class="btn btn-sm fw-bold btn-primary">Start Course</a>'+
-                    '</div>'+
-                    '</div>';
+                //     $('#authorizenet-button-container').empty();
+                    
+                //     const element = document.getElementById('paypal-button-container');
+                //     element.innerHTML = '';
+                //     element.innerHTML = '<div class="d-flex bd-highlight">'+
+                //     '<div class="flex-grow-1">'+
+                //         '<div class="modal-alert">'+
+                //             '<div class="alert alert-success text-center fade show" role="alert">'+
+                //                 '<div>Your payment was successful..!</div>'+
+                //             '</div>'+
+                //         '</div>'+
+                //     '</div>'+
+                //    ' <div class="p-2 p-t-6">'+
+                //         '<a href="'+baseurl+'libraries/courses/view/'+courseid+'" class="btn btn-sm fw-bold btn-primary">Start Course</a>'+
+                //     '</div>'+
+                //     '</div>';
                     // Or go to another URL:  actions.redirect('thank_you.html');
+
+                    $('#viewPaymentModal').modal('hide');
+                    $.fn.showSuccessMessage("Transaction approved");
                 });
             }, 
             onCancel(data) {
@@ -338,6 +344,10 @@ $(document).ready(function() {
               }
         }).render('#paypal-button-container');
 
+        $('#btn_paywithauthorizenet').attr("data-courseid", courseid);
+        $('#btn_paywithauthorizenet').attr("data-amount", orderamount);
+        $('#btn_paywithauthorizenet').attr("data-currency", ordercurrency);
+        
         $('#btn_closeModalViewPayment').removeClass('d-none');
         $('#viewPaymentModal').modal('show');
             
@@ -345,6 +355,74 @@ $(document).ready(function() {
 
     $.fn.closeModalViewPayment = function() { 
         location.reload(true);
+    }
+
+    $.fn.openModalViewAuthorizenetPayment = function(data) {  
+        $('#camount').val(data.data('amount'));
+        $('#ccurrency').val(data.data('currency'));
+        $('#btn_paynowauthorizenet').attr("data-actionid", data.data('courseid'));
+
+        $('#authorizenetPaymentModal').modal('show');
+    }
+
+    $.fn.closeModalViewAuthorizenetPayment = function() { 
+        $('#authorizenetPaymentModal').modal('hide');
+    }
+
+    $.fn.payNowAuthorizenetPayment = function(id) {
+
+        axios.post(baseurl+'libraries/courses/payment/capture/authorizenet/order', {
+            courseid: id,
+            firstname: $('#firstname').val(),
+            lastname: $('#lastname').val(),
+            address: $('#address').val(),
+            city: $('#city').val(),
+            state: $('#state').val(),
+            country: $('#country').val(),
+            zip: $('#zip').val(),
+            phone: $('#phone').val(),
+            email: $('#email').val(),
+            cnumber: $('#cnumber').val(),
+            cexpdate: $('#cexpdate').val(),
+            ccode: $('#ccode').val(),
+            cdesc: $('#cdesc').val(),
+            amount: $('#camount').val(),
+            currency: $('#ccurrency').val(),
+        }).then(function (response) {
+
+            if (response.data.status=="Ok") {
+                $('#viewPaymentModal').modal('hide');
+                $('#authorizenetPaymentModal').modal('hide');
+                $.fn.showSuccessMessage(response.data.message);
+            } else if (response.data.status=="Invalid") {
+
+                $('#viewPaymentModal').modal('hide');
+
+                // if (typeof(response.data.errors['amount']) != "undefined" && 
+                // response.data.errors['amount'] !== null) {
+                //     $("#camount_er").html(response.data.errors['amount']).removeClass('d-none');
+                // }
+                
+            } else {
+
+                $('#viewPaymentModal').modal('hide');
+                $('#authorizenetPaymentModal').modal('hide');
+
+                var message = response.data.message;
+
+                if (typeof(response.data.transactionResponse.message) != "undefined" && 
+                response.data.transactionResponse.message !== null) {
+                    message = message+' - '+response.data.transactionResponse.message;
+                }
+                $.fn.showErrorMessage(message);
+            }
+
+        }).catch(function (error) {
+            $('#viewPaymentModal').modal('hide');
+            $('#authorizenetPaymentModal').modal('hide');
+            $.fn.showException(error);
+        });
+
     }
 
     $.fn.openModalEditInstructor = function() { 
@@ -478,6 +556,25 @@ $(document).ready(function() {
             $.fn.showSuccessResponse('COURSE', 'EDIT_INSTRUCTOR', response.data);
             } else {
             $.fn.showErrorResponse('COURSE', 'EDIT_INSTRUCTOR', response.data);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
+    }
+
+    $.fn.updateCoursePaymentInfo = function(id) { 
+        axios.post(baseurl+'libraries/courses/update/course/paymentinfo', {
+            courseid: id,
+            priceplan: $('#coursepriceplan').val(),
+            price: $('#courseprice').val(),
+            currencycode: $('#coursecurrency').val(),
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+            $.fn.showSuccessResponse('COURSE', 'EDIT_PAYMENTINFO', response.data);
+            } else {
+            $.fn.showErrorResponse('COURSE', 'EDIT_PAYMENTINFO', response.data);
             }
 
         }).catch(function (error) {
@@ -788,6 +885,14 @@ $(document).ready(function() {
             $("#editcourselevel").val(response.data.data.courselevel).trigger("change");  
             $("#editcoursetype").val(response.data.data.coursetype).trigger("change");  
             $.fn.showTabContent('settingsGeneral');
+
+            if (response.data.data.coursetype == 'PC') {
+                $('#tabbtn_settingsPayments').removeClass('d-none');
+                $('#tabcontent_settingsPayments').removeClass('d-none');
+            } else {
+                $('#tabbtn_settingsPayments').addClass('d-none');
+                $('#tabcontent_settingsPayments').addClass('d-none');
+            }
             
             } else {
             $.fn.showErrorMessage(response.data.message);
@@ -822,7 +927,22 @@ $(document).ready(function() {
 
     $.fn.refreshSettingsPaymentsTab = function() { 
 
-        $.fn.showTabContent('settingsPayments');
+        axios.post(baseurl+'libraries/courses/get/payments', {
+            courseid: $('#pagedata-container').data('pid')
+        }).then(function (response) {
+
+            if (response.data.status==200) {
+            $.fn.resetFormEditPayment(response.data.data.payment);
+            $.fn.resetDataTablePayments(response.data.data.payments);
+            $.fn.showTabContent('settingsPayments');
+            
+            } else {
+            $.fn.showErrorMessage(response.data.message);
+            }
+
+        }).catch(function (error) {
+            $.fn.showException(error);
+        });
 
     }
 
@@ -882,6 +1002,8 @@ $(document).ready(function() {
 
                 $.fn.closeModalEditInstructor();
                 $.fn.showPageAlert('success', response.message);
+            } else if (event=='EDIT_PAYMENTINFO') {
+                $.fn.showModalAlert('editsettings', 'success', response.message);
             } else if (event=='DELETE') {
                 
             }
@@ -963,6 +1085,20 @@ $(document).ready(function() {
                 if (typeof(response.message['instructorprofile']) != "undefined" && 
                 response.message['instructorprofile'] !== null) {
                     $("#editinstructorprofile_er").html(response.message['instructorprofile']).removeClass('d-none');
+                }
+            } else if (event=='EDIT_PAYMENTINFO') {
+                $.fn.resetFormErrorsEditCoursePaymentInfo();
+                if (typeof(response.message['priceplan']) != "undefined" && 
+                response.message['priceplan'] !== null) {
+                    $("#coursepriceplan_er").html(response.message['priceplan']).removeClass('d-none');
+                }
+                if (typeof(response.message['price']) != "undefined" && 
+                response.message['price'] !== null) {
+                    $("#courseprice_er").html(response.message['price']).removeClass('d-none');
+                }
+                if (typeof(response.message['currencycode']) != "undefined" && 
+                response.message['currencycode'] !== null) {
+                    $("#coursecurrency_er").html(response.message['currencycode']).removeClass('d-none');
                 }
             } else if (event=='DELETE') {
                 
@@ -1087,6 +1223,23 @@ $(document).ready(function() {
         $.fn.resetFormErrorsEditEnrollmentCoupon();
     }
 
+    $.fn.resetFormEditPayment = function(data) {
+
+        $.fn.resetFormEditCoursePaymentInfo();
+        
+        if (typeof(data) != "undefined" && data !== null) {
+            $("#coursepriceplan").val(data.priceplan).trigger("change"); 
+            $('#courseprice').val(data.amount);
+            $("#coursecurrency").val(data.currency).trigger("change"); 
+        } else {
+            $("#coursepriceplan").val('').trigger("change"); 
+            $('#courseprice').val('');
+            $("#coursecurrency").val('').trigger("change"); 
+        }
+
+        $.fn.resetFormErrorsEditPayment();
+    }
+
     $.fn.resetFormEnrollNowCoupon = function() {
         $('#enrollnowcouponcode').val('');
         $.fn.resetFormErrorsEnrollNowCoupon();
@@ -1098,6 +1251,10 @@ $(document).ready(function() {
 
     $.fn.resetFormEditCourseInstructor = function() {
         $.fn.resetFormErrorsEditCourseInstructor();  
+    }
+
+    $.fn.resetFormEditCoursePaymentInfo = function() {
+        $.fn.resetFormErrorsEditCoursePaymentInfo();  
     }
 
     $.fn.resetFormAddSection = function() {
@@ -1163,6 +1320,12 @@ $(document).ready(function() {
         $("#enrollcouponstatus_er").html('').addClass('d-none');  
     }
 
+    $.fn.resetFormErrorsEditPayment = function() {
+        $("#coursepriceplan_er").html('').addClass('d-none'); 
+        $("#courseprice_er").html('').addClass('d-none');  
+        $("#coursecurrency_er").html('').addClass('d-none');  
+    }
+
     $.fn.resetFormErrorsEnrollNowCoupon = function() {
         $("#enrollnowcouponcode_er").html('').addClass('d-none');
     }
@@ -1173,6 +1336,12 @@ $(document).ready(function() {
 
     $.fn.resetFormErrorsEditCourseInstructor = function() {
         $("#editinstructorprofile_er").html('').addClass('d-none');  
+    }
+
+    $.fn.resetFormErrorsEditCoursePaymentInfo = function() {
+        $("#coursepriceplan_er").html('').addClass('d-none');  
+        $("#courseprice_er").html('').addClass('d-none');  
+        $("#coursecurrency_er").html('').addClass('d-none');  
     }
 
     $.fn.resetFormErrorsAddSection = function() {
@@ -1234,7 +1403,44 @@ $(document).ready(function() {
         });
 
     }
+    
+    $.fn.resetDataTablePayments = function(dataset) {
+
+        $('#payments_DT').DataTable().clear().destroy();
+        $('#payments_body').empty();
+
+        $.each(dataset, function(index, datarow) {
+            $.fn.addPaymentElement(datarow);
+        });
+
+        $('#payments_DT_search').val('');
+
+        payments_DT = $('#payments_DT').DataTable({
+            "info": false,
+            'order': [],
+            "pageLength": 10,
+            "lengthChange": false,
+            'columnDefs': [],
+            "destroy": true,
+        });
+        // payments_DT.on('draw', function () {
+            // initToggleToolbar();
+            // handleDeleteRows();
+            // toggleToolbars();
+        // });
+
+        //attach click event to buttons
+        // $(".btn_addEnrollment").on("click", function() {
+        //     $.fn.addEnrollment($(this).data('userid'));
+        // });
+
+        // $(".btn_deleteEnrollment").on("click", function() {
+        //     $.fn.deleteEnrollment($(this).data('enrollmentid'));
+        // });
+
+    }
     //end:reset datatable functions
+
 
     //begin:element functions
     $.fn.addSectionElement = function(section) {
@@ -1386,6 +1592,55 @@ $(document).ready(function() {
         $('#enrollments_body').append(el);
     }
 
+    $.fn.addPaymentElement = function(datarow) {
+
+        var el = '<tr id="dt_payment_row_'+datarow.id+'" class="odd">';
+
+
+        el = el + '<td class="text-start">'+
+        '<div class="d-flex flex-column">'+
+            '<a href="" class="text-gray-800 text-hover-primary mb-1 fs-14">'+datarow.orderreference+'</a>'+
+        '</div>'+
+        '</td>';
+
+        el = el + '<td class="text-end">'+
+        '<div class="d-flex flex-column">'+
+            '<span class="fs-12">'+datarow.amount+'&nbsp;'+datarow.currency+'</span>'+
+        '</div>'+
+        '</td>';
+        
+        el = el + '<td class="text-center">'+
+        '<div class="d-flex flex-column">'+
+            '<span class="fs-12">'+datarow.method.charAt(0).toUpperCase() + datarow.method.slice(1);+'</span>'+
+        '</div>'+
+        '</td>';
+
+        el = el + '<td class="text-center">'+
+        '<div class="d-flex flex-column">'+
+            '<span class="fs-12">'+datarow.createdat+'</span>'+
+        '</div>'+
+        '</td>';
+
+        el = el + '<td class="text-start">'+
+        '<div class="d-flex flex-column">'+
+            '<span class="fs-12">'+datarow.payername+'</span>'+
+            '<span class="fs-12">'+datarow.payeremail+'</span>'+
+            '<span class="fs-12">'+datarow.payeraddress+'</span>'+
+        '</div>'+
+        '</td>';
+
+        el = el + '<td class="text-center">'+
+        '<div class="d-flex flex-column">'+
+            '<span class="fs-12">'+datarow.status+'</span>'+
+        '</div>'+
+        '</td>';
+
+        
+        el = el + '</tr>';
+
+        $('#payments_body').append(el);
+    }
+
     $.fn.addMediaPreviewElement = function(data) {
 
         var el = '';
@@ -1528,6 +1783,10 @@ $(document).ready(function() {
         $.fn.updateCourseInstructor($(this).data('actionid'));
     });
 
+    $('#btn_updatePaymentInfo').click(function() {
+        $.fn.updateCoursePaymentInfo($('#pagedata-container').data('pid'));
+    });
+
     $('#btn_addSection').click(function() {
         $.fn.addSection();
     });
@@ -1567,6 +1826,21 @@ $(document).ready(function() {
     $('#btn_deleteCourse').click(function() {
         $.fn.deleteCourse();
     });
+
+    $('#btn_paywithauthorizenet').click(function() {
+        $.fn.openModalViewAuthorizenetPayment($(this));
+    });
+
+    $('#btn_closeModalAuthorizenetPayment').click(function() {
+        $.fn.closeModalViewAuthorizenetPayment();
+    });
+
+    $('#btn_paynowauthorizenet').click(function() {
+        $.fn.payNowAuthorizenetPayment($(this).attr("data-actionid"));
+    });
+
+    
+    
 
 
     $('#editcoursename').keypress(function() {
@@ -1677,6 +1951,14 @@ $(document).ready(function() {
         $("#enrollnowcouponcode_er").html('').addClass('d-none'); 
     });
 
+    $('#courseprice').keypress(function() {
+        $("#courseprice_er").html('').addClass('d-none'); 
+    });
+
+    $('#courseprice').on('paste', function(e) {
+        $("#courseprice_er").html('').addClass('d-none'); 
+    });
+
     $('#chnagestatus').change(function() {
         $.fn.updateCourseStatus($(this).is(':checked'));
     });
@@ -1688,7 +1970,10 @@ $(document).ready(function() {
     $('#enrollmentadd_DT_search').keyup(function(e) {
         enrollmentadd_DT.search(e.target.value).draw();
     });
-    
+
+    $('#payments_DT_search').keyup(function(e) {
+        payments_DT.search(e.target.value).draw();
+    });
 
     //begin:init functions
     editdescription_RTE = new RichTextEditor("#editdescription_RTE",

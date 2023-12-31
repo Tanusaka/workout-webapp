@@ -11,6 +11,7 @@ use App\Models\App\CourseModel;
 use App\Models\App\UserModel;
 
 use App\Libraries\Paypal;
+use App\Libraries\Authorizenet;
 
 class CourseController extends AuthController
 {
@@ -330,6 +331,45 @@ class CourseController extends AuthController
 		$course = json_decode(json_encode($reqdata), true);
 		
 		$response = $this->coursemodel->updateCourseInstructor($course);
+
+		if ($response->status==200) {
+			
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+				'message'  => $response->messages,
+				'data' => $response->data
+			]);
+
+		} else {
+			$this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'message'  => $response->messages
+			]);
+		}
+
+        return $this->response;
+
+	}
+
+	public function updateCoursePaymentInfo()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_update')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$course = json_decode(json_encode($reqdata), true);
+		
+		$response = $this->coursemodel->updateCoursePaymentInfo($course);
 
 		if ($response->status==200) {
 			
@@ -1110,7 +1150,42 @@ class CourseController extends AuthController
 
 	}
 
-	public function createPaymentOrder() {
+	public function getCoursePayments()
+	{
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_update')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+
+		$response = $this->coursemodel->getCoursePayments([ 'courseid' => $reqdata->courseid ]);
+
+		if ($response->status == 200 ) {
+			$this->response->setJSON([ 
+				'status' => 200,
+				'redirect' => '',
+                'messages'  => '',
+				'data' => $response->data
+			]);
+        } else {
+            $this->response->setJSON([ 
+				'status' => $response->status,
+				'redirect' => '',
+				'messages'  => $response->messages
+			]);
+        }
+
+        return $this->response;
+
+	}
+
+	public function createPaypalPaymentOrder() {
 		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll')) {
             $this->response->setJSON([ 
                 'status' => 403,
@@ -1141,7 +1216,7 @@ class CourseController extends AuthController
 		return $this->response;
 	}
 
-	public function capturePaymentOrder() {
+	public function capturePaypalPaymentOrder() {
 		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll')) {
             $this->response->setJSON([ 
                 'status' => 403,
@@ -1155,9 +1230,6 @@ class CourseController extends AuthController
 		$reqdata = $this->request->getJSON();
 
 		$order = Paypal::captureOrder($reqdata->id);
-
-		
-
 		$jOrder = json_decode(json_encode($order));
 
 		if ($jOrder->status=='COMPLETED') {
@@ -1185,6 +1257,77 @@ class CourseController extends AuthController
 		$this->response->setJSON($order);
 
 		return $this->response;
+	}
+
+	public function captureAuthorizenetPaymentOrder() {
+		if (!AuthController::auth() || !AuthController::hasPermissions('course_enroll')) {
+            $this->response->setJSON([ 
+                'status' => 403,
+				'redirect' => '',
+                'message'  => "You don't have permission to access"
+            ]);
+
+			return $this->response;
+        }
+
+		$reqdata = $this->request->getJSON();
+		$coursePaymentInfo = $this->coursemodel->getCoursePayment(["courseid" => $reqdata->courseid]);
+
+		$responseArray = []; $status = ""; $message = ""; $errors = []; $transactionResponse = [];
+		
+		if (isset($coursePaymentInfo->status) && $coursePaymentInfo->status == 200) {
+			if ($coursePaymentInfo->data->courseprice != $reqdata->amount) {
+				
+				$errors['amount'] = "Invalid Amount";
+
+			} else {
+				#Use this method to authorize and capture a credit card payment.
+				$order = Authorizenet::chargeCreditCard($reqdata);
+
+				if ($order['status']=='Ok') {
+					
+					$payment = [
+						'courseid'=> trim($reqdata->courseid),
+				        'subscriptionid' => 0,
+				        'orderreference' => $order['transactionResponse']['transactionID'],
+				        'amount' => trim($reqdata->amount),
+				        'currency'=> trim($reqdata->currency),
+				        'method' => 'authorizenet',
+				        'paidon' => time(),
+				        'payerid' => $order['transactionResponse']['authCode'],
+				        'payername' => $reqdata->firstname.' '.$reqdata->lastname,
+				        'payeremail' => $reqdata->email,
+				        'payeraddress' => $reqdata->address.' '.$reqdata->city.' '.$reqdata->state.' '.$reqdata->country.' '.$reqdata->zip,
+				        'status' => $order['status']
+					];
+
+					$this->coursemodel->createCoursePayment($payment);
+				}
+
+				$status  = $order['status'];
+				$message = $order['message'];
+				$transactionResponse = $order['transactionResponse'];
+			}
+		} else {
+			
+			$status  = "Error";
+			$message = "Invalid Request";
+		}
+
+		if ( !empty($errors) ) {
+			$status  = "Invalid";
+			$message = "Invalid Field Values";
+		}
+
+		$responseArray['status'] = $status;
+        $responseArray['message'] = $message;
+		$responseArray['errors'] = $errors;
+		$responseArray['transactionResponse'] = $transactionResponse;
+
+		$this->response->setJSON($responseArray);
+
+		return $this->response;
+
 	}
 
 	public function generateEnrollmentCouponCode()

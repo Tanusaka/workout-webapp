@@ -9,6 +9,7 @@ $(document).ready(function() {
             text: message,
             icon: "error",
             buttonsStyling: false,
+            allowOutsideClick: false,
             confirmButtonText: "Ok, got it!",
             customClass: {
                 confirmButton: "btn btn-primary"
@@ -25,6 +26,7 @@ $(document).ready(function() {
             text: message,
             icon: "success",
             buttonsStyling: false,
+            allowOutsideClick: false,
             confirmButtonText: "Ok, got it!",
             customClass: {
                 confirmButton: "btn btn-primary"
@@ -45,6 +47,7 @@ $(document).ready(function() {
             text: message,
             icon: "error",
             buttonsStyling: false,
+            allowOutsideClick: false,
             confirmButtonText: "Ok, got it!",
             customClass: {
                 confirmButton: "btn btn-primary"
@@ -65,6 +68,7 @@ $(document).ready(function() {
             text: message,
             icon: "warning",
             buttonsStyling: false,
+            allowOutsideClick: false,
             confirmButtonText: "Ok, got it!",
             customClass: {
                 confirmButton: "btn btn-primary"

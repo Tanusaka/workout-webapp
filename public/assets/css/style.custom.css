@@ -552,6 +552,90 @@ img {
   margin-top: 4px;
 }
 
+#authorizenet-button-container {
+  max-width: 100%;
+  width: 100%;
+}
+
+.authorizenet-log {
+  width: 100px;
+}
+
+@media only screen and (min-width: 300px) {
+  .authorizenet-button > .authorizenet-button-label-container {
+      margin: 0px 4vw;
+      height: 18px;
+  }
+  }
+  @media only screen and (min-width: 200px) {
+  .authorizenet-button > .authorizenet-button-label-container {
+      margin: 0px 4vw;
+      height: 18px;
+  }
+  }
+  @media only screen and (min-width: 150px) {
+  .authorizenet-button > .authorizenet-button-label-container {
+      margin: 0px 4vw;
+      heght: 18px;
+  }
+  }
+  @media only screen and (min-width: 75px) {
+  .authorizenet-button > .authorizenet-button-label-container {
+      margin: 0px 4vw;
+      height: 18px;
+  }
+  }
+  .authorizenet-button > .authorizenet-button-label-container {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+  }
+  .authorizenet-button * {
+      cursor: pointer;
+  }
+  
+  .authorizenet-button.authorizenet-button-text-color-black {
+      color: #2C2E2F;
+  }
+  @media only screen and (min-width: 300px) {
+  .authorizenet-button {
+      display: inline-block;
+      text-align: center;
+      height: 100%;
+  }
+  }
+  @media only screen and (min-width: 200px) {
+  .authorizenet-button {
+      display: inline-block;
+      text-align: center;
+      height: 100%;
+  }
+  }
+  @media only screen and (min-width: 150px) {
+  .authorizenet-button {
+      display: inline-block;
+      text-align: center;
+      height: 100%;
+  }
+  }
+  @media only screen and (min-width: 75px) {
+  .authorizenet-button {
+      display: inline-block;
+      text-align: center;
+      height: 100%;
+  }
+  }
+  .authorizenet-button {
+      border: 1px solid transparent;
+      border-radius: 0 3px 3px 0;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      border: none;
+      vertical-align: top;
+      cursor: pointer;
+      overflow: hidden;
+  }
 
 hr.dashed {
   border-top: 2px dashed #f4f4f4;
@@ -639,6 +723,10 @@ hr.dashed {
   padding: 15px 20px;
 }
 
+.tab-content-no-scroll {
+  padding: 15px 20px;
+}
+
 .w-32px {
   width: 32px!important;
   height: 32px!important;
@@ -667,6 +755,10 @@ hr.dashed {
 
 .mt-4px {
   margin-top: 4px!important;
+}
+
+.w-100-percent {
+  width: 100%;
 }
 
 /*************************/

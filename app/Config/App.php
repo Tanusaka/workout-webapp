@@ -458,4 +458,26 @@ class App extends BaseConfig
      *    
      */
     public string $WEBAPI_URL = '';
+
+    /**
+     * --------------------------------------------------------------------------
+     * PAYMENT INTEGRATION DATA - Authorize.net
+     * --------------------------------------------------------------------------
+     *  
+     */
+    public string $PI_AN_MERCHANT_LOGIN_ID = '';
+    
+    public string $PI_AN_MERCHANT_TRANSACTION_KEY = '';
+    
+    /**
+     * --------------------------------------------------------------------------
+     * PAYMENT INTEGRATION DATA - Paypal
+     * --------------------------------------------------------------------------
+     *  
+     */
+    public string $PI_PP_SDK_URL  = '';
+
+    public string $PI_PP_CLIENT_ID = '';
+
+    public string $PI_PP_CLIENT_SECRET = '';
 }

@@ -44,6 +44,15 @@
             <div id="payment_modal_footer" class="modal-footer">
                 <!-- Set up a container element for the button -->
                 <div id="paypal-button-container"></div>
+                <!-- Set up a container element for the button -->
+                <div id="authorizenet-button-container">
+                    <a id="btn_paywithauthorizenet" class="btn btn-primary w-100-percent" data-courseid="" data-amount="" data-currency="">
+                        <div class="authorizenet-button-label-container">
+                            <span class="authorizenet-button-text true" optional="">Pay with Authorize.net</span>
+                            <!-- <img src="assets/images/authorizenet.jpeg" role="presentation" class="authorizenet-log"> -->
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

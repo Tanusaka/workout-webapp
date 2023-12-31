@@ -5,28 +5,15 @@
  */
 namespace App\Libraries;
 
-// use CodeIgniter\I18n\Time;
-// use CodeIgniter\HTTP\RequestInterface;
-// use App\Config\PaypalConfigs;
 
 class Paypal {
 
 
     private static function getAccessToken() {
 
-
-        $CLIENT_ID = 'AZrW4n4VN0w8oiKHOywwhgUbULZ5__MYuBmS1S-HORvO_759JY4TPG4vc2E0QuZOcWfFIhUUIh-RMAxQ';
-        $CLIENT_SECRET = 'EFaN8IccscZfFUob2boFGWLEEGL1umJC3GjEgwS1kmFLmeSRC3hHiIKGzFGbvvqbvDxyZ_Dj3pcmvNBU';
-
-
-        // if ( isset($_SESSION['paypal_accessToken']) &&
-        //      isset($_SESSION['paypal_tokenexpiresat']) && 
-        //      time() < $_SESSION['paypal_tokenexpiresat'] ) {
-        //     return $_SESSION['paypal_accessToken'];
-        // }
-
+        $CI =& get_instance();
         
-        $AUTHORIZATION = 'Authorization: Basic '.base64_encode($CLIENT_ID.':'.$CLIENT_SECRET);
+        $AUTHORIZATION = 'Authorization: Basic '.base64_encode($CI->appconfigs->PI_PP_CLIENT_ID.':'.$CI->appconfigs->PI_PP_CLIENT_SECRET);
 
         $curl = curl_init();
 

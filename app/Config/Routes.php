@@ -67,6 +67,7 @@ $routes->post('/libraries/courses/save/course', 'App\CourseController::saveCours
 $routes->post('/libraries/courses/update/course', 'App\CourseController::updateCourse');
 $routes->post('/libraries/courses/update/course/description', 'App\CourseController::updateCourseDescription');
 $routes->post('/libraries/courses/update/course/instructor', 'App\CourseController::updateCourseInstructor');
+$routes->post('/libraries/courses/update/course/paymentinfo', 'App\CourseController::updateCoursePaymentInfo');
 $routes->post('/libraries/courses/update/course/status', 'App\CourseController::updateCourseStatus');
 
 $routes->post('/libraries/courses/delete/course', 'App\CourseController::deleteCourse');
@@ -88,13 +89,14 @@ $routes->post('/libraries/courses/save/enrollment', 'App\CourseController::saveC
 $routes->post('/libraries/courses/delete/enrollment', 'App\CourseController::deleteCourseEnrollment');
 $routes->post('/libraries/courses/accept/enrollment', 'App\CourseController::acceptCourseEnrollment');
 
-
 $routes->post('/libraries/courses/generate/enrollment/coupon/code', 'App\CourseController::generateEnrollmentCouponCode');
 $routes->post('/libraries/courses/update/enrollment/coupon/code', 'App\CourseController::updateEnrollmentCouponCode');
 
+$routes->post('/libraries/courses/get/payments', 'App\CourseController::getCoursePayments');
+$routes->post('/libraries/courses/payment/create/paypal/order', 'App\CourseController::createPaypalPaymentOrder');
+$routes->post('/libraries/courses/payment/capture/paypal/order', 'App\CourseController::capturePaypalPaymentOrder');
 
-$routes->post('/libraries/courses/payment/create/order', 'App\CourseController::createPaymentOrder');
-$routes->post('/libraries/courses/payment/capture/order', 'App\CourseController::capturePaymentOrder');
+$routes->post('/libraries/courses/payment/capture/authorizenet/order', 'App\CourseController::captureAuthorizenetPaymentOrder');
 
 // $routes->post('/libraries/courses/reviews/save', 'App\CourseController::save_review');
 // $routes->post('/libraries/courses/reviews/delete', 'App\CourseController::delete_review');

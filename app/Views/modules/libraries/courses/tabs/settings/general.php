@@ -36,7 +36,7 @@
         <label id="editcourselevel_er" class="text-truncate fw-normal fs-10 fc-error mb-0 d-none"></label>
     </div>
 
-    <div class="form-group mb-12">
+    <div class="form-group mb-12 d-none">
         <label class="text-truncate fw-normal fs-12 fc-light mb-0 required-field">Course Type:</label>
         <select id="editcoursetype" name="editcoursetype" aria-label="Select type of this course..." data-control="select2" data-placeholder="Select type of this course..." class="form-select">
             <option></option>
