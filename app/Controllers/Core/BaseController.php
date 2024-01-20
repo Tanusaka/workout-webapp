@@ -12,6 +12,7 @@ use CodeIgniter\API\ResponseTrait;
 use Psr\Log\LoggerInterface;
 
 use App\Models\App\FileModel;
+use App\Libraries\S3bucket;
 
 /**
  * Class BaseController
@@ -210,53 +211,29 @@ abstract class BaseController extends Controller
 
 		$file = explode ("|", $fileData);
 
-		$tenantFolder = hash('crc32b', (string)$_SESSION['tenantid']);
-		$userFolder = hash('crc32b', (string)$_SESSION['id']);
-		$rootFolder = hash('crc32b', $root);
+		$s3response = S3bucket::uploadToBucket($file[0]);
 
-		$path = 'uploads/'.$tenantFolder.'/'.$userFolder.'/'.$rootFolder.'/';
+		if ( $s3response->get('ObjectURL') == null ) {
+			return 0;
+		} else {
+			
+			$upload = [
+				'rootdir' => $root,
+				'path' => $s3response->get('ObjectURL'),
+				'name' => $file[0],
+				'type' => $file[1],
+				'ext' => $file[2],
+				'size' => $file[3],
+			];
 
-		if ($sub != "") {
-			$subFolder = hash('crc32b', $sub);
-			$path = $path.$subFolder.'/';
-		}
+			$response = $this->filemodel->saveFile($upload);
 
-        $upload = [
-			'rootdir' => $root,
-			'path' => $path,
-			'name' => $file[0],
-			'type' => $file[1],
-			'ext' => $file[2],
-			'size' => $file[3],
-        ];
-
-        
-		$response = $this->filemodel->saveFile($upload);
-
-		if ($response->status==200) {
-
-			try {
-				if ($file[0] != "") {
-
-					#create folder IF NOT EXIIST
-					if (!is_dir(FCPATH . $upload['path'])) {
-						mkdir(FCPATH . $upload['path'], 0777, TRUE);
-					}
-
-					#move file to permement location IF EXIIST
-					$file = new \CodeIgniter\Files\File(WRITEPATH . 'uploads/temp/'.$file[0]);
-					$file->move(FCPATH . $upload['path']);
-				} 
-				
+			if ($response->status==200) {
 				return $response->data->file;
-
-			} catch (\Exception $e) {
-				log_message('error', '[ERROR] {exception}', ['exception' => $e]);
-                return 0;
+			} else {
+				return 0;
 			}
 
-		} else {
-			return 0;
 		}
 
     }

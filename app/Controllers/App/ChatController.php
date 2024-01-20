@@ -207,7 +207,7 @@ class ChatController extends AuthController
 				if (isset($file->id)) {
 					if ($file->type=='image') {
 						$name= 'Image';
-						$src = $file->path.$file->name;
+						$src = $file->path;
 					} elseif ($file->type=="video") {
 						$name= 'Video';
 						$src = 'assets/images/video.png';
@@ -216,7 +216,7 @@ class ChatController extends AuthController
 						$src = 'assets/images/attachment.png';
 					}
 
-					$message = $message.'<div data-attachmentid="'.$file->id.'" data-attachmentpath="'.$file->path.$file->name.'" data-attachmenttype="'.$file->type.'" class="d-flex flex-stack chat-attachment-preview-item">'.				
+					$message = $message.'<div data-attachmentid="'.$file->id.'" data-attachmentpath="'.$file->path.'" data-attachmenttype="'.$file->type.'" class="d-flex flex-stack chat-attachment-preview-item">'.				
 						'<div class="d-flex">'.
 							'<div class="symbol symbol-40px mt-4px">'.
 								'<img src="'.$src.'">'.

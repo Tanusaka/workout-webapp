@@ -480,4 +480,19 @@ class App extends BaseConfig
     public string $PI_PP_CLIENT_ID = '';
 
     public string $PI_PP_CLIENT_SECRET = '';
+
+    /**
+     * --------------------------------------------------------------------------
+     * CENTRAL RESOURCE REPOSITORY DATA - AWS S3 Bucket
+     * --------------------------------------------------------------------------
+     *  
+     */
+
+    public string $S3_BUCKET_NAME = '';
+
+    public string $S3_REGION = '';
+
+    public string $S3_ACCESS_KEY = '';
+    
+    public string $S3_SECRET_ACCESS_KEY = '';
 }
